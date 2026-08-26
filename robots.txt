@@ -1,0 +1,4 @@
+# Preview build — kept out of search so it cannot compete with the
+# production domain for the same content.
+User-agent: *
+Disallow: /
