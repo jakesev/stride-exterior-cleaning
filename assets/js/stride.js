@@ -261,7 +261,6 @@
     var status   = $('[data-form-status]', form);
     var cfg      = window.STRIDE_CONFIG || {};
     var i = 0;
-    var files = [];
 
     var first = true;
     function show(n) {
@@ -341,61 +340,6 @@
       }
     });
 
-    /* ---- photos ---- */
-    var input = $('[data-files]', form);
-    var zone  = $('.dropzone', form);
-    var thumbs = $('.thumbs', form);
-
-    function renderThumbs() {
-      if (!thumbs) return;
-      thumbs.innerHTML = '';
-      files.forEach(function (f, idx) {
-        var d = document.createElement('div');
-        d.className = 'thumb';
-        var img = document.createElement('img');
-        img.alt = ''; img.src = URL.createObjectURL(f);
-        img.onload = function () { URL.revokeObjectURL(img.src); };
-        var rm = document.createElement('button');
-        rm.type = 'button';
-        rm.setAttribute('aria-label', 'Remove photo ' + (idx + 1));
-        rm.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-        rm.addEventListener('click', function () { files.splice(idx, 1); syncInput(); renderThumbs(); });
-        d.appendChild(img); d.appendChild(rm); thumbs.appendChild(d);
-      });
-      var c = $('[data-file-count]', form);
-      if (c) c.textContent = files.length ? files.length + (files.length === 1 ? ' photo added' : ' photos added') : '';
-    }
-
-    function syncInput() {
-      if (!input || typeof DataTransfer === 'undefined') return;
-      var dt = new DataTransfer();
-      files.forEach(function (f) { dt.items.add(f); });
-      input.files = dt.files;
-    }
-
-    function addFiles(list) {
-      Array.prototype.forEach.call(list, function (f) {
-        if (!/^image\//.test(f.type)) return;
-        if (f.size > 12 * 1024 * 1024) return;
-        if (files.length >= 8) return;
-        files.push(f);
-      });
-      syncInput(); renderThumbs();
-    }
-
-    if (input) input.addEventListener('change', function () { files = []; addFiles(input.files); });
-    if (zone) {
-      ['dragenter', 'dragover'].forEach(function (ev) {
-        zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.add('is-over'); });
-      });
-      ['dragleave', 'drop'].forEach(function (ev) {
-        zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.remove('is-over'); });
-      });
-      zone.addEventListener('drop', function (e) {
-        if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
-      });
-    }
-
     /* ---- summary ---- */
     function buildSummary() {
       var list = $('[data-summary]', form);
@@ -403,11 +347,11 @@
       var picked = $$('input[name="services"]:checked', form).map(function (c) {
         return (c.closest('.choice') && c.closest('.choice').textContent || c.value).trim();
       });
+      var timing = form.querySelector('input[name="timing"]:checked');
       var rows = [
         ['Cleaning', picked.join(', ') || '—'],
-        ['Property', [val('suburb'), val('address')].filter(Boolean).join(' · ') || '—'],
-        ['Photos', files.length ? files.length + ' attached' : 'None attached'],
-        ['Contact', [val('name'), val('phone'), val('email')].filter(Boolean).join(' · ') || '—']
+        ['Property', [val('address'), val('suburb')].filter(Boolean).join(', ') || '—'],
+        ['Timing', timing ? timing.value : 'Not specified']
       ];
       list.innerHTML = rows.map(function (r) {
         return '<div class="summary-row"><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>';

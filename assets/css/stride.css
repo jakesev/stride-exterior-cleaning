@@ -61,7 +61,7 @@
   --wrap:       1320px;
   --wrap-mid:   1060px;
   --wrap-text:  62ch;
-  --section-y:  clamp(4.25rem, 7.5vw, 9rem);
+  --section-y:  clamp(3.4rem, 5.8vw, 6.75rem);
 
   /* form */
   --r-xs: 6px;  --r-sm: 10px;  --r: 16px;  --r-lg: 24px;  --r-xl: 34px;
@@ -173,7 +173,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0; }
 .bg-ink .eyebrow::before { background: rgba(79,176,247,.5); }
 .eyebrow-plain::before { display: none; }
 
-.section-head { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+.section-head { display: grid; gap: clamp(1.25rem, 2.4vw, 2rem); margin-bottom: clamp(1.9rem, 3.6vw, 3rem); }
 @media (min-width: 62rem) {
   .section-head-split { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: end; gap: clamp(2rem, 5vw, 5rem); }
   .section-head-split .section-head-aside { padding-bottom: .35rem; }
@@ -866,6 +866,83 @@ details[open] .faq-icon::after { transform: translate(-50%, -50%) scaleY(0); opa
 .stat strong { display: block; font-size: clamp(1.25rem, 1rem + 1vw, 1.6rem); font-weight: 800; letter-spacing: -.03em; color: var(--ink); margin-bottom: .3rem; }
 .stat span { font-size: var(--fs-xs); color: var(--muted); letter-spacing: .04em; }
 
+
+/* --- Surface marquee ----------------------------------------------------- */
+/* A continuous strip of the materials we actually work on. Two identical
+   halves; the track translates exactly one half then loops, so the seam is
+   never visible. */
+.marquee {
+  --marquee-gap: clamp(1.75rem, 4vw, 3.25rem);
+  --marquee-speed: 64s;
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+  padding-block: clamp(.9rem, 1.7vw, 1.2rem);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track {
+  display: flex; width: max-content; gap: var(--marquee-gap);
+  animation: marquee var(--marquee-speed) linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track { animation-play-state: paused; }
+.marquee-group { display: flex; gap: var(--marquee-gap); flex: 0 0 auto; }
+.marquee-item {
+  display: flex; align-items: center; gap: var(--marquee-gap);
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--text-2); white-space: nowrap;
+}
+.marquee-item::after {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue); flex: 0 0 auto;
+}
+@keyframes marquee { to { transform: translateX(calc(-50% - var(--marquee-gap) / 2)); } }
+.bg-ink .marquee { border-color: var(--line-dark); }
+.bg-ink .marquee-item { color: var(--on-dark-2); }
+.bg-ink .marquee-item::after { background: var(--blue-bright); }
+
+/* --- Situation cards ----------------------------------------------------- */
+.situations { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+@media (min-width: 56rem) { .situations { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.situation {
+  position: relative; background: var(--white);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex; flex-direction: column; gap: .75rem;
+  transition: background-color var(--t) var(--e-out);
+}
+.situation:hover { background: var(--paper-2); }
+.situation-tag {
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: .35rem;
+}
+.situation h3 { font-size: clamp(1.2rem, 1rem + .8vw, 1.5rem); }
+.situation p { font-size: var(--fs-sm); color: var(--text-2); margin: 0; }
+.situation .link-line { margin-top: auto; padding-top: 1rem; }
+.situation-link::after { content: ''; position: absolute; inset: 0; }
+
+/* --- Cited figure -------------------------------------------------------- */
+.figure-stat {
+  display: grid; gap: .5rem;
+  padding: clamp(1.25rem, 2.6vw, 1.85rem) 0;
+  border-top: 1px solid var(--line);
+}
+.figure-stat strong {
+  display: block; font-size: clamp(2.2rem, 1.2rem + 3.6vw, 3.75rem);
+  font-weight: 800; letter-spacing: -.045em; line-height: 1; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.figure-stat p { font-size: var(--fs-sm); color: var(--text-2); margin: 0; max-width: 34ch; }
+.figure-stat cite {
+  font-style: normal; font-size: var(--fs-xs); color: var(--muted);
+  letter-spacing: .02em;
+}
+.stat-pair { display: grid; gap: clamp(1rem, 3vw, 2.5rem); }
+@media (min-width: 48rem) { .stat-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.bg-ink .figure-stat { border-color: var(--line-dark); }
+.bg-ink .figure-stat strong { color: #fff; }
+.bg-ink .figure-stat p { color: var(--on-dark-2); }
+.bg-ink .figure-stat cite { color: var(--on-dark-2); opacity: .8; }
+
 /* --- Reveal animations --------------------------------------------------- */
 .js [data-reveal] { opacity: 0; will-change: opacity, transform; }
 .js [data-reveal="up"]     { transform: translateY(24px); }
@@ -946,6 +1023,8 @@ details[open] .faq-icon::after { transform: translate(-50%, -50%) scaleY(0); opa
   .hero-figure, .hero-inset { clip-path: none !important; }
   .hero-figure > img, .reveal-img img { transform: none !important; }
   .btn:hover, .area-chip:hover { transform: none; }
+  .marquee-track { animation: none !important; transform: none !important; flex-wrap: wrap; }
+  .marquee { -webkit-mask-image: none; mask-image: none; }
   .service-card:hover .service-media img { transform: none; }
 }
 
