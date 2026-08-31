@@ -346,6 +346,10 @@ body.menu-open .mobile-cta { transform: translateY(160%); }
 
 .hero-lead { max-width: 46ch; font-size: var(--fs-lead); color: var(--text-2); line-height: 1.55; }
 .hero-actions { margin-top: clamp(1.6rem, 3vw, 2.2rem); }
+.hero-reassure {
+  margin: 1.1rem 0 0; font-size: var(--fs-xs); font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+}
 
 .hero-media { position: relative; }
 .hero-figure {
@@ -942,6 +946,64 @@ details[open] .faq-icon::after { transform: translate(-50%, -50%) scaleY(0); opa
 .bg-ink .figure-stat strong { color: #fff; }
 .bg-ink .figure-stat p { color: var(--on-dark-2); }
 .bg-ink .figure-stat cite { color: var(--on-dark-2); opacity: .8; }
+
+
+/* --- Quote flow: grouped controls ---------------------------------------- */
+.quote-card fieldset { border: 0; padding: 0; margin: 0 0 1.5rem; }
+.quote-card legend { padding: 0; font-size: var(--fs-sm); font-weight: 700; margin-bottom: .6rem; }
+.quote-card fieldset.has-error legend { color: #B3261E; }
+.choice-grid-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 40rem) { .choice-grid-compact { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.choice-grid-compact .choice-face { padding: .8rem .85rem; font-size: var(--fs-xs); }
+
+/* --- More services disclosure -------------------------------------------- */
+.more-services { margin-top: 1.15rem; border-top: 1px solid var(--line); }
+.more-services > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 0 .25rem; cursor: pointer; list-style: none;
+  font-size: var(--fs-sm); font-weight: 700; color: var(--blue);
+}
+.more-services > summary::-webkit-details-marker { display: none; }
+.more-services > summary:hover { color: var(--blue-deep); }
+.more-services .faq-icon { width: 1.15rem; height: 1.15rem; }
+
+/* --- Contextual upsell ---------------------------------------------------- */
+.upsell {
+  margin-top: 1.5rem; padding: 1.15rem 1.25rem;
+  background: var(--paper-2); border-radius: var(--r-sm);
+}
+.upsell-prompt { margin: 0 0 .8rem; font-size: var(--fs-sm); font-weight: 700; }
+.upsell-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.upsell-add {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem .9rem; border-radius: 999px;
+  border: 1px solid var(--line-2); background: var(--white);
+  font-size: var(--fs-xs); font-weight: 700; color: var(--ink);
+  transition: border-color var(--t) var(--e-out), background-color var(--t) var(--e-out),
+              transform var(--t-fast) var(--e-out);
+}
+.upsell-add:hover { border-color: var(--blue); color: var(--blue-deep); transform: translateY(-1px); }
+.upsell-add span[aria-hidden] { color: var(--blue); font-weight: 800; }
+
+/* --- Service-area result -------------------------------------------------- */
+.area-result {
+  margin: .6rem 0 0; padding: .7rem .9rem; border-radius: var(--r-sm);
+  font-size: var(--fs-sm); font-weight: 600;
+}
+.area-core          { background: #E7F3EA; color: #205C31; }
+.area-discretionary { background: #FDF1DF; color: #7A4E0B; }
+.area-excluded,
+.area-unknown       { background: var(--paper-2); color: var(--text-2); }
+
+/* --- Stride Exterior Check ------------------------------------------------ */
+.check-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+@media (min-width: 40rem) { .check-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 68rem) { .check-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.check-item { background: var(--white); padding: clamp(1.35rem, 2.6vw, 1.9rem); display: grid; gap: .55rem; align-content: start; }
+.check-item h3 { font-size: var(--fs-h4); }
+.check-item p { font-size: var(--fs-sm); color: var(--text-2); margin: 0; }
+.check-item svg { color: var(--blue); margin-bottom: .35rem; }
+.check-disclaimer { font-size: var(--fs-xs); color: var(--muted); margin-top: 1.25rem; max-width: 68ch; }
 
 /* --- Reveal animations --------------------------------------------------- */
 .js [data-reveal] { opacity: 0; will-change: opacity, transform; }

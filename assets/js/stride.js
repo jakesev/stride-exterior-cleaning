@@ -246,23 +246,81 @@
     frame();
   }
 
+  /* -------------------------------------------------------------- analytics */
+  /* Vendor-agnostic. Pushes to dataLayer (GTM-compatible) and forwards to gtag
+     if one is present. No SDK is bundled and no personal data is ever sent —
+     only structural facts about where someone is in the funnel. */
+  function track(event, params) {
+    var payload = {};
+    for (var k in (params || {})) if (params[k] !== undefined && params[k] !== '') payload[k] = params[k];
+    payload.event = event;
+    (window.dataLayer = window.dataLayer || []).push(payload);
+    if (typeof window.gtag === 'function') window.gtag('event', event, params || {});
+    if (window.STRIDE_DEBUG) console.log('[stride]', event, params || {});
+  }
+  window.strideTrack = track;
+
+  function trackCtas() {
+    $$('a[href$="/quote/"], a[href*="/quote/"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('quote_cta_click', {
+          placement: a.closest('.site-header') ? 'header'
+            : a.classList.contains('mobile-cta') ? 'sticky_mobile'
+              : a.closest('.hero') ? 'hero'
+                : a.closest('.site-footer') ? 'footer' : 'body',
+          cta_text: (a.textContent || '').trim().slice(0, 40)
+        });
+      });
+    });
+    $$('a[href^="tel:"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('phone_click', { placement: a.closest('.site-header') ? 'header' : 'body' });
+      });
+    });
+    $$('a[href$="/our-work/"]').forEach(function (a) {
+      a.addEventListener('click', function () { track('before_after_click', {}); });
+    });
+  }
+
   /* ----------------------------------------------------------- quote form */
   function quoteForm() {
     var form = $('[data-quote]');
     if (!form) return;
 
-    var steps    = $$('.step', form);
-    var fill     = $('.progress-fill', form);
-    var label    = $('[data-step-label]', form);
-    var counter  = $('[data-step-count]', form);
-    var btnNext  = $('[data-next]', form);
-    var btnBack  = $('[data-back]', form);
-    var btnSend  = $('[data-send]', form);
-    var status   = $('[data-form-status]', form);
-    var cfg      = window.STRIDE_CONFIG || {};
-    var i = 0;
+    var cfg     = window.STRIDE_CONFIG || {};
+    var Q       = window.StrideQualify;
+    var steps   = $$('.step', form);
+    var fill    = $('.progress-fill', form);
+    var label   = $('[data-step-label]', form);
+    var counter = $('[data-step-count]', form);
+    var btnNext = $('[data-next]', form);
+    var btnBack = $('[data-back]', form);
+    var btnSend = $('[data-send]', form);
+    var status  = $('[data-form-status]', form);
+    var i = 0, first = true, files = [], area = null, outsideArea = false;
 
-    var first = true;
+    var field = function (n) { return form.querySelector('[data-field="' + n + '"]'); };
+    var val   = function (n) { var el = form.elements[n]; return el && el.value ? el.value.trim() : ''; };
+    var esc   = function (s) {
+      return String(s).replace(/[&<>"]/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c];
+      });
+    };
+    var picked = function () {
+      return $$('input[name="services"]:checked', form).map(function (c) { return c.value; });
+    };
+    var pickedLabels = function () {
+      return $$('input[name="services"]:checked', form).map(function (c) {
+        var t = c.parentElement.textContent || c.value; return t.trim();
+      });
+    };
+    var radio = function (n) { var el = form.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : ''; };
+    var radioLabel = function (n) {
+      var el = form.querySelector('input[name="' + n + '"]:checked');
+      return el ? (el.parentElement.textContent || '').trim() : '';
+    };
+
+    /* ---------------------------------------------------------- step view */
     function show(n) {
       i = Math.max(0, Math.min(steps.length - 1, n));
       steps.forEach(function (s, idx) {
@@ -275,112 +333,299 @@
       if (btnBack) btnBack.hidden = i === 0;
       if (btnNext) btnNext.hidden = i === steps.length - 1;
       if (btnSend) btnSend.hidden = i !== steps.length - 1;
-      if (i === steps.length - 1) buildSummary();
+
+      if (i === 2) revealConditionals();
+      if (i === steps.length - 1) { buildSummary(); qualify(); }
+
       var h = $('h2', steps[i]);
-      if (h) {
-        h.setAttribute('tabindex', '-1');
-        if (!first) h.focus({ preventScroll: true });   // not on first paint
-      }
+      if (h) { h.setAttribute('tabindex', '-1'); if (!first) h.focus({ preventScroll: true }); }
       if (!first) {
         var top = form.getBoundingClientRect().top + window.scrollY - 110;
         if (window.scrollY > top) window.scrollTo({ top: top, behavior: isReduced() ? 'auto' : 'smooth' });
+        track('quote_step_view', { step_name: steps[i].getAttribute('data-label'), step_number: i + 1 });
       }
       first = false;
     }
 
+    /* --------------------------------------------------------- validation */
     function clearErrors(scope) {
-      $$('.field.has-error', scope).forEach(function (f) { f.classList.remove('has-error'); });
+      $$('.field.has-error, fieldset.has-error', scope).forEach(function (f) { f.classList.remove('has-error'); });
       $$('.field-error', scope).forEach(function (e) { e.remove(); });
-      $$('[data-choice-error]', scope).forEach(function (e) { e.remove(); });
     }
-
-    function fail(field, msg) {
-      var wrap = field.closest('.field') || field.parentElement;
+    function fail(el, msg) {
+      var wrap = el.closest('.field') || el.closest('fieldset') || el.parentElement;
       wrap.classList.add('has-error');
       var p = document.createElement('p');
       p.className = 'field-error'; p.textContent = msg;
       wrap.appendChild(p);
     }
-
     function validate() {
       var scope = steps[i];
       clearErrors(scope);
       var ok = true, firstBad = null;
 
-      var group = $$('input[type="checkbox"][name="services"]', scope);
-      if (group.length && !group.some(function (c) { return c.checked; })) {
+      if (i === 0 && !picked().length) {
+        var grid = $('.choice-grid', scope);
         var p = document.createElement('p');
         p.className = 'field-error'; p.setAttribute('data-choice-error', '');
-        p.textContent = 'Pick at least one area so we know what to quote.';
-        $('.choice-grid', scope).insertAdjacentElement('afterend', p);
-        ok = false; firstBad = group[0];
+        p.textContent = 'Pick at least one thing you would like us to look at.';
+        grid.insertAdjacentElement('afterend', p);
+        ok = false; firstBad = $('input', grid);
       }
 
       $$('[required]', scope).forEach(function (el) {
+        if (el.offsetParent === null && el.type !== 'hidden') return;   // hidden branch
         var v = (el.value || '').trim();
         var bad = !v;
         if (!bad && el.type === 'email') bad = !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-        if (!bad && el.type === 'tel')  bad = v.replace(/[^\d]/g, '').length < 8;
-        if (bad) {
-          fail(el, el.getAttribute('data-error') || 'This one is needed.');
-          ok = false; firstBad = firstBad || el;
-        }
+        if (!bad && el.type === 'tel') bad = v.replace(/[^\d]/g, '').length < 8;
+        if (!bad && el.hasAttribute('data-postcode')) bad = !/^\d{4}$/.test(v);
+        if (bad) { fail(el, el.getAttribute('data-error') || 'This one is needed.'); ok = false; firstBad = firstBad || el; }
       });
+
       if (!ok && firstBad) firstBad.focus();
       return ok;
     }
 
-    if (btnNext) btnNext.addEventListener('click', function () { if (validate()) show(i + 1); });
-    if (btnBack) btnBack.addEventListener('click', function () { show(i - 1); });
+    /* ------------------------------------------------------ service area */
+    var pc = $('[data-postcode]', form);
+    var areaOut = $('[data-area-result]', form);
+    var afterPc = $('[data-after-postcode]', form);
 
-    form.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file') {
-        e.preventDefault();
-        if (i < steps.length - 1) { if (validate()) show(i + 1); }
+    function checkPostcode() {
+      if (!pc || !Q || !cfg.areas) return;
+      var v = (pc.value || '').trim();
+      if (!/^\d{4}$/.test(v)) { areaOut.hidden = true; if (afterPc) afterPc.hidden = true; outsideArea = false; return; }
+      area = Q.resolveArea(v, cfg.areas);
+      areaOut.hidden = false;
+      areaOut.className = 'area-result area-' + area.tier;
+      areaOut.textContent = area.label ? area.message + ' (' + area.label + ')' : area.message;
+      outsideArea = (area.tier === 'excluded' || area.tier === 'unknown');
+      if (afterPc) afterPc.hidden = outsideArea;
+      if (btnNext) {
+        btnNext.firstChild.nodeValue = outsideArea ? 'Leave my details ' : 'Continue';
       }
+      track('postcode_check', { postcode_result: area.tier });
+    }
+    if (pc) {
+      pc.addEventListener('input', checkPostcode);
+      pc.addEventListener('blur', checkPostcode);
+    }
+
+    /* -------------------------------------------------- conditional steps */
+    function revealConditionals() {
+      var sel = picked();
+      $$('[data-when]', form).forEach(function (fs) {
+        fs.hidden = sel.indexOf(fs.getAttribute('data-when')) === -1;
+      });
+    }
+
+    /* --------------------------------------------------------- upsells */
+    var upsellBox = $('[data-upsell]', form);
+    function renderUpsells() {
+      if (!upsellBox || !cfg.flow || !cfg.flow.upsells) return;
+      var sel = picked();
+      if (!sel.length) { upsellBox.hidden = true; upsellBox.innerHTML = ''; return; }
+      var all = (cfg.flow.services.primary || []).concat(cfg.flow.services.more || []);
+      var byId = {}; all.forEach(function (s) { byId[s.id] = s; });
+
+      var prompt = '', suggest = [];
+      for (var k = 0; k < sel.length; k++) {
+        var u = cfg.flow.upsells[sel[k]];
+        if (!u) continue;
+        var avail = u.suggest.filter(function (id) { return sel.indexOf(id) === -1 && byId[id]; });
+        if (avail.length) { prompt = u.prompt; suggest = avail.slice(0, 3); break; }
+      }
+      if (!suggest.length) { upsellBox.hidden = true; upsellBox.innerHTML = ''; return; }
+
+      upsellBox.hidden = false;
+      upsellBox.innerHTML = '<p class="upsell-prompt">' + esc(prompt) + '</p>' +
+        '<div class="upsell-row">' + suggest.map(function (id) {
+          return '<button type="button" class="upsell-add" data-add="' + esc(id) + '">' +
+            '<span aria-hidden="true">+</span> ' + esc(byId[id].label) + '</button>';
+        }).join('') + '</div>';
+      track('upsell_view', { primary_service: sel[0], suggested_service: suggest.join('+') });
+    }
+    if (upsellBox) {
+      upsellBox.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-add]');
+        if (!b) return;
+        var id = b.getAttribute('data-add');
+        var input = form.querySelector('input[name="services"][value="' + id + '"]');
+        if (input) {
+          input.checked = true;
+          track('upsell_add', { added_service: id });
+          renderUpsells();
+        }
+      });
+    }
+    $$('input[name="services"]', form).forEach(function (c) {
+      c.addEventListener('change', function () {
+        track('service_select', { service: c.value, selected: c.checked });
+        renderUpsells();
+      });
     });
 
-    /* ---- summary ---- */
+    /* ----------------------------------------------------------- photos */
+    var input = $('[data-files]', form);
+    var zone = $('.dropzone', form);
+    var thumbs = $('.thumbs', form);
+
+    function renderThumbs() {
+      if (!thumbs) return;
+      thumbs.innerHTML = '';
+      files.forEach(function (f, idx) {
+        var d = document.createElement('div');
+        d.className = 'thumb';
+        var img = document.createElement('img');
+        img.alt = ''; img.src = URL.createObjectURL(f);
+        img.onload = function () { URL.revokeObjectURL(img.src); };
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.setAttribute('aria-label', 'Remove photo ' + (idx + 1));
+        rm.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+        rm.addEventListener('click', function () { files.splice(idx, 1); syncFiles(); renderThumbs(); });
+        d.appendChild(img); d.appendChild(rm); thumbs.appendChild(d);
+      });
+      var c = $('[data-file-count]', form);
+      if (c) c.textContent = files.length ? files.length + (files.length === 1 ? ' photo added' : ' photos added') : '';
+      var pcField = field('photoCount');
+      if (pcField) pcField.value = String(files.length);
+    }
+    function syncFiles() {
+      if (!input || typeof DataTransfer === 'undefined') return;
+      var dt = new DataTransfer();
+      files.forEach(function (f) { dt.items.add(f); });
+      input.files = dt.files;
+    }
+    function addFiles(list) {
+      var before = files.length;
+      Array.prototype.forEach.call(list, function (f) {
+        if (!/^image\//.test(f.type)) { track('photo_upload_error', { error_type: 'wrong_type' }); return; }
+        if (f.size > 12 * 1024 * 1024) { track('photo_upload_error', { error_type: 'too_large' }); return; }
+        if (files.length >= 8) return;
+        files.push(f);
+      });
+      syncFiles(); renderThumbs();
+      if (files.length > before) track('photo_upload_success', { file_count: files.length });
+    }
+    if (input) input.addEventListener('change', function () {
+      track('photo_upload_start', { file_count: input.files.length });
+      files = []; addFiles(input.files);
+    });
+    if (zone) {
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.add('is-over'); });
+      });
+      ['dragleave', 'drop'].forEach(function (ev) {
+        zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.remove('is-over'); });
+      });
+      zone.addEventListener('drop', function (e) {
+        if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+      });
+    }
+
+    /* ---------------------------------------------------- qualification */
+    function collectFlags() {
+      var flags = {};
+      $$('input[type="radio"]:checked[data-flag]', form).forEach(function (r) {
+        flags[r.getAttribute('data-flag')] = true;
+      });
+      return flags;
+    }
+    function leadShape() {
+      return {
+        postcode: val('postcode'),
+        services: picked(),
+        propertyType: radio('propertyType'),
+        storeys: radio('storeys'),
+        improve: radio('improve'),
+        timing: radio('timing'),
+        photoCount: files.length,
+        flags: collectFlags()
+      };
+    }
+    function qualify() {
+      if (!Q || !cfg.areas) return null;
+      var lead = leadShape();
+      var res = Q.qualifyLead(lead, cfg);
+      var score = Q.scoreLead(lead, cfg);
+      if (field('qualification')) field('qualification').value = res.outcome;
+      if (field('reasons')) field('reasons').value = res.reasons.join(', ');
+      if (field('area')) field('area').value = res.area ? res.area.tier : '';
+      if (field('priority')) field('priority').value = String(score);
+      return res;
+    }
+
+    /* -------------------------------------------------------- summary */
     function buildSummary() {
       var list = $('[data-summary]', form);
       if (!list) return;
-      var picked = $$('input[name="services"]:checked', form).map(function (c) {
-        return (c.closest('.choice') && c.closest('.choice').textContent || c.value).trim();
-      });
-      var timing = form.querySelector('input[name="timing"]:checked');
       var rows = [
-        ['Cleaning', picked.join(', ') || '—'],
-        ['Property', [val('address'), val('suburb')].filter(Boolean).join(', ') || '—'],
-        ['Timing', timing ? timing.value : 'Not specified']
+        ['Cleaning', pickedLabels().join(', ') || '—'],
+        ['Property', [val('address'), val('postcode')].filter(Boolean).join(', ') || val('postcode') || '—'],
+        ['Timing', radioLabel('timing') || 'Not specified'],
+        ['Photos', files.length ? files.length + ' attached' : 'None attached']
       ];
       list.innerHTML = rows.map(function (r) {
         return '<div class="summary-row"><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>';
       }).join('');
     }
-    function val(n) { var el = form.elements[n]; return el ? (el.value || '').trim() : ''; }
-    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
 
-    /* ---- submit ---- */
+    /* ---------------------------------------------------------- nav */
+    if (btnNext) btnNext.addEventListener('click', function () {
+      if (!validate()) return;
+      track('quote_step_complete', { step_name: steps[i].getAttribute('data-label'), step_number: i + 1 });
+      /* an unserviceable postcode skips the middle of the funnel entirely */
+      if (i === 1 && outsideArea) { qualify(); show(steps.length - 1); return; }
+      show(i + 1);
+    });
+    if (btnBack) btnBack.addEventListener('click', function () {
+      track('quote_back', { from_step: i + 1 });
+      show(outsideArea && i === steps.length - 1 ? 1 : i - 1);
+    });
+    form.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file') {
+        e.preventDefault();
+        if (i < steps.length - 1 && validate()) show(i + 1);
+      }
+    });
+
+    /* -------------------------------------------------------- submit */
+    var submitting = false;
     form.addEventListener('submit', function (e) {
+      if (submitting) { e.preventDefault(); return; }
       if (!validate()) { e.preventDefault(); return; }
+
+      var res = qualify();
+      track('quote_submit', { services_count: picked().length });
+      if (res) {
+        track('qualification_result', { qualification_result: res.outcome });
+        if (res.outcome === 'ONSITE_ASSESSMENT') {
+          track('assessment_recommended', { trigger_reason: res.reasons.join('|') });
+        }
+      }
+
       var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
       var mode = cfg.formMode || 'none';
 
-      if (mode === 'netlify' && !local) return;             // let the browser POST to Netlify
+      if (mode === 'netlify' && !local) { submitting = true; return; }   // real POST
 
       e.preventDefault();
+      track('quote_submit_error', { error_type: local ? 'preview_mode' : 'delivery_not_configured' });
       if (status) {
         status.hidden = false;
         status.className = 'form-status form-status-warn';
-        status.innerHTML = local && mode === 'netlify'
+        status.innerHTML = local
           ? '<strong>Preview mode.</strong> Enquiries are delivered once the site is published — nothing was sent just now.'
-          : '<strong>Enquiries aren’t connected yet.</strong> Email us at <a href="mailto:' +
+          : '<strong>Enquiry delivery isn’t connected on this address yet.</strong> Please email us at <a href="mailto:' +
             (cfg.email || '') + '">' + (cfg.email || '') + '</a> and we’ll pick it up from there.';
-        status.focus && status.focus();
         status.scrollIntoView({ block: 'center', behavior: isReduced() ? 'auto' : 'smooth' });
       }
     });
 
+    track('quote_start', { entry_point: document.referrer ? 'internal' : 'direct' });
+    renderUpsells();
     show(0);
   }
 
@@ -391,7 +636,7 @@
 
   function boot() {
     header(); mobileMenu(); stickyCta(); reveals(); parallax();
-    beforeAfter(); accordions(); processLine(); quoteForm(); year();
+    beforeAfter(); accordions(); processLine(); quoteForm(); trackCtas(); year();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

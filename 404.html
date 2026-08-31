@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="That page could not be found. Head back to the Stride Exterior Cleaning homepage, browse our services, or request a free quote for your property.">
 <meta name="twitter:image" content="https://jakesev.github.io/stride-exterior-cleaning/assets/brand/og-default.jpg">
 
-<script>document.documentElement.className+=" js";window.STRIDE_CONFIG={"formMode":"netlify","endpoint":"","email":"info@strideexteriorcleaning.com.au","successPath":"/thank-you/"};</script>
+<script>document.documentElement.className+=" js";window.STRIDE_CONFIG={"formMode":"none","endpoint":"","email":"info@strideexteriorcleaning.com.au","successPath":"/thank-you/","quoteMode":"remote-first","multiServiceReviewThreshold":4,"areas":{"_note":"Postcode gating for the quote flow. This is the ONLY place service-area logic is configured — nothing is hard-coded in components. `core` = normal service area, quoted and booked as usual. `discretionary` = we'll consider it, but the lead is flagged for manual review rather than auto-routed. Anything not listed falls through to OUTSIDE_SERVICE_AREA.","_confirmNote":"These lists are a sensible starting proposal based on Redland City LGA plus the bayside/south-east Brisbane ring. THEY HAVE NOT BEEN CONFIRMED BY THE OWNER. Review them before this goes on the real domain — a wrong postcode here silently turns away real work, or promises service you don't want to drive to.","core":{"4157":"Capalaba, Sheldon","4158":"Thorneside","4159":"Birkdale","4160":"Ormiston, Wellington Point","4161":"Alexandra Hills","4163":"Cleveland","4164":"Thornlands","4165":"Redland Bay, Victoria Point, Mount Cotton"},"discretionary":{"4127":"Springwood, Daisy Hill, Rochedale South","4128":"Shailer Park","4129":"Loganholme, Tanah Merah","4130":"Carbrook, Cornubia","4152":"Camp Hill, Carina","4153":"Carindale","4154":"Belmont, Chandler, Gumdale","4155":"Burbank","4156":"Mackenzie","4170":"Cannon Hill, Morningside, Seven Hills","4171":"Balmoral, Bulimba, Hawthorne","4172":"Murarrie","4173":"Tingalpa","4174":"Hemmant","4178":"Wynnum, Manly, Lota","4179":"Manly West, Wakerley"},"_excludedNote":"Listed explicitly so the message can be accurate rather than generic. Bay islands are ferry-access only.","excluded":{"4183":"North Stradbroke Island","4184":"Southern Moreton Bay Islands"},"messages":{"core":"We service this area.","discretionary":"You're just outside our usual run. Send the details and we'll confirm whether we can get to you.","excluded":"We don't service this area regularly yet. Leave your details and we'll be in touch if that changes.","unknown":"We don't service this area regularly yet. Leave your details and we'll be in touch if that changes."}},"flow":{"services":{"primary":[{"id":"driveway","label":"Driveways & Concrete","remoteQuotable":true},{"id":"house","label":"House Washing","remoteQuotable":true},{"id":"roof","label":"Roof Cleaning","remoteQuotable":false},{"id":"gutter","label":"Gutter Cleaning","remoteQuotable":true},{"id":"window","label":"Window Cleaning","remoteQuotable":true},{"id":"patio","label":"Patios & Outdoor Areas","remoteQuotable":true}],"more":[{"id":"pool","label":"Pool Surrounds","remoteQuotable":true},{"id":"solar","label":"Solar Panels","remoteQuotable":false},{"id":"fence","label":"Fences","remoteQuotable":true},{"id":"retaining","label":"Retaining Walls","remoteQuotable":true},{"id":"deck","label":"Decks","remoteQuotable":false},{"id":"commercial","label":"Commercial / Body Corporate","remoteQuotable":false},{"id":"other","label":"Something else","remoteQuotable":false}]},"timing":[{"id":"asap","score":3},{"id":"2weeks","score":3},{"id":"month","score":0},{"id":"quarter","score":-1},{"id":"pricing","score":-2}],"upsells":{"house":{"prompt":"Anything else while we're looking at the exterior?","suggest":["window","gutter","roof"]},"roof":{"prompt":"Also check the gutters while we're up there?","suggest":["gutter"]},"driveway":{"prompt":"Include the adjoining areas?","suggest":["patio"]},"window":{"prompt":"Worth doing at the same time?","suggest":["house","gutter"]},"gutter":{"prompt":"Worth doing at the same time?","suggest":["roof","house"]}}}};</script>
 
 </head>
 <body>
@@ -49,7 +49,7 @@
 <a class="nav-link" href="/stride-exterior-cleaning/about/">About</a>
 <a class="nav-link" href="/stride-exterior-cleaning/service-areas/">Service Areas</a>
 
-<a class="btn btn-primary nav-cta" href="/stride-exterior-cleaning/quote/">Book an Assessment<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
+<a class="btn btn-primary nav-cta" href="/stride-exterior-cleaning/quote/">Get a Free Quote<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
 </nav>
 <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
 <span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -67,7 +67,7 @@
 <a href="/stride-exterior-cleaning/service-areas/"><span>Service Areas</span><span class="idx">06</span></a>
 </nav>
 <div class="mobile-menu-foot">
-<a class="btn btn-primary btn-lg btn-block" href="/stride-exterior-cleaning/quote/">Book an Assessment<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
+<a class="btn btn-primary btn-lg btn-block" href="/stride-exterior-cleaning/quote/">Get a Free Quote<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
 <a class="btn btn-ghost btn-lg btn-block" href="mailto:info@strideexteriorcleaning.com.au">Email Stride</a>
 <p class="mobile-menu-meta">Redlands &amp; Greater Brisbane · Monday to Friday, 9am – 5pm</p>
 </div>
@@ -79,7 +79,7 @@
 <h1>That page isn’t here.</h1>
 <p class="lead" style="margin-top:1.25rem">The link may be old, or the page may have moved. Here’s where most people are heading.</p>
 <div class="btn-row" style="margin-top:2rem">
-<a class="btn btn-primary" href="/stride-exterior-cleaning/quote/">Book an Assessment<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
+<a class="btn btn-primary" href="/stride-exterior-cleaning/quote/">Get a Free Quote<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
 <a class="btn btn-ghost" href="/stride-exterior-cleaning/">Home<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a>
 </div>
 <hr style="margin:2.5rem 0">
@@ -125,7 +125,7 @@
 <ul>
 
 <li><a href="mailto:info@strideexteriorcleaning.com.au">info@strideexteriorcleaning.com.au</a></li>
-<li><a href="/stride-exterior-cleaning/quote/">Book an assessment</a></li>
+<li><a href="/stride-exterior-cleaning/quote/">Get a free quote</a></li>
 <li><a href="/stride-exterior-cleaning/contact/">Contact page</a></li>
 
 </ul>
@@ -144,6 +144,7 @@
 </div>
 </footer>
 
+<script src="/stride-exterior-cleaning/assets/js/qualify.js" defer></script>
 <script src="/stride-exterior-cleaning/assets/js/stride.js" defer></script>
 </body>
 </html>
