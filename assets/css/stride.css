@@ -273,7 +273,11 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0; }
   .nav-link:hover, .nav-link[aria-current="page"] { color: var(--ink); }
   .nav-link:hover::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); transform-origin: left; }
   .nav-cta { margin-left: .6rem; }
-  .header-tel { font-size: var(--fs-sm); font-weight: 700; color: var(--ink); }
+  .header-tel {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: var(--fs-sm); font-weight: 700; color: var(--ink);
+  }
+  .header-tel:hover { color: var(--blue); }
 }
 .nav-toggle {
   margin-left: auto; width: 2.9rem; height: 2.9rem; display: grid; place-items: center;
@@ -293,6 +297,21 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0; }
 [aria-expanded="true"] .nav-toggle-bars span:nth-child(1) { transform: translateY(5.1px) rotate(45deg); }
 [aria-expanded="true"] .nav-toggle-bars span:nth-child(2) { opacity: 0; }
 [aria-expanded="true"] .nav-toggle-bars span:nth-child(3) { transform: translateY(-5.1px) rotate(-45deg); }
+
+/* --- Google rating chip -------------------------------------------------- */
+/* Only ever rendered when there is a real rating behind it. */
+.rating-chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .4rem .7rem; border: 1px solid var(--line-2); border-radius: 999px;
+  font-size: var(--fs-xs); color: var(--text-2); white-space: nowrap;
+  transition: border-color var(--t) var(--e-out), background-color var(--t) var(--e-out);
+}
+.rating-chip svg { color: #E8A317; flex: 0 0 auto; }
+.rating-chip strong { color: var(--ink); font-weight: 800; }
+.rating-chip:hover { border-color: var(--ink); background: var(--paper-2); }
+.rating-chip-sm { padding: .3rem .6rem; }
+.bg-ink .rating-chip { border-color: var(--line-dark-2); color: var(--on-dark-2); }
+.bg-ink .rating-chip strong { color: #fff; }
 
 /* --- Mobile menu --------------------------------------------------------- */
 .mobile-menu {
