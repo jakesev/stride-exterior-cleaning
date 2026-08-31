@@ -84,8 +84,8 @@
 <div class="wrap quote-shell">
 <div class="quote-aside">
 <p class="eyebrow">Free quote</p>
-<h1 style="font-size:clamp(2rem,1.2rem+3vw,3.2rem)">Tell us what<br>needs cleaning.</h1>
-<p class="lead" style="margin-top:1.15rem">A few questions about the property and what you'd like looked at. We'll come back with a clear scope and price.</p>
+<h1 style="font-size:clamp(2rem,1.2rem+3vw,3.2rem)">Two questions.<br>That's it.</h1>
+<p class="lead" style="margin-top:1.15rem">Tell us what needs cleaning and where, then how to reach you. Anything else you want to add is optional.</p>
 
 <div style="margin-top:1.75rem;padding-top:1.35rem;border-top:1px solid var(--line)">
 <h2 style="font-size:var(--fs-h4)">Included: the Stride Exterior Check</h2>
@@ -93,7 +93,7 @@
 </div>
 
 <ul class="care-list" style="margin-top:1.5rem">
-<li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>Free, with no obligation to proceed</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>Photos optional — they help us quote faster</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>We tell you what won’t come out, before you commit</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>$10 million public liability cover</span></li>
+<li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>Free, with no obligation to proceed</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>No account, no login, no follow-up campaign</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>We tell you what won’t come out, before you commit</span></li><li style="color:var(--text-2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 4.5 4.5L19.5 6.5"/></svg><span>$10 million public liability cover</span></li>
 </ul>
 <hr style="margin:2rem 0">
 <p class="body-muted" style="font-size:var(--fs-sm)">Prefer to talk it through first?</p>
@@ -115,18 +115,18 @@
 
 <div class="progress">
 <div class="progress-meta">
-<span data-step-count>Step 1 of 5</span>
-<span data-step-label>What we can help with</span>
+<span data-step-count>Step 1 of 2</span>
+<span data-step-label>What and where</span>
 </div>
 <div class="progress-bar"><div class="progress-fill"></div></div>
 </div>
 
 <div class="form-status" data-form-status hidden tabindex="-1"></div>
 
-<!-- 1 ---------------------------------------------------------------- -->
-<section class="step is-active" data-label="What we can help with">
-<h2>What can we help you with?</h2>
-<p class="step-hint">Choose everything you'd like us to look at.</p>
+<!-- 1 — what and where ------------------------------------------------ -->
+<section class="step is-active" data-label="What and where">
+<h2>What needs cleaning?</h2>
+<p class="step-hint">Pick everything you'd like us to look at.</p>
 <div class="choice-grid">
 <label class="choice">
 <input type="checkbox" name="services" value="driveway" data-service="driveway" data-remote="yes">
@@ -178,29 +178,52 @@
 </details>
 
 <div class="upsell" data-upsell hidden></div>
-</section>
 
-<!-- 2 ---------------------------------------------------------------- -->
-<section class="step" data-label="The property" hidden>
-<h2>Where's the property?</h2>
-<p class="step-hint">We'll check that we service your area before asking you anything else.</p>
-
-<div class="field">
-<label for="postcode">Postcode</label>
+<div class="field" style="margin-top:1.75rem">
+<label for="postcode">Property postcode</label>
 <input id="postcode" name="postcode" type="text" inputmode="numeric" maxlength="4"
        autocomplete="postal-code" required data-postcode
-       data-error="We need a four-digit postcode to check your area." placeholder="e.g. 4163">
+       data-error="A four-digit postcode, so we can check we service your area." placeholder="e.g. 4163">
 <p class="area-result" data-area-result hidden></p>
 </div>
+</section>
 
-<div data-after-postcode hidden>
+<!-- 2 — contact, with everything else optional ------------------------- -->
+<section class="step" data-label="Your details" hidden>
+<h2>Where should we send it?</h2>
+<p class="step-hint">Used to answer this enquiry and nothing else.</p>
 <div class="field">
-<label for="address">Street address <span class="hint">(optional)</span></label>
+<label for="name">First name</label>
+<input id="name" name="name" type="text" autocomplete="given-name" required
+       data-error="Please add a first name so we know who we're talking to.">
+</div>
+<div class="field-row field-row-2">
+<div class="field">
+<label for="phone">Mobile</label>
+<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required
+       data-error="A contactable mobile number, please.">
+</div>
+<div class="field">
+<label for="email">Email</label>
+<input id="email" name="email" type="email" inputmode="email" autocomplete="email" required
+       data-error="We need a valid email to send the quote to.">
+</div>
+</div>
+
+<details class="more-details" data-optional-details>
+<summary>
+<span><strong>Add a few details</strong> — optional, but it gets you a firmer number faster</span>
+<span class="faq-icon" aria-hidden="true"></span>
+</summary>
+<div class="more-details-body">
+
+<div class="field">
+<label for="address">Street address</label>
 <input id="address" name="address" type="text" autocomplete="street-address" placeholder="e.g. 12 Shore Street">
 </div>
 
 <fieldset class="field">
-<legend>What type of property is it?</legend>
+<legend>Type of property</legend>
 <div class="choice-grid choice-grid-compact">
 <label class="choice">
 <input type="radio" name="propertyType" value="house">
@@ -224,7 +247,7 @@
 </div>
 </fieldset>
 
-<fieldset class="field" data-storeys>
+<fieldset class="field">
 <legend>How many storeys?</legend>
 <div class="choice-grid choice-grid-compact">
 <label class="choice">
@@ -239,13 +262,6 @@
 </label>
 </div>
 </fieldset>
-</div>
-</section>
-
-<!-- 3 ---------------------------------------------------------------- -->
-<section class="step" data-label="Job details" hidden>
-<h2>Tell us a little about the job.</h2>
-<p class="step-hint">Only what's relevant to what you've picked.</p>
 
 <fieldset class="field">
 <legend>What would you like us to improve?</legend>
@@ -348,7 +364,7 @@
 </fieldset>
 
 <fieldset class="field">
-<legend>When would you ideally like the work done?</legend>
+<legend>When would you like it done?</legend>
 <div class="choice-grid choice-grid-compact">
 <label class="choice">
 <input type="radio" name="timing" value="asap">
@@ -368,53 +384,24 @@
 </label>
 </div>
 </fieldset>
-</section>
-
-<!-- 4 ---------------------------------------------------------------- -->
-<section class="step" data-label="Photos" hidden>
-<h2>Photos can help us quote faster.</h2>
-<p class="step-hint">A few photos of the areas you'd like cleaned help us understand condition, access and size before we contact you. For straightforward jobs they can be enough to price without a separate visit.</p>
 
 <label class="dropzone" for="photos">
-<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4.8M12 4.8 7.8 9M12 4.8 16.2 9"/><path d="M4.5 15v3.2A1.8 1.8 0 0 0 6.3 20h11.4a1.8 1.8 0 0 0 1.8-1.8V15"/></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4.8M12 4.8 7.8 9M12 4.8 16.2 9"/><path d="M4.5 15v3.2A1.8 1.8 0 0 0 6.3 20h11.4a1.8 1.8 0 0 0 1.8-1.8V15"/></svg>
 <p><strong>Add photos</strong> — tap to choose, or drag them here</p>
-<span class="hint">Optional · up to 8 images · JPG or PNG</span>
+<span class="hint">Optional · up to 8 images · straightforward jobs can often be priced from these</span>
 <input id="photos" name="photos" type="file" accept="image/*" multiple data-files class="sr-only">
 </label>
 <p class="body-muted" style="font-size:var(--fs-xs);margin-top:.6rem" data-file-count></p>
 <div class="thumbs"></div>
 
-<p class="body-muted" style="font-size:var(--fs-sm);margin-top:1rem">No photos? No problem — you can continue without them.</p>
-<p class="body-muted" style="font-size:var(--fs-xs);margin-top:.75rem">Best photos: one wide shot, plus a closer one of any staining or problem area. Please don't climb ladders or go onto the roof for a photo — that's our job, and we'll assess it on site.</p>
-</section>
-
-<!-- 5 ---------------------------------------------------------------- -->
-<section class="step" data-label="Your details" hidden>
-<h2>Where should we send your quote?</h2>
-<p class="step-hint">Used to answer this enquiry and nothing else.</p>
-<div class="field">
-<label for="name">First name</label>
-<input id="name" name="name" type="text" autocomplete="given-name" required
-       data-error="Please add a first name so we know who we're talking to.">
-</div>
-<div class="field-row field-row-2">
-<div class="field">
-<label for="phone">Mobile</label>
-<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required
-       data-error="A contactable mobile number, please.">
-</div>
-<div class="field">
-<label for="email">Email</label>
-<input id="email" name="email" type="email" inputmode="email" autocomplete="email" required
-       data-error="We need a valid email to send the quote to.">
-</div>
-</div>
-<div class="field">
-<label for="notes">Anything else we should know? <span class="hint">(optional)</span></label>
+<div class="field" style="margin-top:1.5rem">
+<label for="notes">Anything else we should know?</label>
 <textarea id="notes" name="notes" placeholder="Marks you've already tried to shift, a gate code, a date you're working towards…"></textarea>
 </div>
 
-<dl class="summary-list" data-summary></dl>
+</div>
+</details>
+
 <p class="form-note">We'll only use these details to respond to your enquiry and manage your quote. See our <a href="/stride-exterior-cleaning/privacy/" style="text-decoration:underline;text-underline-offset:2px">privacy policy</a>.</p>
 </section>
 
@@ -424,7 +411,7 @@
 <button type="button" class="btn btn-primary" data-next>Continue<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></button>
 <button type="submit" class="btn btn-primary btn-lg" data-send hidden>Get My Free Quote<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></button>
 </div>
-<p class="body-muted" style="font-size:var(--fs-xs);text-align:right;margin-top:.85rem">Free · No obligation · Photos optional</p>
+<p class="body-muted" style="font-size:var(--fs-xs);text-align:right;margin-top:.85rem">Free · No obligation · Two steps</p>
 </form>
 </div>
 </div>

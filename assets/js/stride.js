@@ -334,8 +334,7 @@
       if (btnNext) btnNext.hidden = i === steps.length - 1;
       if (btnSend) btnSend.hidden = i !== steps.length - 1;
 
-      if (i === 2) revealConditionals();
-      if (i === steps.length - 1) { buildSummary(); qualify(); }
+      if (i === steps.length - 1) qualify();
 
       var h = $('h2', steps[i]);
       if (h) { h.setAttribute('tabindex', '-1'); if (!first) h.focus({ preventScroll: true }); }
@@ -463,6 +462,7 @@
       c.addEventListener('change', function () {
         track('service_select', { service: c.value, selected: c.checked });
         renderUpsells();
+        revealConditionals();
       });
     });
 
@@ -557,32 +557,15 @@
       return res;
     }
 
-    /* -------------------------------------------------------- summary */
-    function buildSummary() {
-      var list = $('[data-summary]', form);
-      if (!list) return;
-      var rows = [
-        ['Cleaning', pickedLabels().join(', ') || '—'],
-        ['Property', [val('address'), val('postcode')].filter(Boolean).join(', ') || val('postcode') || '—'],
-        ['Timing', radioLabel('timing') || 'Not specified'],
-        ['Photos', files.length ? files.length + ' attached' : 'None attached']
-      ];
-      list.innerHTML = rows.map(function (r) {
-        return '<div class="summary-row"><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>';
-      }).join('');
-    }
-
     /* ---------------------------------------------------------- nav */
     if (btnNext) btnNext.addEventListener('click', function () {
       if (!validate()) return;
       track('quote_step_complete', { step_name: steps[i].getAttribute('data-label'), step_number: i + 1 });
-      /* an unserviceable postcode skips the middle of the funnel entirely */
-      if (i === 1 && outsideArea) { qualify(); show(steps.length - 1); return; }
       show(i + 1);
     });
     if (btnBack) btnBack.addEventListener('click', function () {
       track('quote_back', { from_step: i + 1 });
-      show(outsideArea && i === steps.length - 1 ? 1 : i - 1);
+      show(i - 1);
     });
     form.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file') {
@@ -624,8 +607,14 @@
       }
     });
 
+    var optional = $('[data-optional-details]', form);
+    if (optional) optional.addEventListener('toggle', function () {
+      if (optional.open) track('optional_details_open', {});
+    });
+
     track('quote_start', { entry_point: document.referrer ? 'internal' : 'direct' });
     renderUpsells();
+    revealConditionals();
     show(0);
   }
 

@@ -89,15 +89,59 @@
 </div>
 </section>
 
-<section class="reveal-img" style="overflow:hidden" data-reveal="mask">
-<div class="wrap">
-<figure class="figure" style="aspect-ratio:21/9;border-radius:var(--r)">
-<picture>
-<source type="image/avif" srcset="/stride-exterior-cleaning/assets/img/area-aerial-900.avif 900w, /stride-exterior-cleaning/assets/img/area-aerial-1400.avif 1400w, /stride-exterior-cleaning/assets/img/area-aerial-2000.avif 2000w" sizes="(min-width: 84rem) 1320px, 94vw">
-<source type="image/webp" srcset="/stride-exterior-cleaning/assets/img/area-aerial-900.webp 900w, /stride-exterior-cleaning/assets/img/area-aerial-1400.webp 1400w, /stride-exterior-cleaning/assets/img/area-aerial-2000.webp 2000w" sizes="(min-width: 84rem) 1320px, 94vw">
-<img src="/stride-exterior-cleaning/assets/img/area-aerial-2000.webp" width="2000" height="1052" alt="Aerial view over Australian suburbs at sunset" loading="lazy" decoding="async">
-</picture>
+<section class="section" style="padding-top:0">
+<div class="wrap map-split" data-reveal="up">
+<figure class="service-map">
+<svg viewBox="0 0 760 580" role="img" aria-labelledby="map-title map-desc" class="service-map-svg">
+<title id="map-title">Where Stride works</title>
+<desc id="map-desc">Indicative map. Core service area covering Redland Bay, Cleveland, Capalaba, Alexandra Hills, Thornlands, Victoria Point, with wider coverage toward Greater Brisbane by arrangement.</desc>
+<defs>
+<mask id="zone-wide"><rect width="760" height="580" fill="#000"/><circle cx="562.1" cy="430.0" r="118" fill="#fff"/><circle cx="532.2" cy="252.0" r="118" fill="#fff"/><circle cx="437.0" cy="269.7" r="118" fill="#fff"/><circle cx="477.1" cy="251.5" r="118" fill="#fff"/><circle cx="523.2" cy="306.5" r="118" fill="#fff"/><circle cx="566.8" cy="340.7" r="118" fill="#fff"/><circle cx="193.2" cy="150.0" r="118" fill="#fff"/></mask>
+<mask id="zone-core"><rect width="760" height="580" fill="#000"/><circle cx="562.1" cy="430.0" r="78" fill="#fff"/><circle cx="532.2" cy="252.0" r="78" fill="#fff"/><circle cx="437.0" cy="269.7" r="78" fill="#fff"/><circle cx="477.1" cy="251.5" r="78" fill="#fff"/><circle cx="523.2" cy="306.5" r="78" fill="#fff"/><circle cx="566.8" cy="340.7" r="78" fill="#fff"/></mask>
+</defs>
+
+<rect width="760" height="580" mask="url(#zone-wide)" class="map-zone-wide"/>
+<rect width="760" height="580" mask="url(#zone-core)" class="map-zone-core"/>
+
+<a href="/stride-exterior-cleaning/service-areas/brisbane/" class="map-pin map-pin-wide">
+<circle cx="193.2" cy="150.0" r="6" class="map-dot"/>
+<text x="193.2" y="134.0" text-anchor="middle">Greater Brisbane</text>
+</a>
+<a href="/stride-exterior-cleaning/service-areas/redland-bay/" class="map-pin map-pin-core">
+<circle cx="562.1" cy="430.0" r="7" class="map-dot"/>
+<text x="562.1" y="414.0" text-anchor="middle">Redland Bay</text>
+</a><a href="/stride-exterior-cleaning/service-areas/cleveland/" class="map-pin map-pin-core">
+<circle cx="532.2" cy="252.0" r="7" class="map-dot"/>
+<text x="532.2" y="236.0" text-anchor="middle">Cleveland</text>
+</a><a href="/stride-exterior-cleaning/service-areas/capalaba/" class="map-pin map-pin-core">
+<circle cx="437.0" cy="269.7" r="7" class="map-dot"/>
+<text x="437.0" y="253.7" text-anchor="middle">Capalaba</text>
+</a><a href="/stride-exterior-cleaning/service-areas/alexandra-hills/" class="map-pin map-pin-core">
+<circle cx="477.1" cy="251.5" r="7" class="map-dot"/>
+<text x="477.1" y="277.5" text-anchor="middle">Alexandra Hills</text>
+</a><a href="/stride-exterior-cleaning/service-areas/thornlands/" class="map-pin map-pin-core">
+<circle cx="523.2" cy="306.5" r="7" class="map-dot"/>
+<text x="523.2" y="332.5" text-anchor="middle">Thornlands</text>
+</a><a href="/stride-exterior-cleaning/service-areas/victoria-point/" class="map-pin map-pin-core">
+<circle cx="566.8" cy="340.7" r="7" class="map-dot"/>
+<text x="566.8" y="366.7" text-anchor="middle">Victoria Point</text>
+</a>
+
+<g class="map-key">
+<circle cx="26" cy="530" r="7" class="map-key-core"/>
+<text x="42" y="535">Core service area</text>
+<circle cx="26" cy="558" r="6" class="map-key-wide"/>
+<text x="42" y="563">By arrangement</text>
+</g>
+</svg>
+<figcaption class="figure-cap">Indicative service map. Suburb positions are accurate; zone boundaries are approximate — send a postcode and you'll get a definite answer.</figcaption>
 </figure>
+<div>
+<h2 style="font-size:var(--fs-h3)">Redlands is home ground.</h2>
+<p class="lead" style="margin-top:1rem">Every suburb marked in blue is on our normal run. The wider ring is Greater Brisbane, which we take on depending on the size of the job and how it fits the week.</p>
+<p class="body-muted" style="font-size:var(--fs-sm);margin-top:1rem">Not sure which you're in? The quote form checks your postcode as soon as you type it, before asking you anything else.</p>
+<div class="btn-row" style="margin-top:1.75rem"><a class="btn btn-primary" href="/stride-exterior-cleaning/quote/">Check my postcode<span class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span></a></div>
+</div>
 </div>
 </section>
 

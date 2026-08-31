@@ -298,6 +298,31 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0; }
 [aria-expanded="true"] .nav-toggle-bars span:nth-child(2) { opacity: 0; }
 [aria-expanded="true"] .nav-toggle-bars span:nth-child(3) { transform: translateY(-5.1px) rotate(-45deg); }
 
+/* --- Service map ---------------------------------------------------------- */
+.map-split { display: grid; gap: clamp(2rem, 4vw, 3.5rem); align-items: center; }
+@media (min-width: 62rem) { .map-split { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); } }
+.service-map { margin: 0; }
+.service-map-svg {
+  width: 100%; height: auto; display: block;
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r);
+}
+.map-zone-wide { fill: rgba(10,109,196,.08); }
+.map-zone-core { fill: rgba(10,109,196,.17); }
+.map-pin { cursor: pointer; }
+.map-pin .map-dot { fill: var(--blue); stroke: var(--white); stroke-width: 2.5; transition: r 200ms var(--e-out); }
+.map-pin-wide .map-dot { fill: var(--muted); }
+.map-pin text {
+  font-size: 15px; font-weight: 700; fill: var(--ink);
+  paint-order: stroke; stroke: var(--paper-2); stroke-width: 4px; stroke-linejoin: round;
+}
+.map-pin:hover .map-dot { r: 10; }
+.map-pin:hover text { fill: var(--blue-deep); }
+.map-pin:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.map-key text { font-size: 14px; font-weight: 600; fill: var(--text-2); }
+.map-key-core { fill: var(--blue); }
+.map-key-wide { fill: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .map-pin .map-dot { transition: none; } }
+
 /* --- Google rating chip -------------------------------------------------- */
 /* Only ever rendered when there is a real rating behind it. */
 .rating-chip {
@@ -985,6 +1010,25 @@ details[open] .faq-icon::after { transform: translate(-50%, -50%) scaleY(0); opa
 .more-services > summary::-webkit-details-marker { display: none; }
 .more-services > summary:hover { color: var(--blue-deep); }
 .more-services .faq-icon { width: 1.15rem; height: 1.15rem; }
+
+/* --- Optional detail expander -------------------------------------------- */
+/* Two steps are required; this is everything that is merely helpful. */
+.more-details {
+  margin-top: 1.75rem; border: 1px solid var(--line-2);
+  border-radius: var(--r-sm); background: var(--paper-2);
+}
+.more-details > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.15rem; cursor: pointer; list-style: none;
+  font-size: var(--fs-sm); color: var(--text-2);
+}
+.more-details > summary::-webkit-details-marker { display: none; }
+.more-details > summary strong { color: var(--ink); }
+.more-details > summary:hover { color: var(--ink); }
+.more-details[open] > summary { border-bottom: 1px solid var(--line); }
+.more-details .faq-icon { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; }
+.more-details-body { padding: 1.35rem 1.15rem .5rem; background: var(--white); border-radius: 0 0 var(--r-sm) var(--r-sm); }
+.more-details-body .dropzone { background: var(--paper-2); }
 
 /* --- Contextual upsell ---------------------------------------------------- */
 .upsell {
