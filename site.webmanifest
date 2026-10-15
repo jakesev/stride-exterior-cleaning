@@ -1,19 +1,19 @@
 {
   "name": "Stride Exterior Cleaning",
   "short_name": "Stride",
-  "description": "Exterior cleaning across Redlands & Greater Brisbane.",
-  "start_url": "/",
+  "description": "Exterior cleaning across the Redlands & Greater Brisbane.",
+  "start_url": "/stride-exterior-cleaning/",
   "display": "browser",
   "background_color": "#FFFFFF",
-  "theme_color": "#071523",
+  "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "/assets/brand/icon-192.png",
+      "src": "/stride-exterior-cleaning/assets/brand/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/brand/icon-512.png",
+      "src": "/stride-exterior-cleaning/assets/brand/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept A — The Maquette</title>
+<style>
+@font-face{font-family:Archivo;src:url(fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%}
+@font-face{font-family:Plex;src:url(fonts/plexmono-500-latin.woff2) format('woff2');font-weight:500}
+:root{--ink:#061426;--ink2:#3b4a5c;--blue:#0076D1;--line:#e3e8ee;--paper:#f5f7f9}
+*{box-sizing:border-box;margin:0}
+body{font-family:Archivo,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+.mono{font-family:Plex,monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 48px;border-bottom:1px solid var(--line)}
+header img{height:34px}
+nav{display:flex;gap:34px;font-size:15px;font-weight:500}
+nav a{color:var(--ink);text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--blue);color:#fff;font-weight:600;font-size:15.5px;padding:15px 22px 15px 24px;border-radius:4px;text-decoration:none}
+.btn i{font-style:normal;transition:transform .2s}
+.btn.ghost{background:none;color:var(--ink);border:1px solid #c9d2dc}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);min-height:calc(100vh - 79px);position:relative}
+.hero .copy{padding:9vh 0 6vh 48px;display:flex;flex-direction:column;justify-content:space-between;z-index:2}
+h1{font-size:clamp(44px,5.4vw,84px);font-stretch:112%;font-weight:640;line-height:.95;letter-spacing:-.035em;margin:22px 0 28px}
+h1 .soft{color:#8a97a6}
+.lede{font-size:19px;line-height:1.5;color:var(--ink2);max-width:30em}
+.ctas{display:flex;gap:12px;margin-top:34px}
+.trust{display:flex;gap:28px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}
+.stage{position:relative;background:radial-gradient(120% 90% at 60% 55%,#fff 40%,#f2f5f8 100%)}
+.stage img{position:absolute;inset:6% 0 8% -6%;width:106%;height:86%;object-fit:contain}
+.pin{position:absolute;display:flex;align-items:center;gap:10px}
+.pin b{width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--blue);box-shadow:0 0 0 6px rgba(0,118,209,.14)}
+.pin span{background:#fff;border:1px solid var(--line);padding:7px 10px;border-radius:3px;box-shadow:0 6px 18px rgba(6,20,38,.08)}
+.drag{position:absolute;left:8%;bottom:6%;display:flex;gap:16px;align-items:center}
+.drag .track{width:220px;height:2px;background:var(--line);position:relative}
+.drag .track:after{content:"";position:absolute;inset:0 45% 0 0;background:var(--blue)}
+.index{padding:110px 48px 120px}
+.index-head{display:grid;grid-template-columns:5fr 7fr;align-items:end;margin-bottom:46px}
+.index h2{font-size:52px;font-stretch:110%;font-weight:620;letter-spacing:-.03em;line-height:1}
+.row{display:grid;grid-template-columns:70px 1.3fr 1fr 1fr 1fr 40px;align-items:center;padding:26px 0;border-top:1px solid var(--line);font-size:16px}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row h3{font-size:30px;font-stretch:108%;font-weight:560;letter-spacing:-.02em}
+.row.on{background:linear-gradient(90deg,#f3f8fd,transparent)}
+.row.on h3{color:var(--blue)}
+.row .arrow{font-size:22px;color:var(--blue)}
+.peek{position:absolute;right:120px;margin-top:-210px;width:300px;height:210px;object-fit:cover;clip-path:polygon(14% 0,100% 0,86% 100%,0 100%)}
+</style></head><body>
+<header><img src="../../assets/brand/stride-logo-primary.svg" alt="Stride"><nav><a>Services</a><a>Our work</a><a>Learn</a><a>Areas</a><a>About</a></nav><div style="display:flex;gap:10px"><a class="btn ghost">Book a clean</a><a class="btn">Free quote <i>→</i></a></div></header>
+<section class="hero">
+  <div class="copy">
+    <div>
+      <p class="mono">Exterior cleaning · Redlands &amp; Greater Brisbane</p>
+      <h1>Every surface,<br>cleaned the <span class="soft">right&nbsp;way.</span></h1>
+      <p class="lede">Roof, render, driveway, gutters, glass and solar — each cleaned with the method its material needs. Nothing forced, nothing etched, nothing left behind.</p>
+      <div class="ctas"><a class="btn">Get a free quote <i>→</i></a><a class="btn ghost">See before &amp; after</a></div>
+    </div>
+    <div class="trust"><span class="mono">Free written quotes</span><span class="mono">Photo quotes in 24h</span><span class="mono">Redlands-based</span></div>
+  </div>
+  <div class="stage">
+    <img src="img/maquette-half.png" alt="">
+    <div class="pin" style="left:40%;top:22%"><b></b><span class="mono">Roof · soft wash</span></div>
+    <div class="pin" style="left:62%;top:47%"><b></b><span class="mono">Render · low pressure</span></div>
+    <div class="pin" style="left:57%;top:73%"><b></b><span class="mono">Driveway · surface clean</span></div>
+    <div class="pin" style="left:30%;top:30%"><b></b><span class="mono">Solar · pure water</span></div>
+    <div class="drag"><span class="mono">Drag across the house to clean it</span><span class="track"></span><span class="mono">42%</span></div>
+  </div>
+</section>
+<section class="index">
+  <div class="index-head"><h2>Surface index</h2><p class="lede">Six surfaces, six different methods. Pick the one that’s bothering you.</p></div>
+  <div class="row"><span class="mono">01</span><h3>Roofs</h3><span class="mono">Tile · Colorbond</span><span class="mono">Soft wash</span><span class="mono">Low pressure</span><span class="arrow">→</span></div>
+  <div class="row on"><span class="mono">02</span><h3>Driveways &amp; concrete</h3><span class="mono">Plain · aggregate</span><span class="mono">Rotary surface clean</span><span class="mono">High pressure</span><span class="arrow">→</span></div>
+  <img class="peek" src="img/svc-driveway-760.webp" alt="">
+  <div class="row"><span class="mono">03</span><h3>House washing</h3><span class="mono">Render · cladding</span><span class="mono">Soft wash</span><span class="mono">Low pressure</span><span class="arrow">→</span></div>
+  <div class="row"><span class="mono">04</span><h3>Gutters</h3><span class="mono">All profiles</span><span class="mono">Hand + vacuum</span><span class="mono">—</span><span class="arrow">→</span></div>
+</section>
+</body></html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept B — Surface Library</title>
+<style>
+@font-face{font-family:Hanken;src:url(fonts/hanken-grotesk.woff2) format('woff2');font-weight:300 800}
+@font-face{font-family:JB;src:url(fonts/jetbrains-mono.woff2) format('woff2');font-weight:400 600}
+:root{--ink:#061426;--blue:#0076D1;--bg:#f4f4f1;--line:#dcdcd6}
+*{box-sizing:border-box;margin:0}
+body{font-family:Hanken,sans-serif;background:var(--bg);color:var(--ink)}
+.mono{font-family:JB,monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:18px 40px;border-bottom:1px solid var(--line)}
+header img{height:30px;justify-self:center}
+header nav{display:flex;gap:26px;font-size:14px}
+.btn{justify-self:end;background:var(--ink);color:#fff;padding:13px 20px;font-weight:600;font-size:14px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:calc(100vh - 67px)}
+.left{padding:70px 40px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line)}
+h1{font-size:118px;font-weight:300;letter-spacing:-.055em;line-height:.86}
+h1 strong{font-weight:750;display:block}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);padding-top:16px;gap:20px}
+.meta b{display:block;font-size:44px;font-weight:300;letter-spacing:-.04em}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);perspective:1200px}
+.tile{position:relative;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.tile .spec{position:relative;z-index:2;display:flex;justify-content:space-between}
+.tile .sw{position:absolute;inset:48px 18px 70px;transform:rotateX(52deg) rotateZ(-30deg);box-shadow:0 40px 40px -20px rgba(6,20,38,.35);background-size:cover;background-position:center}
+.tile .sw:after{content:"";position:absolute;inset:0 50% 0 0;backdrop-filter:brightness(.55) saturate(.6) sepia(.4);border-right:2px solid #fff}
+.tile h3{position:relative;z-index:2;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.tile.on{background:#fff}
+.tile.on h3{color:var(--blue)}
+</style></head><body>
+<header><nav><a>Surfaces</a><a>Method</a><a>Library</a><a>Areas</a></nav><img src="../../assets/brand/stride-logo-primary.svg" alt="Stride"><a class="btn">Request assessment</a></header>
+<section class="hero">
+  <div class="left">
+    <div><p class="mono" style="margin-bottom:26px">Surface library — Vol. 01 — South-East Queensland</p>
+    <h1>Know the surface.<strong>Clean it right.</strong></h1></div>
+    <div class="meta"><div><b>06</b><span class="mono">Surfaces catalogued</span></div><div><b>0–3000</b><span class="mono">PSI range used</span></div><div><b>1</b><span class="mono">Method per material</span></div></div>
+  </div>
+  <div class="grid">
+    <div class="tile"><div class="spec mono"><span>S-01</span><span>Soft wash</span></div><div class="sw" style="background-image:url(img/svc-roof-760.webp)"></div><h3>Terracotta tile</h3></div>
+    <div class="tile on"><div class="spec mono"><span>S-02</span><span>Rotary</span></div><div class="sw" style="background-image:url(img/ba-pavers-after-760.webp)"></div><h3>Concrete pavers</h3></div>
+    <div class="tile"><div class="spec mono"><span>S-03</span><span>Low pressure</span></div><div class="sw" style="background-image:url(img/svc-house-760.webp)"></div><h3>Acrylic render</h3></div>
+    <div class="tile"><div class="spec mono"><span>S-04</span><span>Pure water</span></div><div class="sw" style="background-image:url(img/svc-window-760.webp)"></div><h3>Glass</h3></div>
+    <div class="tile"><div class="spec mono"><span>S-05</span><span>Rotary</span></div><div class="sw" style="background-image:url(img/svc-driveway-760.webp)"></div><h3>Exposed aggregate</h3></div>
+    <div class="tile"><div class="spec mono"><span>S-06</span><span>Soft wash</span></div><div class="sw" style="background-image:url(img/work-water-960.webp)"></div><h3>Sandstone</h3></div>
+  </div>
+</section>
+</body></html>
