@@ -85,7 +85,7 @@ async function assets() {
   await write('assets/css/stride.css', css.outputFiles[0].contents);
 
   const js = await esbuild({
-    entryPoints: { main: path.join(SRC, 'scripts/main.js'), forms: path.join(SRC, 'scripts/forms.js'), story: path.join(SRC, 'scripts/story-entry.js') },
+    entryPoints: { main: path.join(SRC, 'scripts/main.js'), forms: path.join(SRC, 'scripts/forms.js') },
     bundle: true, minify: true, format: 'iife', target: ['es2019'], write: false, outdir: 'x', legalComments: 'none', logLevel: 'warning',
     define: { 'process.env.NODE_ENV': '"production"' }
   });

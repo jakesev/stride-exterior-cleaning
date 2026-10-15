@@ -44,9 +44,9 @@ export function sectionHead(title, lede = '', { idx = '', h = 'h2', cls = 'h2' }
 
 export function surfaceIndex(list = SERVICES) {
   return `<div class="index" data-index>
-${list.map((s) => `  <a class="index-row" href="${u(`/services/${s.slug}/`)}" data-peek="${u(`/assets/img/${s.render}-560.webp`)}">
+${list.map((s) => `  <a class="index-row" href="${u(`/services/${s.slug}/`)}"${s.img ? ` data-peek="${u(`/assets/img/${s.img}-520.webp`)}"` : ''}>
     <span class="spec n">${s.n}</span>
-    ${pic(s.render, { cls: 'thumb', alt: '', sizes: '84px' }).replace('<picture class="thumb">', '<picture>').replace('<img ', '<img class="thumb" ')}
+    ${s.img ? pic(s.img, { alt: '', sizes: '84px' }).replace('<img ', '<img class="thumb" ') : `<span class="thumb thumb--icon">${icon(s.icon)}</span>`}
     <h3>${esc(s.name)}</h3>
     <span class="spec c2">${esc(s.surfaces)}</span>
     <span class="spec c3">${esc(s.method)}</span>
@@ -71,7 +71,7 @@ export function crumbs(list) {
   return `<nav aria-label="Breadcrumb"><ol class="crumbs spec">${list.map(([name, href], i) => `<li>${i < list.length - 1 ? `<a href="${u(href)}">${esc(name)}</a>` : `<span aria-current="page">${esc(name)}</span>`}</li>`).join('')}</ol></nav>`;
 }
 
-export function cta({ title = 'Ready to see your home <span class="blue">clean</span>?', text = 'Tell us what needs cleaning and where. Photos help us quote without a visit — we’ll come back with a clear scope, a price, and our honest read on what actually needs doing.', art = 'model-clean' } = {}) {
+export function cta({ title = 'Ready to see your home <span class="blue">clean</span>?', text = 'Tell us what needs cleaning and where. Photos help us quote without a visit — we’ll come back with a clear scope, a price, and our honest read on what actually needs doing.', art = 'ba-driveway-after' } = {}) {
   return `<section class="cta section" aria-labelledby="cta-h">
   <div class="wrap cta-grid">
     <div data-reveal>
@@ -80,7 +80,7 @@ export function cta({ title = 'Ready to see your home <span class="blue">clean</
       <div class="btn-row mt-3"><a class="btn btn--lg" href="${u('/quote/')}">Get a free quote ${arr()}</a><a class="btn btn--ghost btn--lg" href="${u('/book/')}">Request a booking</a></div>
       <ul class="reassure">${['Free, no obligation', 'Photo quotes, usually within a business day', '$10m public liability'].map((t) => `<li class="spec spec-dot">${t}</li>`).join('')}</ul>
     </div>
-    <div class="cta-art" data-reveal>${pic(art, { alt: '', sizes: '(min-width: 900px) 40vw, 90vw' })}</div>
+    <div class="cta-art" data-reveal>${pic(art, { alt: '', sizes: '(min-width: 900px) 40vw, 90vw' })}<span class="glass-pill spec cta-tag">Demonstration photograph</span></div>
   </div>
 </section>`;
 }

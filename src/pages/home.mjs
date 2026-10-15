@@ -1,26 +1,41 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { u, esc, arr, icon, pic } from '../lib/html.mjs';
 import { MEDIA } from '../lib/media.mjs';
 import { layout } from '../templates/layout.mjs';
 import { figure, beforeAfter, sectionHead, surfaceIndex, cta, areaMap, faqList, WORK } from '../templates/parts.mjs';
-import { CHAPTERS, STORY_HOTSPOTS, LAYER_LABELS } from '../content/story.mjs';
 import { AREAS } from '../content/areas.mjs';
 import { SITE } from '../content/site.mjs';
 import { GUIDES } from '../content/guides.mjs';
 import { BUSINESS_FAQS } from '../content/faqs.mjs';
 
 export function home({ SRC, articles }) {
-  const hot = JSON.parse(fs.readFileSync(path.join(SRC, 'media/renders/hotspots.json'), 'utf8'))['story-arrive'];
-  const hotPos = Object.fromEntries(hot.map((h) => [h.id, h]));
-  const story = () => storyMarkup(hotPos);
   const featured = ['pressure-washing-vs-soft-washing', 'roof-cleaning-south-east-queensland', 'how-to-choose-an-exterior-cleaner-in-queensland', 'seasonal-exterior-care-calendar-seq']
     .map((s) => articles.find((a) => a.slug === s)).filter(Boolean);
 
   const body = `
-${story()}
-
-<span id="after-story"></span>
+<section class="hero2" aria-labelledby="hero-h">
+  <div class="hero2-card">
+    <div class="pass" data-pass style="--pos:34%">
+      ${pic('ba-pavers-before', { alt: 'Weathered concrete pavers in front of a modern home, dull with grime and growth in the joints (demonstration photograph).', sizes: '100vw', eager: true, priority: true })}
+      <div class="pass-after">${pic('ba-pavers-after', { alt: 'The same pavers after cleaning, bright and even (demonstration photograph).', sizes: '100vw', eager: true })}</div>
+      <canvas class="pass-mist" data-pass-mist aria-hidden="true"></canvas>
+      <span class="pass-line" aria-hidden="true"></span>
+      <input class="pass-range" type="range" min="0" max="100" value="34" aria-label="Clean the pavers: drag to compare before and after" data-pass-range>
+      <span class="glass-pill spec hero2-tag">Demonstration photograph</span>
+      <span class="pass-knob" aria-hidden="true">${icon('drag')}<span class="spec">Drag to clean</span></span>
+    </div>
+    <div class="hero2-veil" aria-hidden="true"></div>
+    <div class="hero2-copy">
+      <p class="glass-pill spec spec--ink"><span class="dot" aria-hidden="true"></span>Exterior cleaning · Redlands &amp; Greater Brisbane</p>
+      <h1 id="hero-h" class="hero2-h">Why keep on top of your concrete and&nbsp;pavers?</h1>
+      <div class="btn-row"><a class="btn btn--lg btn--ink" href="${u('/quote/')}">Get a free quote ${arr()}</a><a class="btn btn--lg btn--glass" href="${u('/book/')}">Book a time</a></div>
+    </div>
+    <ul class="hero2-points" aria-label="Why it matters">
+      <li class="glass-card"><span class="gc-ico" aria-hidden="true">${icon('house')}</span><b>Pre-sale &amp; appraisal value</b><p>The driveway is the first thing buyers and valuers see before they even step inside.</p></li>
+      <li class="glass-card"><span class="gc-ico" aria-hidden="true">${icon('shield')}</span><b>Surface protection</b><p>Mould, lichen and trapped dirt slowly break down protective coatings and permanently stain porous stone.</p></li>
+      <li class="glass-card"><span class="gc-ico" aria-hidden="true">${icon('drop')}</span><b>Year-round safety</b><p>Clearing built-up moss and black algae stops shaded paths and driveways turning into slip hazards when it rains.</p></li>
+    </ul>
+  </div>
+</section>
 <section class="section" aria-labelledby="idx-h">
   <div class="wrap">
     ${sectionHead('<span id="idx-h">Eight surfaces.<br>Eight different methods.</span>', 'Concrete can take a rotary surface cleaner. Render, tile, timber, stone and glass cannot. Choosing correctly is the actual skill — pick the surface that’s bothering you.')}
@@ -40,7 +55,7 @@ ${story()}
     </div>
     <div class="grid mt-4">
       <div style="grid-column:1 / span 7">${figure('work-steam', { caption: 'Rotary surface cleaning spreads force evenly across a slab', alt: 'A worker using a rotary surface cleaner on paving', ratio: 'ratio-photo', sizes: '(min-width: 1000px) 55vw, 100vw' })}</div>
-      <div style="grid-column:9 / span 4;align-self:end">${figure('focus-house', { caption: 'Soft wash: the same wall, before and after the pass', alt: 'The model house wall with the dirty and cleaned halves side by side', ratio: 'ratio-tall', sizes: '(min-width: 1000px) 30vw, 100vw' })}</div>
+      <div style="grid-column:9 / span 4;align-self:end">${figure('svc-house', { caption: 'Painted weatherboard: soft wash, never high pressure', alt: 'Painted weatherboard house exterior with awnings', ratio: 'ratio-tall', sizes: '(min-width: 1000px) 30vw, 100vw' })}</div>
     </div>
   </div>
 </section>
@@ -116,8 +131,8 @@ ${cta()}
     title: 'Exterior Cleaning Redlands & Brisbane | Stride Exterior Cleaning',
     description: SITE.description,
     body,
-    image: '/assets/img/story-arrive-1280.webp',
-    head: `<link rel="preload" as="image" type="image/avif" imagesrcset="${['640', '960', '1280', '1600'].map((w) => `${u(`/assets/img/story-arrive-${w}.avif`)} ${w}w`).join(', ')}" imagesizes="(min-width: 960px) 62vw, 100vw" fetchpriority="high">`,
+    image: '/assets/img/ba-pavers-after-1340.webp',
+    head: `<link rel="preload" as="image" type="image/avif" imagesrcset="${MEDIA['ba-pavers-before'].widths.map((w) => `${u(`/assets/img/ba-pavers-before-${w}.avif`)} ${w}w`).join(', ')}" imagesizes="(min-width: 1000px) 58vw, 100vw" fetchpriority="high">`,
     bodyClass: 'is-home',
     ld: [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: BUSINESS_FAQS.slice(0, 6).map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a.replace(/<[^>]+>/g, '') } })) }]
   });
@@ -144,67 +159,5 @@ export function guideCard(g) {
 </article>`;
 }
 
-
-/* ------------------------------------------------------------ the story */
-const CH = {
-  roof: { kicker: '01 · The roof', title: 'Start at the top.', body: 'Lichen and black streaks hold moisture against your tiles. We lift them with a soft wash — a cleaning solution, time to work, then a gentle rinse. Never a blaster.', spec: [['Surface', 'Concrete tile'], ['Method', 'Soft wash'], ['Pressure', 'Low']], meter: ['roof', 'Lichen removed'], fig: 'Soft wash crossing the roof — clean on the left, weathered on the right' },
-  layers: { kicker: '02 · Every layer', title: 'Eight surfaces. Eight methods.', body: 'A home isn’t one surface. Tile, render, glass, steel, concrete and stone each need a different approach — and choosing correctly is the part most cleaners skip.', spec: [['Roof', 'Soft wash'], ['Walls', 'Low pressure'], ['Glass', 'Pure water']], meter: ['layers', 'Layers inspected'], fig: 'The house taken apart: site, ground floor, upper floor, roof, solar' },
-  vision: { kicker: '03 · Grime vision', title: 'See where growth takes hold.', body: 'Algae and mould don’t spread evenly. They climb from damp ground, gather on shaded walls and settle under eaves. Move the lens over the house to inspect a surface.', fig: 'Grime vision — warmer colours show where growth takes hold first' },
-  drive: { kicker: '04 · The driveway', title: 'Even passes. No stripes.', body: 'A wand held close can etch lines into concrete. A rotary surface cleaner spreads the force evenly, lane by lane, then edges and joints are finished by hand.', spec: [['Pressure', 'Set to the slab'], ['Edges', 'By hand'], ['Run-off', 'Managed']], meter: ['drive', 'Coverage'], fig: 'Rotary surface cleaning, lane by lane' },
-  done: { kicker: '05 · Done', title: 'Your home, back to its best.', body: 'That’s the Stride standard on every job: the right method for every surface, run-off managed, a walk-around with you, and before-and-after photos.', fig: 'Every surface clean' }
-};
-
-function storyMarkup(hotPos) {
-  const chap = (c, i) => {
-    if (c.id === 'arrive') return `<article class="chap chap--hero is-active" data-chapter="${i}" id="ch-arrive">
-      <div class="chap-text">
-        <p class="spec spec--ink">Exterior cleaning · Redlands &amp; Greater Brisbane</p>
-        <h1 class="display">Every surface, cleaned the <span class="soft">right&nbsp;way.</span></h1>
-        <p class="lede">Roofs, render, driveways, gutters, glass and solar — each cleaned with the method its material needs. Nothing forced, nothing etched, nothing left behind.</p>
-        <div class="btn-row"><a class="btn btn--lg" href="${u('/quote/')}">Get a free quote ${arr()}</a><a class="btn btn--ghost btn--lg" href="${u('/book/')}">Book a time</a></div>
-        <ul class="hero-proof"><li class="spec spec-dot">Free photo quotes</li><li class="spec spec-dot">$10m public liability</li><li class="spec spec-dot">Based in Redland Bay</li></ul>
-        <p class="scroll-cue spec only-live" aria-hidden="true"><span class="cue-line"></span>Scroll to clean the house · drag to scrub it yourself</p>
-      </div>
-    </article>`;
-    const d = CH[c.id];
-    return `<article class="chap" data-chapter="${i}" id="ch-${c.id}" aria-labelledby="ch-${c.id}-h">
-      <div class="chap-text">
-        <p class="spec spec--blue">${d.kicker}</p>
-        <h2 id="ch-${c.id}-h" class="h2">${d.title}</h2>
-        <p class="chap-body">${d.body}</p>
-        ${d.spec ? `<dl class="chap-spec">${d.spec.map(([k, v]) => `<div><dt class="spec">${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : ''}
-        ${d.meter ? `<div class="chap-meter only-live" data-meter="${d.meter[0]}"><span class="spec">${d.meter[1]}</span><span class="cm-track"><span class="cm-fill"></span></span><span class="spec spec--ink num" data-val="${d.meter[0]}">0%</span></div>` : ''}
-        ${c.id === 'drive' ? `<p class="spec only-live mt-1">Lane <span class="num" data-val="lane">1 of 3</span></p>` : ''}
-        ${c.id === 'vision' ? `<div class="lens-out only-live" data-lens-out aria-live="polite"><div><span class="spec">Surface</span><b data-lens-name>Move the lens over the house</b></div><div><span class="spec">What grows</span><b data-lens-growth>—</b></div><div><span class="spec">How we clean it</span><b data-lens-method>—</b></div></div>` : ''}
-        ${c.id === 'done' ? `<div class="btn-row mt-2"><a class="btn btn--lg" href="${u('/quote/')}">Get a free quote ${arr()}</a><a class="btn btn--ghost btn--lg" href="${u('/services/')}">Explore services</a></div>` : ''}
-      </div>
-      <figure class="chap-still fig only-static">
-        <div class="fig-frame">${pic(`story-${c.id}`, { alt: d.fig, sizes: '(min-width: 960px) 55vw, 100vw' })}</div>
-        <figcaption><span class="spec spec--ink">${d.fig}</span><span class="spec">Stride 3D study</span></figcaption>
-      </figure>
-    </article>`;
-  };
-  return `<section class="story" data-story aria-label="The Clean Pass: how a Stride clean works, surface by surface">
-  <div class="story-pin">
-    <div class="story-stage" data-story-stage>
-      <div class="stage-frame" data-frame>
-        <div class="poster">${pic('story-arrive', { alt: 'A white architectural model of a two-storey Redlands home, weathered with roof lichen, wall algae and a mould-blackened driveway; the pool area at left has already been cleaned.', sizes: '(min-width: 960px) 62vw, 100vw', eager: true, priority: true })}</div>
-        ${STORY_HOTSPOTS.map((h) => `<a class="hot" href="${u(h.href)}" data-hot="${h.id}" style="left:${(hotPos[h.id].x * 100).toFixed(2)}%;top:${(hotPos[h.id].y * 100).toFixed(2)}%"><span class="hot-dot" aria-hidden="true"></span><span class="hot-label spec">${esc(h.label)}</span><span class="sr">: ${esc(h.label.split(' · ')[0])} cleaning</span></a>`).join('')}
-        <div class="lens-ring only-live" data-lens aria-hidden="true"></div>
-        ${LAYER_LABELS.map((l) => `<span class="layer-label only-live" data-layer-label aria-hidden="true"><b class="spec">${l.n}</b><span><strong>${esc(l.label)}</strong><span class="spec">${esc(l.method)}</span></span></span>`).join('')}
-      </div>
-    </div>
-    <div class="story-chapters">
-      ${CHAPTERS.map(chap).join('')}
-    </div>
-    <nav class="story-rail only-live" data-rail aria-label="Story chapters">${CHAPTERS.map((c, i) => `<button type="button" aria-current="${i ? 'false' : 'step'}"><span class="spec">${String(i).padStart(2, '0')}</span><span class="rail-name">${c.name}</span></button>`).join('')}</nav>
-    <div class="story-tools only-live">
-      <button class="chip" type="button" data-sound aria-pressed="false">${icon('drop')}<span>Sound off</span></button>
-      <a class="chip" href="#after-story">${icon('down')}<span>Skip</span></a>
-    </div>
-    <div class="story-progress only-live" aria-hidden="true"><span></span></div>
-  </div>
-</section>`;
-}
 
 export const coverPic = (g, o) => pic(MEDIA[`cover-${g.slug}`] ? `cover-${g.slug}` : g.cover, o);

@@ -28,6 +28,10 @@
   - an offline outbox with retry;
   - an honest prefilled-email fallback when delivery isn't configured.
 
+## Current hero (owner copy, 15 Oct)
+
+The homepage hero is a framed full-bleed photograph of concrete pavers with a drag/scroll "clean pass" wipe and water mist. The headline is "Why keep on top of your concrete and pavers?" and the owner's three points sit on floating glass cards. The 3D code and all clay renders have been removed from the site. Previews: `docs/hero-preview-*.png`.
+
 ## Rejected
 
 - The white-clay WebGL house (`src/scripts/maquette.js`). The owner judged it low quality.

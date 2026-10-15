@@ -218,27 +218,61 @@
     else if (a.classList.contains('hot')) track('hotspot_click', { surface: a.getAttribute('data-hot') });
   });
 
-  /* ------------------------------------------------------------ the story */
-  var story = $('[data-story]');
-  if (story) {
-    var canWebGL = (function () {
-      try { var c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; }
-    })();
-    var conn = navigator.connection || {};
-    var lowMem = navigator.deviceMemory && navigator.deviceMemory < 2;
-    var capable = canWebGL && !reduced.matches && !conn.saveData && !lowMem;
-    if (!capable) {
-      story.setAttribute('data-mode', reduced.matches ? 'reduced-motion' : 'static');
-    } else {
-      var load = function () {
-        var s = document.createElement('script');
-        s.src = BASE + '/assets/js/story.js?v=' + ((document.querySelector('script[src*="main.js"]') || {}).src || '').split('v=')[1];
-        s.async = true;
-        document.head.appendChild(s);
-      };
-      // After first paint, so the poster (LCP) and text are never held up.
-      if (document.readyState === 'complete') setTimeout(load, 60);
-      else addEventListener('load', function () { setTimeout(load, 60); });
-    }
+  /* ------------------------------------------------------- the clean pass */
+  /* Hero photo: a diagonal clean pass sweeps the pavers on arrival, scrolling
+     finishes the job, and dragging hands control to the visitor. A light mist
+     of droplets rides the leading edge. */
+  var pass = $('[data-pass]');
+  if (pass) {
+    var range = $('[data-pass-range]', pass), mist = $('[data-pass-mist]', pass);
+    var pos = parseFloat(range.value) || 34, shown = pos, user = false, auto = null, last = performance.now();
+    var ctx = mist && mist.getContext ? mist.getContext('2d') : null, parts = [], rafP = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+    var setPos = function (v) { shown = v; pass.style.setProperty('--pos', v.toFixed(2) + '%'); range.value = Math.round(v); range.setAttribute('aria-valuetext', Math.round(v) + '% cleaned'); };
+    var size = function () { if (!ctx) return; mist.width = pass.clientWidth * dpr; mist.height = pass.clientHeight * dpr; };
+    size(); addEventListener('resize', size);
+    var emit = function (n) {
+      if (!ctx || reduced.matches) return;
+      var W = pass.clientWidth, H = pass.clientHeight, slope = Math.tan(24 * Math.PI / 180) * 0.58;
+      for (var k = 0; k < n; k++) {
+        var y = Math.random() * H, x = shown / 100 * W + (H * 0.58 - y) * slope;
+        parts.push({ x: x + (Math.random() - 0.3) * 18, y: y, vx: 40 + Math.random() * 140, vy: -30 + Math.random() * 60, r: 0.6 + Math.random() * 2.2, life: 1 });
+      }
+      if (parts.length > 700) parts.splice(0, parts.length - 700);
+    };
+    var tick = function (now) {
+      rafP = 0;
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      var moving = false;
+      if (auto) {
+        var t = Math.min(1, (now - auto.t0) / auto.dur), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        setPos(auto.from + (auto.to - auto.from) * e); emit(10); moving = true; if (t >= 1) { pos = auto.to; auto = null; }
+      } else if (Math.abs(pos - shown) > 0.05) { setPos(shown + (pos - shown) * Math.min(1, dt * 9)); emit(6); moving = true; }
+      if (ctx) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, mist.width, mist.height);
+        for (var k = parts.length - 1; k >= 0; k--) {
+          var q = parts[k];
+          q.life -= dt * 1.1; if (q.life <= 0) { parts.splice(k, 1); continue; }
+          q.vy += 160 * dt; q.x += q.vx * dt; q.y += q.vy * dt;
+          ctx.globalAlpha = q.life * 0.75;
+          ctx.fillStyle = q.r > 1.8 ? '#ffffff' : '#cfe7fa';
+          ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.283); ctx.fill();
+        }
+        if (parts.length) moving = true;
+      }
+      if (moving) rafP = requestAnimationFrame(tick);
+    };
+    var kick = function () { if (!rafP) { last = performance.now(); rafP = requestAnimationFrame(tick); } };
+    range.addEventListener('input', function () { user = true; auto = null; pos = parseFloat(range.value); setPos(pos); emit(8); kick(); });
+    range.addEventListener('change', function () { track('hero_pass_drag', { value: Math.round(pos) }); }, { once: true });
+    if (!reduced.matches) {
+      setTimeout(function () { if (!user) { auto = { from: shown, to: 68, t0: performance.now(), dur: 2600 }; kick(); } }, 700);
+      addEventListener('scroll', function () {
+        if (user || auto) return;
+        var r = pass.getBoundingClientRect(), p = Math.max(0, Math.min(1, -r.top / (r.height * 0.55)));
+        var target = 68 + 32 * p;
+        if (target > pos + 0.2 || target < pos - 0.2) { pos = Math.max(68, target); kick(); }
+      }, { passive: true });
+    } else { pos = 60; setPos(60); }
   }
 })();

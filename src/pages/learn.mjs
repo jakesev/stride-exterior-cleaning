@@ -1,4 +1,5 @@
 import { u, abs, esc, arr, icon, pic } from '../lib/html.mjs';
+import { MEDIA } from '../lib/media.mjs';
 import { layout } from '../templates/layout.mjs';
 import { sectionHead, cta, faqList, crumbs, resetFigures } from '../templates/parts.mjs';
 import { SERVICES } from '../content/services.mjs';
@@ -11,22 +12,22 @@ const catSlug = (c) => c.toLowerCase().replace(/[^a-z]+/g, '-');
 
 /* Which render illustrates an article, and which service it leads to. */
 const ARTICLE_META = {
-  'pressure-washing-vs-soft-washing': { img: 'focus-house', svc: 'house-washing', guide: 'surface-guide' },
-  'driveway-concrete-stains-and-sealing': { img: 'focus-driveway', svc: 'driveway-cleaning', guide: 'surface-guide' },
-  'house-washing-seq-humidity': { img: 'story-vision', svc: 'house-washing', guide: 'exterior-care-calendar' },
-  'pavers-natural-stone-pool-surrounds': { img: 'focus-pool', svc: 'pool-surround-cleaning', guide: 'surface-guide' },
-  'timber-decks-fences-cleaning-oiling': { img: 'focus-paths', svc: 'path-patio-cleaning', guide: 'surface-guide' },
-  'roof-cleaning-south-east-queensland': { img: 'focus-roof', svc: 'roof-cleaning', guide: 'storm-season-ready' },
-  'gutters-storm-season-seq': { img: 'focus-gutter', svc: 'gutter-cleaning', guide: 'storm-season-ready' },
-  'solar-panel-cleaning-does-it-matter': { img: 'focus-solar', svc: 'solar-panel-cleaning', guide: 'storm-season-ready' },
-  'window-cleaning-streak-free-bayside': { img: 'focus-window', svc: 'window-cleaning', guide: 'exterior-care-calendar' },
-  'seasonal-exterior-care-calendar-seq': { img: 'story-done', svc: null, guide: 'exterior-care-calendar' },
-  'how-to-choose-an-exterior-cleaner-in-queensland': { img: 'story-layers', svc: null, guide: 'before-you-book' },
-  'what-affects-the-cost-of-exterior-cleaning': { img: 'model-clean', svc: null, guide: 'before-you-book' },
-  'wastewater-run-off-and-the-environment': { img: 'story-drive', svc: null, guide: 'before-you-book' },
-  'getting-your-home-ready-for-sale-or-rental-inspection': { img: 'story-clean', svc: null, guide: 'exterior-care-calendar' }
+  'pressure-washing-vs-soft-washing': { img: 'work-water', svc: 'house-washing', guide: 'surface-guide' },
+  'driveway-concrete-stains-and-sealing': { img: 'ba-driveway-after', svc: 'driveway-cleaning', guide: 'surface-guide' },
+  'house-washing-seq-humidity': { img: 'svc-house', svc: 'house-washing', guide: 'exterior-care-calendar' },
+  'pavers-natural-stone-pool-surrounds': { img: 'ba-poolside-after', svc: 'pool-surround-cleaning', guide: 'surface-guide' },
+  'timber-decks-fences-cleaning-oiling': { img: 'svc-paths', svc: 'path-patio-cleaning', guide: 'surface-guide' },
+  'roof-cleaning-south-east-queensland': { img: 'svc-roof', svc: 'roof-cleaning', guide: 'storm-season-ready' },
+  'gutters-storm-season-seq': { img: 'svc-gutter', svc: 'gutter-cleaning', guide: 'storm-season-ready' },
+  'solar-panel-cleaning-does-it-matter': { img: 'svc-roof', svc: 'solar-panel-cleaning', guide: 'storm-season-ready' },
+  'window-cleaning-streak-free-bayside': { img: 'svc-window', svc: 'window-cleaning', guide: 'exterior-care-calendar' },
+  'seasonal-exterior-care-calendar-seq': { img: 'area-bay', svc: null, guide: 'exterior-care-calendar' },
+  'how-to-choose-an-exterior-cleaner-in-queensland': { img: 'work-steam', svc: null, guide: 'before-you-book' },
+  'what-affects-the-cost-of-exterior-cleaning': { img: 'ba-pavers-after', svc: null, guide: 'before-you-book' },
+  'wastewater-run-off-and-the-environment': { img: 'work-water', svc: null, guide: 'before-you-book' },
+  'getting-your-home-ready-for-sale-or-rental-inspection': { img: 'svc-driveway', svc: null, guide: 'exterior-care-calendar' }
 };
-export const articleMeta = (slug) => ARTICLE_META[slug] || { img: 'model-clean', svc: null, guide: 'surface-guide' };
+export const articleMeta = (slug) => ARTICLE_META[slug] || { img: 'ba-pavers-after', svc: null, guide: 'surface-guide' };
 
 export function learnHub(articles, facts) {
   resetFigures();
@@ -36,7 +37,7 @@ export function learnHub(articles, facts) {
   <div class="phero-grid">
     <div><p class="spec spec--ink">Homeowner education centre</p><h1 class="display">Know your surfaces <span class="soft">before you book.</span></h1>
     <p class="lede">Plain-English, researched guides to what’s growing on your roof, why render shouldn’t be blasted, what the rules are on run-off, and how to compare quotes. Every article lists its sources.</p></div>
-    <div class="phero-aside">${pic('story-layers', { alt: 'The model house separated into its layers', sizes: '(min-width: 900px) 40vw, 90vw', eager: true })}</div>
+    <div class="phero-aside">${pic('work-water', { alt: 'Water rinsing a paved surface (demonstration photograph)', sizes: '(min-width: 900px) 40vw, 90vw', eager: true })}</div>
   </div>
 </div></section>
 <section class="section section--tight"><div class="wrap">
@@ -99,9 +100,9 @@ ${guide ? `<section class="section section--paper"><div class="wrap"><div class=
 ${related.length ? `<section class="section"><div class="wrap">${sectionHead('Keep reading.')}<div class="alist">${related.map(articleRow).join('')}</div></div></section>` : ''}
 ${cta()}`;
   return layout({
-    path, title: a.title, description: a.description, body, image: `/assets/img/${meta.img}-1400.webp`.replace('-1400', meta.img.startsWith('story') ? '-1280' : '-1400'),
+    path, title: a.title, description: a.description, body, image: `/assets/img/${meta.img}-${MEDIA[meta.img].widths.at(-1)}.webp`,
     crumbs: [['Home', '/'], ['Learn', '/learn/'], [a.title, path]],
-    ld: [{ '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.description, articleSection: a.category, dateModified: '2026-10-15', author: { '@type': 'Organization', name: 'Stride Exterior Cleaning', url: abs('/') }, publisher: { '@id': abs('/') + '#business' }, mainEntityOfPage: abs(path), image: abs(`/assets/img/${meta.img}-${meta.img.startsWith('story') ? 1280 : 1400}.webp`) }],
+    ld: [{ '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.description, articleSection: a.category, dateModified: '2026-10-15', author: { '@type': 'Organization', name: 'Stride Exterior Cleaning', url: abs('/') }, publisher: { '@id': abs('/') + '#business' }, mainEntityOfPage: abs(path), image: abs(`/assets/img/${meta.img}-${MEDIA[meta.img].widths.at(-1)}.webp`) }],
     scripts: ['/assets/js/forms.js']
   });
 }

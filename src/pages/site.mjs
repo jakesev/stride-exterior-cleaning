@@ -30,7 +30,7 @@ export function servicesHub() {
 <section class="section section--paper"><div class="wrap">
   ${sectionHead('Not sure which<br>you need?', 'Most homes need two or three services, and some are best done together — gutters after the roof, windows after the house wash. Tick what you can see in the quote form and we’ll tell you what actually needs doing.')}
   <div class="cols-2">
-    ${figure('story-layers', { caption: 'One house, five layers, eight surfaces', alt: 'The model house separated into layers: site, ground floor, upper floor, roof and solar', ratio: 'ratio-photo' })}
+    ${figure('craft-work-wide', { caption: 'High pressure suits sound concrete — and very little else', alt: 'A worker pressure cleaning concrete steps', ratio: 'ratio-photo' })}
     <div class="stack" style="--s:20px;align-self:end">
       <h3 class="h3">Good combinations</h3>
       <ul class="ticks">
@@ -57,8 +57,7 @@ export function servicePage(s, articles) {
 <section class="section section--tight"><div class="wrap">
   ${specsheet(s.spec)}
   <div class="grid mt-4">
-    <div style="grid-column:1 / span ${s.photo ? 8 : 12}">${figure(s.render, { caption: `The clean pass on ${s.short.toLowerCase()} — before on one side, after on the other`, alt: `3D study of ${s.name.toLowerCase()}, half cleaned`, ratio: 'ratio-photo', sizes: '(min-width: 1000px) 62vw, 100vw', eager: true })}</div>
-    ${s.photo ? `<div style="grid-column:9 / -1;align-self:end">${figure(s.photo, { caption: s.short, alt: `${s.name} — demonstration photograph`, ratio: 'ratio-tall', sizes: '(min-width: 1000px) 30vw, 100vw' })}</div>` : ''}
+    ${s.img ? `<div style="grid-column:1 / -1">${figure(s.img, { caption: s.name, alt: `${s.name} — demonstration photograph`, ratio: 'ratio-wide', sizes: '100vw', eager: true })}</div>` : ''}
   </div>
 </div></section>
 <section class="section section--line"><div class="wrap">
@@ -97,7 +96,7 @@ ${related.length ? `<section class="section section--line"><div class="wrap">
 </div></section>
 ${cta({ title: `Get a price for <span class="blue">${esc(s.short.toLowerCase())}</span>.` })}`;
   return layout({
-    path, title: s.title, description: s.metaDesc, body, image: `/assets/img/${s.render}-1400.webp`,
+    path, title: s.title, description: s.metaDesc, body, image: s.img ? `/assets/img/${s.img}-1100.webp` : undefined,
     crumbs: [['Home', '/'], ['Services', '/services/'], [s.name, path]],
     ld: [
       { '@context': 'https://schema.org', '@type': 'Service', name: s.name, serviceType: s.name, description: s.metaDesc, url: abs(path), provider: { '@id': abs('/') + '#business' }, areaServed: ['Redland City', 'Brisbane'].map((n) => ({ '@type': 'Place', name: n })) },
@@ -178,9 +177,9 @@ export function ourWork() {
   </div>`).join('')}
 </div></section>
 <section class="section section--paper"><div class="wrap">
-  ${sectionHead('The same clean,<br>surface by surface.', 'Original 3D studies of the Stride model home, each showing the clean pass halfway across one surface.')}
+  ${sectionHead('Every surface,<br>its own method.', 'Demonstration photographs of the surfaces we clean — tap one to see how it’s done.')}
   <div class="tiles">
-    ${SERVICES.map((s) => `<a class="tile" href="${u(`/services/${s.slug}/`)}"><div class="fig-frame ratio-photo">${pic(s.render, { alt: `${s.name}: half-cleaned 3D study`, sizes: '(min-width: 1000px) 30vw, (min-width: 640px) 45vw, 100vw' })}</div><div class="meta"><span class="spec">${s.n}</span><span class="spec">${esc(s.method)}</span></div><h3 class="h4">${esc(s.name)}</h3></a>`).join('')}
+    ${SERVICES.filter((s) => s.img).map((s) => `<a class="tile" href="${u(`/services/${s.slug}/`)}"><div class="fig-frame ratio-photo">${pic(s.img, { alt: `${s.name} (demonstration photograph)`, sizes: '(min-width: 1000px) 30vw, (min-width: 640px) 45vw, 100vw' })}</div><div class="meta"><span class="spec">${s.n}</span><span class="spec">${esc(s.method)}</span></div><h3 class="h4">${esc(s.name)}</h3></a>`).join('')}
   </div>
 </div></section>
 <section class="section"><div class="wrap wrap--narrow">
@@ -215,7 +214,7 @@ export function standard() {
     <div><h3 class="h4">Which surfaces take pressure</h3><p class="mt-1">And where a coating has already failed — so you know the cleaning revealed it rather than caused it.</p></div>
   </div>
 </div></section>
-<section class="section"><div class="wrap">${figure('story-vision', { caption: 'Grime vision: where growth takes hold first on a typical home', alt: 'The model house with a thermal-style lens showing growth concentrated low on the walls', ratio: 'ratio-wide', sizes: '100vw' })}</div></section>
+<section class="section"><div class="wrap">${figure('work-steam', { caption: 'Rotary surface cleaning for an even finish on open concrete', alt: 'A rotary surface cleaner on paving', ratio: 'ratio-wide', sizes: '100vw' })}</div></section>
 ${cta()}`;
   return layout({ path: '/why-stride/', title: 'The Stride Standard | Why Stride', description: 'Surface-appropriate methods, $10m public liability, run-off managed, written scopes and before-and-after documentation. The Stride standard for exterior cleaning.', body, crumbs: [['Home', '/'], ['The Stride standard', '/why-stride/']] });
 }
@@ -324,7 +323,7 @@ export function thankYou() {
     <p class="lede" data-ty-lede>A real person reads every enquiry. You’ll hear back within one business day with a scope and price, or a time for a quick free visit if your home needs one.</p>
     <p class="ref mt-2" data-ty-ref hidden><span class="spec">Reference</span><b class="num" data-ty-refnum></b></p>
   </div>
-  <div class="phero-aside">${pic('story-done', { alt: 'The model house, fully clean', sizes: '(min-width: 900px) 40vw, 90vw', eager: true })}</div>
+  <div class="phero-aside">${pic('ba-driveway-after', { alt: 'A clean concrete driveway (demonstration photograph)', sizes: '(min-width: 900px) 40vw, 90vw', eager: true })}</div>
 </div></div></section>
 <section class="section"><div class="wrap">
   <div class="grid">
@@ -352,7 +351,7 @@ export function notFound() {
   const body = `<section class="phero"><div class="wrap"><div class="phero-grid">
   <div><p class="spec">404</p><h1 class="display">This page has been <span class="soft">washed away.</span></h1><p class="lede">The address may have changed. These are the places most people are looking for:</p>
   <div class="btn-row mt-3"><a class="btn" href="${u('/')}">Home ${arr()}</a><a class="btn btn--ghost" href="${u('/services/')}">Services</a><a class="btn btn--ghost" href="${u('/quote/')}">Free quote</a><a class="btn btn--ghost" href="${u('/learn/')}">Learn</a></div></div>
-  <div class="phero-aside">${pic('story-clean', { alt: '', sizes: '40vw', eager: true })}</div>
+  <div class="phero-aside">${pic('ba-pavers-after', { alt: '', sizes: '40vw', eager: true })}</div>
 </div></div></section>`;
   return layout({ path: '/404.html', title: 'Page Not Found', description: 'This page could not be found.', body, noindex: true });
 }
