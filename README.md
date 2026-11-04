@@ -30,12 +30,3 @@ For the real domain, build without any flags and publish `v2/site`.
 - **Photography is licensed stock**, clearly labelled as demonstration.
 - **No customer reviews** — the site shows an honest empty state rather than
   invented testimonials.
-
-## `/journal` — separate personal app
-
-`journal/` is **not** part of the Stride site and is not produced by
-`build.mjs`. It is a standalone daily read/write/speak practice app
-("Articulate"): plain HTML, CSS and JavaScript, no build step, data stored in
-the visitor's browser. It is marked `noindex` and not linked from the site.
-
-If a rebuild clears this folder, restore `journal/` from git history.
