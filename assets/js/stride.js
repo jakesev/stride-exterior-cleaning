@@ -148,43 +148,188 @@
   }
 
   /* ------------------------------------------------------- before / after */
-  function beforeAfter() {
-    $$('[data-ba]').forEach(function (root) {
-      var range = $('.ba-range', root);
-      if (!range) return;
-      var set = function (v) { root.style.setProperty('--pos', v + '%'); };
-      set(range.value);
-      range.addEventListener('input', function () { set(range.value); });
+  /* Comparison slider. Both photographs sit in the same box at the same size;
+     only the clip on the "after" layer moves, so the images never shift,
+     scale or distort relative to each other.
+     Mouse: press anywhere to jump, drag to scrub.
+     Touch: a horizontal drag scrubs, a vertical drag scrolls the page, a tap jumps.
+     Keyboard: the native range input stays focusable — arrows (±5, Shift ±10),
+     Home/End, PageUp/PageDown.
+     One gentle demonstration sweep plays the first time a slider is properly
+     on screen, and stops dead the moment the visitor touches anything. */
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var easeInOut = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  var easeOut = function (t) { return 1 - Math.pow(1 - t, 3); };
 
-      // one-time nudge so the control reads as draggable
-      if (isReduced() || !('IntersectionObserver' in window)) return;
-      var hinted = false;
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (!e.isIntersecting || hinted) return;
-          hinted = true; io.disconnect();
-          var start = performance.now(), from = 50, keys = [[0, 50], [0.38, 70], [0.72, 36], [1, 50]];
-          var dur = 1700;
-          (function step(now) {
-            var t = Math.min(1, (now - start) / dur);
-            var e2 = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-            var v = from;
-            for (var i = 1; i < keys.length; i++) {
-              if (e2 <= keys[i][0]) {
-                var span = keys[i][0] - keys[i - 1][0];
-                var local = span ? (e2 - keys[i - 1][0]) / span : 0;
-                var sm = local * local * (3 - 2 * local);
-                v = keys[i - 1][1] + (keys[i][1] - keys[i - 1][1]) * sm;
-                break;
-              }
-            }
-            set(v.toFixed(1)); range.value = Math.round(v);
-            if (t < 1) requestAnimationFrame(step);
-          })(start);
-        });
-      }, { threshold: 0.55 });
-      io.observe(root);
+  function Compare(root) {
+    var range = $('.ba-range', root);
+    if (!range) return null;
+    var self = this;
+    var pos = parseFloat(range.value) || 50;
+    var tween = 0, introState = 'idle';           // idle | playing | done
+    var drag = null;                                // active pointer gesture
+
+    this.root = root;
+    root._compare = this;
+
+    function label(v) {
+      var a = Math.round(100 - v);
+      return a + '% after, ' + (100 - a) + '% before';
+    }
+    function render(v) {
+      pos = clamp(v, 0, 100);
+      root.style.setProperty('--pos', pos.toFixed(2) + '%');
+      root.style.setProperty('--p', pos.toFixed(2));
+      range.value = Math.round(pos);
+      range.setAttribute('aria-valuetext', label(pos));
+    }
+    function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = 0; } }
+    function tweenTo(target, dur, ease) {
+      stopTween();
+      target = clamp(target, 0, 100);
+      if (isReduced() || !dur) { render(target); return; }
+      var from = pos, start = performance.now();
+      (function step(now) {
+        var t = Math.min(1, (now - start) / dur);
+        render(from + (target - from) * (ease || easeOut)(t));
+        tween = t < 1 ? requestAnimationFrame(step) : 0;
+      })(start);
+    }
+    function interrupt() {
+      if (introState === 'playing') { introState = 'done'; stopTween(); }
+      else if (introState === 'idle') introState = 'done';
+      root.classList.add('is-ready');
+    }
+    function xToPos(x) {
+      var r = root.getBoundingClientRect();
+      return r.width ? ((x - r.left) / r.width) * 100 : pos;
+    }
+
+    /* pointer */
+    root.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0 || e.target.closest('button, a')) return;
+      interrupt();
+      root.classList.add('is-pointer');              // no keyboard focus ring for mouse/touch use
+      try { range.focus({ preventScroll: true }); } catch (_) { range.focus(); }
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, type: e.pointerType, active: false };
+      if (e.pointerType === 'mouse') {
+        e.preventDefault();
+        drag.active = true;
+        root.setPointerCapture(e.pointerId);
+        root.classList.add('is-dragging');
+        tweenTo(xToPos(e.clientX), 260);
+      }
     });
+    root.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.active) {
+        var dx = Math.abs(e.clientX - drag.x), dy = Math.abs(e.clientY - drag.y);
+        if (dx > 6 && dx > dy * 1.1) {
+          drag.active = true;
+          try { root.setPointerCapture(e.pointerId); } catch (_) {}
+          root.classList.add('is-dragging');
+        } else if (dy > 8) { drag = null; return; }   // the page is scrolling
+        else return;
+      }
+      stopTween();
+      render(xToPos(e.clientX));
+    });
+    function end(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.active && e.type === 'pointerup') tweenTo(xToPos(e.clientX), 320);   // tap
+      drag = null;
+      root.classList.remove('is-dragging');
+    }
+    root.addEventListener('pointerup', end);
+    root.addEventListener('pointercancel', end);
+    root.addEventListener('lostpointercapture', function () { root.classList.remove('is-dragging'); });
+    $$('img', root).forEach(function (img) { img.draggable = false; });
+
+    /* keyboard */
+    range.addEventListener('focus', interrupt);
+    range.addEventListener('blur', function () { root.classList.remove('is-pointer'); });
+    range.addEventListener('keydown', function (e) {
+      var k = e.key, step = e.shiftKey ? 10 : 5, to = null;
+      if (k === 'ArrowLeft' || k === 'ArrowDown') to = pos - step;
+      else if (k === 'ArrowRight' || k === 'ArrowUp') to = pos + step;
+      else if (k === 'PageDown') to = pos - 25;
+      else if (k === 'PageUp') to = pos + 25;
+      else if (k === 'Home') to = 0;
+      else if (k === 'End') to = 100;
+      if (to === null) return;
+      root.classList.remove('is-pointer');
+      e.preventDefault();
+      e.stopPropagation();
+      interrupt();
+      tweenTo(to, 200);
+    });
+    range.addEventListener('input', function () { interrupt(); stopTween(); render(parseFloat(range.value)); });
+
+    /* public */
+    this.set = function (v, animate) { if (animate) tweenTo(v, 420); else { stopTween(); render(v); } };
+    this.get = function () { return pos; };
+    this.interrupt = interrupt;
+    this.intro = function (delay) {
+      if (introState !== 'idle') return;
+      root.classList.add('is-ready');
+      if (isReduced()) { introState = 'done'; return; }
+      introState = 'playing';
+      var keys = [50, 72, 30, 50], seg = 0;
+      setTimeout(function next() {
+        if (introState !== 'playing') return;
+        if (seg >= keys.length - 1) { introState = 'done'; return; }
+        var target = keys[++seg];
+        var dur = seg === 1 ? 900 : seg === 2 ? 1150 : 820;
+        var from = pos, start = performance.now();
+        (function step(now) {
+          if (introState !== 'playing') return;
+          var t = Math.min(1, (now - start) / dur);
+          render(from + (target - from) * easeInOut(t));
+          if (t < 1) tween = requestAnimationFrame(step);
+          else { tween = 0; setTimeout(next, seg === keys.length - 1 ? 0 : 90); }
+        })(start);
+      }, delay || 0);
+    };
+
+    render(pos);
+  }
+
+  var introQueue = [], introTimer = 0;
+  function queueIntro(c) {
+    // Several sliders entering together play one after another, never at once.
+    introQueue.push(c);
+    if (introTimer) return;
+    (function drain() {
+      var next = introQueue.shift();
+      if (!next) { introTimer = 0; return; }
+      next.intro(180);
+      introTimer = setTimeout(drain, 520);
+    })();
+  }
+
+  function initCompare(root, opts) {
+    if (root._compare) return root._compare;
+    var c = new Compare(root);
+    if (!c) return null;
+    if (opts && opts.intro === false) { root.classList.add('is-ready'); c.interrupt(); return c; }
+    if (!('IntersectionObserver' in window)) { root.classList.add('is-ready'); return c; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        root.classList.add('is-ready');               // handle settles in on entry
+        if (e.intersectionRatio < 0.55) return;
+        io.disconnect();
+        // wait for the masked reveal (if any) to settle before demonstrating
+        setTimeout(function () { queueIntro(c); }, root.closest('[data-reveal]') ? 520 : 0);
+      });
+    }, { threshold: [0.01, 0.6] });
+    io.observe(root);
+    return c;
+  }
+  window.StrideCompare = { init: initCompare };
+
+  function beforeAfter() {
+    $$('[data-ba]').forEach(function (root) { initCompare(root); });
   }
 
   /* ------------------------------------------------------------ accordion */
