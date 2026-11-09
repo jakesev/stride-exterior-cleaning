@@ -30,3 +30,32 @@ For the real domain, build without any flags and publish `v2/site`.
 - **Photography is licensed stock**, clearly labelled as demonstration.
 - **No customer reviews** — the site shows an honest empty state rather than
   invented testimonials.
+
+## Results (before & after) — how to publish a job
+
+The Results page (`/our-work/`) and the homepage "The Results Speak for
+Themselves." section are built from `<article class="result-card">` blocks.
+Everything — filter counts, the full-screen viewer, deep links
+(`/our-work/#result-<id>`, `/our-work/?service=driveways`) — reads from each
+card's `data-*` attributes, so publishing a job means adding one card.
+
+Per card: `data-result` (id), `data-cats` (any of `house-washing driveways
+concrete windows gutters solar-panels`), `data-kind` (`job` or
+`illustration`), `data-title`, `data-desc`, `data-place` (suburb, optional),
+`data-w`/`data-h`, `data-widths`, `data-before`/`data-after` (image base path,
+files named `<base>-<width>.avif|webp`).
+
+**Photo rule:** a `job` card must be a real Stride job, before and after shot
+from the same position and never edited to exaggerate the difference. The three
+current cards are `illustration` — one stock photo each with the "before"
+darkened digitally — and are labelled as not Stride work on every card, in the
+viewer and in the disclosure. Replace them as real pairs come in. The homepage
+line "Real transformations." only appears once all three featured cards are
+real jobs.
+
+**Porting to `v2/` source:** these changes were made in the built output.
+Mirror them in the v2 templates before the next build or they will be
+overwritten: `assets/js/results.js` (new), the slider block and Results section
+in `assets/css/stride.css`, `beforeAfter()` in `assets/js/stride.js`, the
+`our-work` and homepage markup, the new handle icon, and the nav label
+"Our Work" → "Results".
