@@ -1,0 +1,15 @@
+{
+  "name": "Stride Door Coach",
+  "short_name": "Door Coach",
+  "description": "Door-knocking practice: the sales process, the script and a daily rep log.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#071523",
+  "theme_color": "#071523",
+  "icons": [
+    { "src": "../assets/brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "../assets/brand/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
