@@ -55,7 +55,7 @@
       noun: sv.noun, short: sv.short, spot: sv.spot, show: sv.show, count: sv.count, countTip: sv.countTip,
       stackLine: sv.stackLine, why: sv.why, fiddly: sv.fiddly, whole: sv.whole, scope: sv.scope, diy: sv.diy,
       guy: sv.guy, link: sv.link, throwIn: sv.throwIn, honestLine: HONEST[S.service],
-      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge
+      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge, what: st.what
     };
     t.reasonCap = t.reason.charAt(0).toUpperCase() + t.reason.slice(1);
     return t;
@@ -191,6 +191,12 @@
         return '<li class="' + (lit && !lit[st.k] ? 'dim' : '') + '"><b>' + (i + 1) + '</b><div><strong>' + esc(st.name) + '</strong><span>' + esc(st.what) + '</span><em>' + esc(st.ex) + '</em></div></li>';
       }).join('') + '</ol><p class="proc-out">' + ico('door') + '<span>' + esc(p.out) + '</span></p></section>';
   }
+  // what a homeowner expects from a salesman, against what the coach does
+  function patternHTML() {
+    return '<div class="pat"><div class="pat-head"><span>They expect a salesman to</span><span>So he does this</span></div><ol>' + C.patterns.map(function (p) {
+      return '<li><span class="exp">' + esc(p[0]) + '</span><span class="does">' + esc(p[1]) + '</span></li>';
+    }).join('') + '</ol></div>';
+  }
   function sayOf(o) { return o.steps.map(function (s) { return s[1]; }).join(' // '); }
   function lineHTML(l, strategy) {
     if (l.who === 'move') return '<p class="line move">' + ico('foot') + '<span>' + fmt(l.t, strategy) + '</span></p>';
@@ -283,12 +289,14 @@
         return '<a class="rep' + (r[3] ? ' done' : '') + '" href="#' + r[0] + '"><span class="rep-n">' + (r[3] ? ico('check') : (i + 1)) + '</span><span><h3>' + r[1] + '</h3><p>' + r[2] + '</p></span>' + ico('arrow') + '</a>';
       }).join('') + '</div></section>' +
       '<section class="stack"><h2>The door in five lines</h2><ol class="five">' +
-      '<li><span><b>Human first.</b> Seven seconds before any of it is about you.</span></li>' +
+      '<li><span><b>Break the pattern.</b> Seven seconds with nothing a salesman would say.</span></li>' +
       '<li><span><b>Two steps to the dirt.</b> You and them, facing the problem.</span></li>' +
       '<li><span><b>Go for the price.</b> The front half is only about getting to the count.</span></li>' +
       '<li><span><b>Parts, then price, with a reason.</b> Look at the surface when you say the number.</span></li>' +
       '<li><span><b>A decision today, a name, and leave well.</b></span></li></ol>' +
       '<p class="note">' + ico('scale') + '<span>The coach sells in the US. Queensland has its own door-knocking rules, and they change how you book the job. <button type="button" data-open="law" style="color:var(--accent);font-weight:750;text-decoration:underline;text-underline-offset:3px">Read the six rules</button></span></p></section></div>' +
+      '<section class="stack"><div class="stack" style="gap:6px"><h2>Break the pattern</h2><p class="lede">A homeowner has a script for salespeople, and "not interested" is the end of it. Every line that fits the script triggers it. So he never says the expected line.</p></div>' +
+      patternHTML() + '<div class="row"><a class="btn ghost" href="#delivery">Drill the first seven seconds' + ico('arrow') + '</a></div></section>' +
       '<section class="stack"><div class="stack" style="gap:6px"><h2>When they say no</h2><p class="lede">He never argues an objection. Before there is a price he goes past it. After the price he guides them to a decision. Each one is a fixed set of steps.</p></div>' +
       '<div class="two">' + processHTML('front') + processHTML('back') + '</div>' +
       '<div class="row"><a class="btn" href="#objections">Drill the process' + ico('arrow') + '</a></div></section>';
@@ -317,6 +325,7 @@
       '<div class="convo">' + beatLines(b).map(function (l) { return lineHTML(l); }).join('') + '</div>' +
       coachHTML('move', 'Body', b.move) +
       coachHTML('why', 'Why it works', b.why + (b.strategyNote ? ' ' + C.strategies[S.strategy].coach : '')) +
+      (b.pattern ? '<div class="stack" style="gap:10px"><h3>The pattern, and how he breaks it</h3>' + patternHTML() + '</div>' : '') +
       coachHTML('trap', 'The trap', b.trap, b.who) +
       '<div class="pager"><button type="button" class="btn ghost" data-go="' + (W.i - 1) + '"' + (W.i === 0 ? ' disabled' : '') + ' aria-label="Previous beat">' + ico('back') + '</button>' +
       (W.i < C.beats.length - 1 ? '<button type="button" class="btn" data-go="' + (W.i + 1) + '">Next: ' + esc(C.beats[W.i + 1].title) + ico('arrow') + '</button>'
@@ -452,7 +461,7 @@
     var nextLevel = S.level === 'read' ? 'cue' : S.level === 'cue' ? 'blind' : null;
     document.getElementById('rh').innerHTML = '<div class="result panel"><p class="eyebrow">Run complete</p><p class="big">' + Math.floor(secs / 60) + ':' + ('0' + secs % 60).slice(-2) + '</p>' +
       '<p class="lede" style="text-align:center">' + said + ' lines. ' + (RH.fast ? '<b>' + RH.fast + ' rushed.</b> Run it again and breathe at every pause mark.' : 'None rushed. That is a conversation.') + '</p>' +
-      '<ul class="checks"><li>' + ico('whistle') + '<span>Did you wait for their answer after "have you seen us"?</span></li><li>' + ico('whistle') + '<span>Did you name each part of the job in its own breath?</span></li><li>' + ico('whistle') + '<span>Did you stop talking after the price?</span></li></ul>' +
+      '<ul class="checks"><li>' + ico('whistle') + '<span>Did your first seven seconds sound like a salesman, or like someone who popped over?</span></li><li>' + ico('whistle') + '<span>Did you wait for their answer after "have you seen us"?</span></li><li>' + ico('whistle') + '<span>Did you name each part of the job in its own breath?</span></li><li>' + ico('whistle') + '<span>Did you stop talking after the price?</span></li></ul>' +
       '<div class="row" style="justify-content:center">' + (nextLevel ? '<button type="button" class="btn" data-level="' + nextLevel + '" data-again="1">' + (nextLevel === 'cue' ? 'Again, cues only' : 'Again, from memory') + '</button>' : '') +
       '<button type="button" class="btn ghost" data-again="1">' + ico('redo') + 'Run it again</button><a class="btn ghost" href="#sim">Try a door sim</a></div></div>';
   }
@@ -584,7 +593,7 @@
   function stopOpener() { if (D.raf) cancelAnimationFrame(D.raf); D.raf = 0; }
   function paceLines() {
     return [
-      ['Who you are', C.strategies[S.strategy].bridge],
+      ['The opener', "Hello, hello. // How are you doing? // " + C.strategies[S.strategy].bridge],
       ['The quick price', C.beats[3].lines[0].t + ' ' + C.beats[3].lines[1].t],
       ['The parts', '{stackLine} {why}'],
       ['The price', C.beats[8].lines[0].t + ' ' + C.beats[8].lines[1].t + ' ' + C.beats[8].lines[3].t],
@@ -596,8 +605,8 @@
     var R = 2 * Math.PI * 54;
     return practiceNav() + '<header class="stack"><p class="eyebrow">Delivery</p><h2>The coach\'s most repeated note is "slow down"</h2>' +
       '<p class="lede">Two drills for the two things the words cannot fix: the first seven seconds, and your pace.</p></header>' +
-      '<div class="two"><section class="panel stack"><h3>Seven seconds of being a person</h3>' +
-      '<p class="muted">You get a doorstep. Start the clock and open on what you see. Nothing about Stride until the ring turns green.</p>' +
+      '<div class="two"><section class="panel stack"><h3>Seven seconds that break the pattern</h3>' +
+      '<p class="muted">You get a doorstep. Start the clock and open on what you see. That is the pattern break: nothing a salesman would say until the ring turns green.</p>' +
       '<div class="well cue-card"><span class="eyebrow">What you see</span><q id="cue">' + esc(C.cues[D.cue]) + '</q></div>' +
       '<div class="ring-wrap" id="ring"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="54" stroke-dasharray="' + R.toFixed(1) + '" stroke-dashoffset="' + R.toFixed(1) + '"/></svg>' +
       '<div class="ring-center"><b id="ring-n">7</b><span id="ring-t">Be a person</span></div></div>' +
@@ -639,7 +648,7 @@
       (function tick(now) {
         var s = (now - t0) / 1000;
         if (s < 7) { fg.style.strokeDashoffset = R * (1 - s / 7); nEl.textContent = Math.ceil(7 - s); tEl.textContent = 'Be a person'; }
-        else if (s < 15) { ring.classList.add('phase2'); fg.style.strokeDashoffset = R * (1 - (s - 7) / 8); nEl.textContent = Math.ceil(15 - s); tEl.textContent = 'Now: who you are, as a question'; }
+        else if (s < 15) { ring.classList.add('phase2'); fg.style.strokeDashoffset = R * (1 - (s - 7) / 8); nEl.textContent = Math.ceil(15 - s); tEl.textContent = 'Now: first name, then "have you seen us?"'; }
         else { P.opener++; mark('delivery'); nEl.textContent = '✓'; tEl.textContent = 'Then: two steps'; document.getElementById('op-count').textContent = P.opener + ' openers practised'; D.raf = 0; document.getElementById('op-go').textContent = 'Again'; return; }
         D.raf = requestAnimationFrame(tick);
       })(t0);
@@ -650,6 +659,7 @@
   views.film = function () {
     return '<header class="stack"><p class="eyebrow">Film room</p><h1 style="font-size:clamp(1.9rem,1.3rem + 2.4vw,2.9rem)">What the coach saw at each door</h1>' +
       '<p class="lede">Sixteen doors from three sessions. For each one: what worked, what it cost, and the fix he gave.</p></header>' +
+      '<section class="stack"><div class="stack" style="gap:6px"><h2>The pattern he breaks</h2><p class="lede">His words for it are "avoiding sales patterns". Anything a homeowner expects a salesman to say or do, he replaces.</p></div>' + patternHTML() + '</section>' +
       '<section class="stack"><div class="stack" style="gap:6px"><h2>How he handles a no</h2><p class="lede">Watch any of his doors and it is the same steps each time. Before the price he goes past the objection. After the price he guides them to a decision.</p></div>' +
       '<div class="two">' + processHTML('front') + processHTML('back') + '</div></section>' +
       '<section class="stack"><h2>His ten rules</h2><ol class="rules">' + C.rules.map(function (r) { return '<li><div><b>' + esc(r.t) + '</b><span>' + esc(r.d) + '</span></div></li>'; }).join('') + '</ol></section>' +

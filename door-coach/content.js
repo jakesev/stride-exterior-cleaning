@@ -89,8 +89,8 @@
     anchor: {
       label: 'Job on the street',
       blurb: 'You have a booked job nearby. The neighbour is your proof and your reason for the price.',
-      bridge: "I'm {me}, from Stride. // Have you seen us on {street} at all? We're doing {neighbour} on {runDay}.",
-      reason: "we're already here for {neighbour}",
+      bridge: "My name's {me}. // Have you seen us on {street} at all, the last couple of days?",
+      what: "We're from Stride // we're doing {neighbour} on {runDay}.",      reason: "we're already here for {neighbour}",
       reasonLong: "While we're already on {street} on {runDay} for {neighbour}",
       spots: "we've got room for two more on the day",
       coach: 'Real name, real day. "We are doing the Hendersons on Thursday" makes you a known figure on the street before you have said what you do.'
@@ -98,8 +98,8 @@
     cold: {
       label: 'Cold street',
       blurb: 'No job here yet. You are building the first one, so the run itself is the reason.',
-      bridge: "I'm {me}, from Stride. // Have you seen the ute on {street} at all today? We're lining up a run of homes here for {runDay}.",
-      reason: "we're doing the street in one run",
+      bridge: "My name's {me}. // Have you seen me on {street} at all today?",
+      what: "We're from Stride // we're lining up a run of homes on {street} for {runDay}.",      reason: "we're doing the street in one run",
       reasonLong: "Because we're doing {street} in one run on {runDay}",
       spots: "we're capping the run at five homes",
       coach: 'The first sale on a street is the hard one: the coach puts it at 5 to 10 percent. Once you have a name to drop it goes to 20, 30, even 40. So your only job here is to earn that first name.'
@@ -109,22 +109,28 @@
   /* The ten beats of the door. stage = what the 3D scene shows. */
   var beats = [
     {
-      id: 'hello', half: 'front', title: 'Human first', time: 'First 7 seconds', stage: 'door',
-      goal: 'Be a person who popped over. No pitch yet.',
-      feel: 'This is just someone from down the road.',
+      id: 'hello', half: 'front', title: 'Break the pattern', time: 'First 7 seconds', stage: 'door',
+      goal: 'Say nothing a salesman would say. No company, no service, no offer.',
+      feel: 'Hang on. This is not what I expected.',
+      pattern: true,
       lines: [
-        { who: 'you', t: "Hey, how are you going?" },
-        { who: 'them', t: "Yeah, good thanks. You?" },
-        { who: 'you', t: "Living the dream. // Is that the guard dog? He looks ferocious.", cue: 'React to one real thing' },
+        { who: 'you', t: "Hello, hello. // How are you doing?", cue: 'Pattern break: not a rehearsed greeting' },
+        { who: 'them', t: "Good. How are you?" },
+        { who: 'you', t: "I'm living the dream. // Is that the guard dog? He looks ferocious.", cue: 'Pattern break: react to what is in front of you' },
         { who: 'them', t: "Ha. He's all bark." }
       ],
       move: 'Two steps back from the door, side-on. Smile before you speak. Then stop and let them answer.',
-      why: "Most lost sales are lost to sales resistance, and what you say has little to do with it. Every salesperson opens with who they are and what they sell, so the moment you do the same, their guard goes up before they have heard a word.",
+      why: "A homeowner has a script for salespeople: a knock, \"Hi, I'm so-and-so from such-and-such, we're doing…\", and \"not interested\" is out before you finish. Every line that fits that script triggers it. The coach calls those sales patterns. So his first seven seconds contain nothing a salesman would say. \"Hello, hello.\" \"I'm living the dream.\" A remark about the dog. The reflex has nothing to fire at.",
       trap: "The Duo opened with \"Be quick with you, we were just helping your neighbour Julie\" in one breath. Same words the coach would use, but fired at her with no gap, so it landed as a pitch.",
       who: 'The coach, on the Pitch Perfect Duo',
       ways: [
+        { by: 'Nick', name: '"Can I help you?"', lines: [
+          { who: 'you', t: "Hello, hello. // How are you doing?" },
+          { who: 'them', t: "Fine. Can I help you?" },
+          { who: 'you', t: "I don't know // I was just popping over. My name's {me}.", cue: 'Pattern break: no purpose, no pitch' }
+        ], note: 'His real answer to a suspicious "can I help you?". A salesman would launch into the pitch here. He says he does not know, and that he just popped over.' },
         { by: 'Drew', name: 'The compliment', lines: [
-          { who: 'you', t: "Hey, how are you going today?" },
+          { who: 'you', t: "Hello, hello. How are you doing today?" },
           { who: 'them', t: "So far so good." },
           { who: 'you', t: "I had to stop and meet the expert gardener on the street.", cue: 'Only if the garden earns it' },
           { who: 'them', t: "Ha, I wish." }
@@ -144,32 +150,32 @@
       ]
     },
     {
-      id: 'bridge', half: 'front', title: 'Who you are, as a question', time: '7 to 15 seconds', stage: 'door',
-      goal: 'Say who you are and why you are here, and hand it straight back.',
-      feel: 'Oh, these are the people working on my street.',
+      id: 'bridge', half: 'front', title: 'First name, then a question', time: '7 to 15 seconds', stage: 'door',
+      goal: 'Give your first name and ask if they have seen you. Make them ask what you are doing.',
+      feel: 'Seen you? What is he on about?',
       lines: [
-        { who: 'you', t: '{bridge}' },
-        { who: 'them', t: "No, I haven't. What are you doing?" }
+        { who: 'you', t: '{bridge}', cue: 'Pattern break: first name only, and a question they have to answer' },
+        { who: 'them', t: "No… what are you talking about?" }
       ],
-      move: 'Ask it, then wait. Their "what are you doing?" is the invitation you want.',
-      why: "A question makes it a conversation. \"Have you seen us?\" also frames you as someone already working on the street. In Queensland you must give your name, your business and your reason for calling before any price talk, so this beat carries that too.",
+      move: 'Ask it, then wait. Look a little unsure of yourself. Their "what are you talking about?" is the invitation you want.',
+      why: "They expect \"I'm Nick from Summit Window Cleaning, we're washing windows and giving a discount.\" He says \"My name's Nick. Have you seen me on Waterfront the past couple of days?\" First name only, no company, and a question they have to stop and think about. Now the homeowner is the one asking what you are doing, so you are answering, and that is the opposite of pitching.",
       trap: "Blake listed three neighbours, the service, a joke and a discount without one pause. The coach: \"one big run-on sentence of information.\"",
       who: 'The coach, on Blake',
       strategyNote: true,
       ways: [
         { by: 'Blake', name: 'Do you know…?', only: 'anchor', lines: [
-          { who: 'you', t: "I'm {me}, from Stride. // Do you know {neighbour}, by any chance?" },
+          { who: 'you', t: "Do you know {neighbour}, by any chance?" },
           { who: 'them', t: "Yeah, we know them." },
           { who: 'you', t: "We're helping them out on {runDay}." }
         ], note: 'Blake\'s name-drop works. Say one name, then wait for the nod. He lost the effect by listing three names and carrying straight on.' },
         { by: 'Gabe', name: 'Just popping by', lines: [
-          { who: 'you', t: "I was just popping by. I'm {me}, from Stride // we're down the road helping a few of the neighbours." },
+          { who: 'you', t: "I was just popping by. My name's {me} // we're just down the road helping a few of the neighbours out." },
           { who: 'them', t: "Oh yeah? With what?" }
         ], note: 'Fine words. The coach\'s one note to Gabe: slow down. "It is a conversation, you are not talking at her."' },
         { by: 'Nick', name: 'They have seen you', lines: [
-          { who: 'you', t: "I'm {me}. // Have you seen us on {street} the last couple of days?" },
+          { who: 'you', t: "My name's {me}. // Have you seen us on {street} the last couple of days?" },
           { who: 'them', t: "Yeah, I have actually." },
-          { who: 'you', t: "You have! // That's us, from Stride. I'll show you what we've been doing." }
+          { who: 'you', t: "You have! // I'll show you what we've been doing." }
         ], note: 'When they say yes, be pleased about it. Then go straight to showing them.' }
       ]
     },
@@ -180,6 +186,7 @@
       lines: [
         { who: 'you', t: "I can show you, actually, if you want to take two steps." },
         { who: 'move', t: 'Walk to {spot}. Look at it, not at them.' },
+        { who: 'you', t: '{what}', cue: 'Who you are and why you are here, said at the surface and before any price' },
         { who: 'you', t: '{show}' },
         { who: 'them', t: "Yeah… it has got pretty bad." }
       ],
@@ -191,6 +198,7 @@
         { by: 'Nick', name: 'Spot it before you knock', lines: [
           { who: 'you', t: "I'll show you // it's just this one here." },
           { who: 'move', t: 'You picked the spot from the footpath. Walk straight to it.' },
+          { who: 'you', t: '{what}' },
           { who: 'you', t: '{show}' }
         ], note: 'Walking up, the coach already clocks the dirtiest window: "Rather than pitching them at the door, I am going to try to get them outside."' }
       ]
@@ -519,19 +527,19 @@
       nodes: [
         { stage: 'door', them: "(The door opens.) Hey. How are you?",
           choices: [
-            { v: 'best', g: -12, t: "Good thanks, how's your day going? // Is that the guard dog back there?", reply: "Ha, she's harmless. Yeah, not bad.", c: 'Seven seconds of being a person. She has answered twice and you have not pitched.' },
+            { v: 'best', g: -12, t: "Hello, hello. I'm living the dream. // Is that the guard dog back there?", reply: "Ha, she's harmless. Yeah, not bad.", c: 'Nothing in that fits the script she has for salespeople, so the reflex has nothing to fire at. She has answered twice and you have not pitched.' },
             { v: 'miss', g: 18, t: "Good! I'm {me} from Stride, we're doing {noun} on your street and taking ${saving} off, I can run round and give you a price?", reply: "Oh. Um. Okay…", c: 'She let you, because she is nice. That was still one run-on sentence. The coach to Gabe: "Slow down. It is a conversation."' },
-            { v: 'ok', g: 2, t: "Hi, I'm {me} from Stride Exterior Cleaning.", reply: "Hi…?", c: 'Clear and legal, but it lands cold. One human beat first, then who you are.' }
+            { v: 'ok', g: 6, t: "Hi, I'm {me} from Stride Exterior Cleaning.", reply: "Hi…?", c: 'Name and company is exactly how she expects a salesman to start. That is the pattern. Break it first, first name next, and name Stride when you say what you are doing.' }
           ] },
         { stage: 'door', them: "So what brings you round?",
           choices: [
-            { v: 'best', g: -10, t: "{bridge}", reply: "No, I haven't. What are you doing?", c: 'Name, business, reason, and it ends on a question. She asked what you are doing. That is the invitation.' },
+            { v: 'best', g: -10, t: "{bridge}", reply: "No, I haven't. What are you doing?", c: 'First name only and a question. Now she is the one asking what you are doing, so everything after this is an answer and not a pitch.' },
             { v: 'ok', g: 0, t: "We clean {noun}. We're in the area this week.", reply: "Right.", c: 'True, and flat. You gave her nothing to ask about.' },
             { v: 'miss', g: 14, t: "We're the best-rated exterior cleaners in the Redlands and we've got a special on today only.", reply: "Mm-hm.", c: 'A claim and a deadline. That is the sales pattern everyone has heard before, and "today only" has to be true to say it.' }
           ] },
         { stage: 'pain', them: "What are you doing, exactly?",
           choices: [
-            { v: 'best', g: -14, t: "I can show you, actually, if you want to take two steps. // {show}", reply: "Oh. Yeah, that has got bad.", c: 'She is off the door and looking at it. Now it is the two of you against the dirt.' },
+            { v: 'best', g: -14, t: "I can show you, actually, if you want to take two steps. // {what} {show}", reply: "Oh. Yeah, that has got bad.", c: 'She is off the door and looking at it. Now it is the two of you against the dirt.' },
             { v: 'ok', g: 2, t: "We clean {whole}. It makes a big difference.", reply: "I'm sure.", c: 'Telling. She is still on the doorstep picturing "the idea" of it.' },
             { v: 'miss', g: 10, t: "Honestly, your {noun} really need it. When did you last have it done?", reply: "It's not that bad.", c: 'From the doorstep that sounds like criticism. At the surface she would have said it herself.' }
           ] },
@@ -573,13 +581,13 @@
       nodes: [
         { stage: 'door', them: "(Door opens a crack.) I'm good. What's up?",
           choices: [
-            { v: 'best', g: -8, t: "I'm {me}, from Stride. // Have you seen us on {street} at all?", reply: "What are you talking about?", c: 'Short, and it ends on a question. She is curious now, which beats defensive.' },
+            { v: 'best', g: -8, t: "My name's {me}. // Have you seen us on {street} at all?", reply: "What are you talking about?", c: 'First name, no company, and a question she did not expect. She is curious now, which beats defensive.' },
             { v: 'miss', g: 15, t: "I won't take much of your time. We're offering discounted {short}s in your area today.", reply: "No, thank you.", c: '"I won\'t take much of your time" is what every salesman says. Her guard was up before you finished.' },
             { v: 'ok', g: 4, t: "Sorry to bother you! Have you got a minute?", reply: "Not really.", c: 'An apology and a yes or no question. You gave her the easy way out.' }
           ] },
         { stage: 'pain', them: "What is it you're doing?",
           choices: [
-            { v: 'best', g: -10, t: "I'll show you // you want to take two steps? {show}", reply: "(She takes one step out.) I have a housekeeper for that.", c: 'She only came one step. That still gets her hand off the door.' },
+            { v: 'best', g: -10, t: "I'll show you // you want to take two steps? {what} {show}", reply: "(She takes one step out.) I have a housekeeper for that.", c: 'She only came one step. That still gets her hand off the door.' },
             { v: 'ok', g: 4, t: "We do {short}s. {whole}.", reply: "I have a housekeeper for that.", c: 'Fine, but said through a doorway. Nothing for her to look at.' },
             { v: 'miss', g: 12, t: "Exterior cleaning. Can I ask who does yours at the moment?", reply: "I have someone. I'm all set.", c: 'You invited the objection and got it.' }
           ] },
@@ -621,13 +629,13 @@
       nodes: [
         { stage: 'door', them: "(A couple, pulling into the driveway.) Howdy.",
           choices: [
-            { v: 'best', g: -10, t: "Hello, hello. How's your day been? // I'm {me}, from Stride. Do you know {neighbour}?", reply: "Yeah, we know them. Why's that?", c: 'One name, then a pause. They asked why. Drew said the whole pitch in one breath here.' },
+            { v: 'best', g: -10, t: "Hello, hello. How's your day been? // My name's {me}. Do you know {neighbour}?", reply: "Yeah, we know them. Why's that?", c: 'One name, then a pause. They asked why. Drew said the whole pitch in one breath here.' },
             { v: 'ok', g: 2, t: "Hi! We're doing {neighbour} and taking ${saving} off for neighbours. I can count it up and give you that rate.", reply: "Where are you from?", c: 'All correct, and all at once. They had to ask who you even are.' },
             { v: 'miss', g: 14, t: "Hi folks, quick one. We've done most of the street already.", reply: "Have you? Who?", c: 'If it is not true, do not say it. One real name beats ten vague ones, and they will check.' }
           ] },
         { stage: 'pain', them: "And what are you doing for them?",
           choices: [
-            { v: 'best', g: -12, t: "I'll show you on yours // {show} Same thing at theirs on {runDay}. I'll {count} and give you the neighbour price.", reply: "You do all of it? …Yeah, go on.", c: 'Shown on their own house, then the assumptive price.' },
+            { v: 'best', g: -12, t: "We're from Stride. I'll show you on yours // {show} Same thing at theirs on {runDay}. I'll {count} and give you the neighbour price.", reply: "You do all of it? …Yeah, go on.", c: 'Shown on their own house, then the assumptive price.' },
             { v: 'ok', g: 0, t: "A full {short}. I can do you a quote if you like?", reply: "Do you want a quote, honey?", c: 'A yes or no question, so now they are consulting each other about whether to let you look.' },
             { v: 'miss', g: 10, t: "Everything. Honestly it's the best value on the street.", reply: "Right.", c: 'A claim with nothing to look at.' }
           ] },
@@ -825,7 +833,7 @@
 
   var rules = [
     { t: 'People like to buy. They hate being sold.', d: 'Most lost doors are lost to self-defence. Wrong words lose far fewer. The coach reckons 70 to 80 percent would say yes if they truly heard the offer.' },
-    { t: 'Nothing about you for seven seconds.', d: 'Be a person first. Then who you are, as a question.' },
+    { t: 'Break the pattern.', d: 'For seven seconds, say nothing a salesman would say. Then your first name and a question. No company, no service, no offer.' },
     { t: 'A conversation has gaps.', d: 'Short lines. Pauses. Your voice going up and down. A filler word or two so you sound human.' },
     { t: 'Get them off the door.', d: 'Two steps to the dirt. It becomes you and them against the problem.' },
     { t: 'Front half: go for the price, not the sale.', d: 'You cannot sell until there is a number. Every front-half move is about getting to the count.' },
@@ -834,6 +842,19 @@
     { t: 'Every discount needs a reason.', d: 'On the street already, last spot on the run, a review. No reason looks desperate.' },
     { t: 'After the price, guide them to a decision.', d: '"I don\'t know" is a no. Stay in it, find the real hesitation, give a reason, make one move, ask.' },
     { t: 'Do the job, not the outcome.', d: 'Take each person as far as they will comfortably go, leave with a name, carry the mood to the next door.' }
+  ];
+
+  /* The pattern he breaks. Left: what a homeowner expects from a salesman. Right: what the coach does. */
+  var patterns = [
+    ['A rehearsed "Hi there, how are you today?"', '"Hello, hello." Then a remark about whatever just happened: "You were ready for me!"'],
+    ['"Good thanks, and yourself?"', '"I\'m living the dream."'],
+    ['Name, company and service in one breath', 'First name only, then a question: "Have you seen me on Waterfront the past couple of days?"'],
+    ['A reason for calling, delivered straight away', '"I don\'t know, I was just popping over."'],
+    ['Polished and word-perfect', '"Just a dude." Filler words, "kind of", thinking as he talks.'],
+    ['Stands at the door and talks', '"You want to take two steps?" He walks to the window.'],
+    ['"Would you like a free quote?" and waits', '"I\'ll take a quick look, just so you know." He is already walking.'],
+    ['Argues the objection, or gives up', '"Most people have a guy." Or a joke: "Is it the service, or the haircut?"'],
+    ['Stares at you waiting for a yes', 'Says the price looking at the window.']
   ];
 
   var cues = [
@@ -847,7 +868,7 @@
     intro: 'The coach works in the US. Door-knocking in Queensland falls under the Australian Consumer Law rules for unsolicited sales. This is a plain summary from the ACCC and Queensland Government pages, not legal advice. Check the detail with the Office of Fair Trading before your first run.',
     points: [
       ['Hours', 'Knock 9am to 6pm on weekdays and 9am to 5pm on Saturdays. No Sundays, no public holidays.'],
-      ['Say who you are', 'Give your name, the business and why you are there before you talk price. The app does it in beat two, after one human hello.'],
+      ['Say who you are', 'You must tell them your name, the business and why you are there before you start selling. The coach never names his company at the door. This script follows him for the first two beats, then names Stride and the reason in beat three, at the surface and before any price. Wear the Stride shirt. If you want to be more cautious, name Stride in beat two.'],
       ['Leave when asked', 'If they ask you to go, go, and do not call back for 30 days. A Do Not Knock sticker counts. So: one light loop on a reason, none on a refusal.'],
       ['Over $100: put it in writing', 'A door-knocked job over $100 needs a written agreement and a 10-business-day cooling-off notice.'],
       ['No work or money in the cooling-off', 'You cannot start the job or take payment, deposit included, until those ten business days are up. So the decision is made today and the work happens on the run day.'],
@@ -860,6 +881,6 @@
   };
 
   window.DC = window.DC || {};
-  window.DC.content = { services: services, strategies: strategies, beats: beats, process: process, objections: objections,
+  window.DC.content = { services: services, strategies: strategies, beats: beats, patterns: patterns, process: process, objections: objections,
     scenarios: scenarios, film: film, rules: rules, cues: cues, qld: qld };
 })();

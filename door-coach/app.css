@@ -474,6 +474,22 @@ tr.on td { background: var(--accent-wash); }
 .segs strong { display: block; font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
 .segs span { display: block; font-size: 1.06rem; font-weight: 650; color: var(--ink); line-height: 1.4; }
 
+/* ---------- the pattern table ---------- */
+.pat { border: 1.5px solid var(--line-2); border-radius: var(--r-lg); overflow: hidden; background: var(--card); }
+.pat-head, .pat li { display: grid; grid-template-columns: 1fr 1fr; }
+.pat-head span { padding: 10px 16px; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg-2); }
+.pat-head span + span { color: var(--accent); }
+.pat li { border-top: 1px solid var(--line); }
+.pat li span { padding: 12px 16px; min-width: 0; font-size: .95rem; }
+.pat .exp { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-2); }
+.pat .does { color: var(--ink); font-weight: 650; background: var(--accent-wash); }
+@media (max-width: 560px) {
+  .pat-head { display: none; }
+  .pat li { grid-template-columns: 1fr; }
+  .pat li span { padding: 10px 14px; }
+  .pat .exp { padding-bottom: 4px; font-size: .88rem; }
+}
+
 /* ---------- sheets ---------- */
 dialog.sheet {
   border: 0; padding: 0; background: var(--card); color: var(--text); width: min(560px, 100%); max-width: 100%; max-height: min(88vh, 100%);
