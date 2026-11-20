@@ -30,3 +30,21 @@ For the real domain, build without any flags and publish `v2/site`.
 - **Photography is licensed stock**, clearly labelled as demonstration.
 - **No customer reviews** — the site shows an honest empty state rather than
   invented testimonials.
+
+## Door Coach (internal training tool)
+
+`door-coach/` is a self-contained practice app for door-knocking: the script,
+the sales process and the coach's feedback, rehearsed out loud. It is not
+linked from the site and is marked `noindex`, but anyone with the address can
+open it:
+
+https://jakesev.github.io/stride-exterior-cleaning/door-coach/
+
+It is hand-written (no build step) and is not produced by `build.mjs`. If the
+site build ever clears this folder before writing, keep a copy of
+`door-coach/` and restore it afterwards.
+
+- `content.js` holds every line of script, objection, door scenario and
+  film-room note. Edit wording there.
+- `scene.js` is the 3D doorstep (three.js r128, vendored in `vendor/`).
+- `app.js` and `app.css` are the interface.
