@@ -11,7 +11,7 @@
   var saved = load();
   var S = Object.assign({
     me: 'Jake', street: 'Wattle Street', neighbour: 'the Hendersons at number 14', runDay: '',
-    service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {}, sayFirst: false, example: true
+    service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {}, sayFirst: false, pushback: true, example: true
   }, saved.S || {});
   var P = Object.assign({ days: {}, today: {}, simBest: {}, obj: {}, opener: 0, rehearsals: 0 }, saved.P || {});
   var todayKey = new Date().toISOString().slice(0, 10);
@@ -133,7 +133,7 @@
     leave: { chip: 'Leaving well', cls: 'back', vs: '<i class="dot you"></i>A wave, a name, the next door' },
     shut: { chip: 'Door closed', cls: 'count', vs: 'On to the next one' }
   };
-  var GUARD = { hello: .82, bridge: .66, steps: .44, quick: .34, loop: .78, count: .3, back: .3, stack: .22, price: .3, book: .06, leave: .25 };
+  var GUARD = { hello: .82, bridge: .66, steps: .44, quick: .34, loop: .78, count: .3, back: .3, stack: .22, price: .3, stall: .5, book: .06, leave: .25 };
   function stageHTML() {
     return '<div class="stage" id="stage"><div class="stage-fallback" hidden>The 3D doorstep needs WebGL, which this browser has switched off. Everything else works.</div>' +
       '<div class="stage-ui"><span class="stage-chip" id="st-chip"><i></i><span></span></span>' +
@@ -169,9 +169,32 @@
   }
 
   /* ---------------- shared bits ---------------- */
+  function stepInfo(k) {
+    if (k === 'out' || k === 'big') return { n: k === 'out' ? '✓' : '!', name: C.process[k].name, side: k };
+    var side = k.charAt(0) === 'f' ? 'front' : 'back', i = +k.slice(1);
+    return { n: i, name: C.process[side].steps[i - 1].name, side: side };
+  }
+  function stepTag(k) { var s = stepInfo(k); return '<span class="steptag"><b>' + s.n + '</b>' + esc(s.name) + '</span>'; }
+  function litOf(lines) { var o = {}; lines.forEach(function (l) { var k = l.step || l[0]; if (k) o[k] = true; }); return o; }
+  // compact strip of rungs; lit = map of step keys to highlight (omit to light none)
+  function ladderHTML(side, lit) {
+    var p = C.process[side];
+    return '<ol class="ladder ' + side + '" aria-label="' + esc(p.title) + '">' + p.steps.map(function (st, i) {
+      return '<li class="' + (lit && lit[st.k] ? 'on' : '') + '"><b>' + (i + 1) + '</b>' + esc(st.name) + '</li>';
+    }).join('') + '</ol>';
+  }
+  // the full explainer: every rung, what it is, and the coach's own words
+  function processHTML(side, lit) {
+    var p = C.process[side];
+    return '<section class="proc ' + side + '"><header><span class="tag ' + (side === 'front' ? 'blue' : 'good') + '">' + esc(p.when) + '</span><h3>' + esc(p.title) + '</h3><p>' + esc(p.line) + '</p></header>' +
+      '<ol class="proc-steps">' + p.steps.map(function (st, i) {
+        return '<li class="' + (lit && !lit[st.k] ? 'dim' : '') + '"><b>' + (i + 1) + '</b><div><strong>' + esc(st.name) + '</strong><span>' + esc(st.what) + '</span><em>' + esc(st.ex) + '</em></div></li>';
+      }).join('') + '</ol><p class="proc-out">' + ico('door') + '<span>' + esc(p.out) + '</span></p></section>';
+  }
+  function sayOf(o) { return o.steps.map(function (s) { return s[1]; }).join(' // '); }
   function lineHTML(l, strategy) {
     if (l.who === 'move') return '<p class="line move">' + ico('foot') + '<span>' + fmt(l.t, strategy) + '</span></p>';
-    return '<p class="line ' + l.who + '"><span class="who">' + (l.who === 'you' ? 'You' : 'Homeowner') + '</span>' + fmt(l.t, strategy) +
+    return '<p class="line ' + l.who + (l.step ? ' stepped' : '') + '">' + (l.step ? stepTag(l.step) : '<span class="who">' + (l.who === 'you' ? 'You' : 'Homeowner') + '</span>') + fmt(l.t, strategy) +
       (l.cue ? '<span class="cue">' + esc(l.cue) + '</span>' : '') + '</p>';
   }
   function coachHTML(kind, title, text, cite) {
@@ -239,10 +262,10 @@
   views.today = function () {
     var pr = prices(S.service), n = streak();
     var reps = [
-      ['walk', 'Walk the door', 'Eleven beats, about two minutes. See where everyone stands.', P.today.walk],
+      ['walk', 'Walk the door', 'Twelve beats, about two minutes. See where everyone stands.', P.today.walk],
       ['rehearse', 'Rehearse out loud', 'The homeowner talks, you answer. Read it, then cue it, then go blind.', P.today.rehearse],
       ['sim', 'Run a door', 'Pick your reply and watch their guard move. The coach marks every choice.', P.today.sim],
-      ['objections', 'Six objections', 'Answer out loud before you flip the card.', P.today.obj]
+      ['objections', 'Six objections', 'Build each answer on his process, out loud, before you flip the card.', P.today.obj]
     ];
     return '<section class="hero"><div class="hero-copy"><p class="eyebrow">Stride Door Coach' + (n > 1 ? ' · ' + n + ' days running' : '') + '</p>' +
       '<h1>Knock like a neighbour.</h1>' +
@@ -265,7 +288,10 @@
       '<li><span><b>Go for the price.</b> The front half is only about getting to the count.</span></li>' +
       '<li><span><b>Parts, then price, with a reason.</b> Look at the surface when you say the number.</span></li>' +
       '<li><span><b>A decision today, a name, and leave well.</b></span></li></ol>' +
-      '<p class="note">' + ico('scale') + '<span>The coach sells in the US. Queensland has its own door-knocking rules, and they change how you book the job. <button type="button" data-open="law" style="color:var(--accent);font-weight:750;text-decoration:underline;text-underline-offset:3px">Read the six rules</button></span></p></section></div>';
+      '<p class="note">' + ico('scale') + '<span>The coach sells in the US. Queensland has its own door-knocking rules, and they change how you book the job. <button type="button" data-open="law" style="color:var(--accent);font-weight:750;text-decoration:underline;text-underline-offset:3px">Read the six rules</button></span></p></section></div>' +
+      '<section class="stack"><div class="stack" style="gap:6px"><h2>When they say no</h2><p class="lede">He never argues an objection. Before there is a price he goes past it. After the price he guides them to a decision. Each one is a fixed set of steps.</p></div>' +
+      '<div class="two">' + processHTML('front') + processHTML('back') + '</div>' +
+      '<div class="row"><a class="btn" href="#objections">Drill the process' + ico('arrow') + '</a></div></section>';
   };
   after.today = function () { setStage('door', .7, 'At the door'); };
 
@@ -287,6 +313,7 @@
       (ws.length ? '<div class="ways"><div class="ways-head"><b>Ways to say it</b><div class="chips"><button type="button" class="chip" data-way="-1" aria-pressed="' + (wi < 0) + '">The standard</button>' +
         ws.map(function (w, i) { return '<button type="button" class="chip" data-way="' + i + '" aria-pressed="' + (wi === i) + '">' + esc(w.name) + '</button>'; }).join('') + '</div></div>' +
         (wi >= 0 ? '<p class="way-note"><b>' + esc(ws[wi].by) + '.</b> ' + fmt(ws[wi].note) + '</p>' : '') + '</div>' : '') +
+      (b.process ? processHTML(b.process, litOf(beatLines(b))) : '') +
       '<div class="convo">' + beatLines(b).map(function (l) { return lineHTML(l); }).join('') + '</div>' +
       coachHTML('move', 'Body', b.move) +
       coachHTML('why', 'Why it works', b.why + (b.strategyNote ? ' ' + C.strategies[S.strategy].coach : '')) +
@@ -313,6 +340,7 @@
       out += '<section class="sbeat"><div class="sbeat-head"><span class="tag blue">' + (i + 1) + '</span><h3>' + esc(b.title) + '</h3><span class="muted" style="font-size:.86rem">' + esc(b.time) + '</span></div>' +
         (ws.length ? '<div class="chips"><button type="button" class="chip" data-way="-1" data-beat="' + b.id + '" aria-pressed="' + (wi < 0) + '">The standard</button>' +
           ws.map(function (w, k) { return '<button type="button" class="chip" data-way="' + k + '" data-beat="' + b.id + '" aria-pressed="' + (wi === k) + '">' + esc(w.by) + ': ' + esc(w.name) + '</button>'; }).join('') + '</div>' : '') +
+        (b.process ? ladderHTML(b.process, litOf(beatLines(b))) : '') +
         '<div class="convo">' + beatLines(b).map(function (l) { return lineHTML(l); }).join('') + '</div>' +
         '<p class="why">' + (wi >= 0 ? fmt(ws[wi].note) : fmt(b.goal + ' ' + b.why.split('. ')[0] + '.')) + '</p></section>';
     });
@@ -349,8 +377,11 @@
   function rhLines() {
     var out = [];
     C.beats.forEach(function (b) {
-      if (b.id === 'loop' || b.id === 'leave') return;
-      beatLines(b).forEach(function (l) { out.push({ b: b, who: l.who, t: l.t, cue: l.cue }); });
+      if (b.id === 'leave' || (b.process && !S.pushback)) return;
+      beatLines(b).forEach(function (l) {
+        if (S.pushback && l.easy) return; // the easy yes is replaced by the pushback beat
+        out.push({ b: b, who: l.who, t: l.t, cue: l.cue, step: l.step });
+      });
     });
     return out;
   }
@@ -368,6 +399,7 @@
     document.getElementById('rh').innerHTML = '<header class="stack"><p class="eyebrow">Rehearse</p><h2>Say the whole door out loud</h2>' +
       '<p class="lede">The homeowner speaks. You answer out loud, standing up, then tap. Take every pause mark. If it sounds like a script, slow down.</p></header>' +
       levelSeg() +
+      '<button type="button" class="toggle" id="pushback" aria-pressed="' + !!S.pushback + '"><i></i>Include pushback: one brush-off before the price, one stall after it</button>' +
       '<ul class="checks"><li>' + ico('check') + '<span>Short lines. Hand it back after each one.</span></li><li>' + ico('check') + '<span>Eyes on the surface when you say the price.</span></li><li>' + ico('check') + '<span>The app times you. Past about 185 words a minute it flags the line as rushed.</span></li></ul>' +
       '<button type="button" class="btn big" id="rh-go">' + ico('door') + 'Knock</button>' +
       (P.rehearsals ? '<p class="muted" style="text-align:center;font-size:.9rem">' + P.rehearsals + ' full run' + (P.rehearsals > 1 ? 's' : '') + ' so far</p>' : '');
@@ -376,7 +408,7 @@
   function rhPrompt(l) {
     var full = fmt(l.t);
     if (l.who === 'move' || S.level === 'read') return full;
-    if (S.level === 'cue') { var w = plain(l.t).split(/\s+/); return esc(w.slice(0, 3).join(' ')) + ' …'; }
+    if (S.level === 'cue') { if (l.step) return '<span class="muted">Your words for this step</span>'; var w = plain(l.t).split(/\s+/); return esc(w.slice(0, 3).join(' ')) + ' …'; }
     return '<span class="muted">' + esc(l.b.title) + '</span>';
   }
   function rhStep(i) {
@@ -392,8 +424,9 @@
     var mine = l.who !== 'them';
     el.innerHTML = '<div class="meter"><span>' + esc(halfName(b.half)) + ' · ' + esc(b.title) + '</span><div class="meter-bar"><i style="width:' + Math.round(i / RH.lines.length * 100) + '%"></i></div></div>' +
       '<div class="history" id="rh-hist">' + hist + '</div>' +
-      '<div class="turn ' + (mine ? 'yours' : 'theirs') + '"><h4><span>' + (l.who === 'them' ? 'Homeowner' : l.who === 'move' ? 'Do this' : 'Your line') + '</span>' +
+      '<div class="turn ' + (mine ? 'yours' : 'theirs') + '"><h4><span>' + (l.who === 'them' ? 'Homeowner' : l.who === 'move' ? 'Do this' : l.step ? stepTag(l.step) : 'Your line') + '</span>' +
       (l.who === 'them' ? '<span class="speaking" aria-hidden="true"><i></i><i></i><i></i></span>' : '') + '</h4>' +
+      (l.step && l.b.process ? ladderHTML(l.b.process, litOf([l])) : '') +
       '<p class="say">' + rhPrompt(l) + '</p>' +
       (l.who === 'you' ? '<p class="hint">' + (S.level === 'read' ? (l.cue ? esc(l.cue) + '. ' : '') + esc(b.goal) : esc(b.goal)) + '</p>' : '') + '</div>' +
       '<button type="button" class="btn big' + (mine ? '' : ' ghost') + '" id="rh-next">' + (l.who === 'them' ? 'Skip' : l.who === 'move' ? 'Done' : 'Said it') + '</button>';
@@ -479,6 +512,7 @@
     var last = M.i === s.nodes.length - 1, shut = M.guard >= 100 && !s.independent;
     document.getElementById('sim-verdict').innerHTML = '<div class="verdict"><div class="convo">' + lineHTML({ who: 'them', t: c.reply }, M.strat) + '</div>' +
       '<div class="coach ' + (c.v === 'miss' ? 'trap' : 'why') + '"><span class="coach-ico">' + ico('whistle') + '</span><div><h4>' + label[1] + '</h4><p>' + fmt(c.c, M.strat) + '</p></div></div>' +
+      (n.obj ? '<div class="well stack" style="gap:8px"><p style="font-size:.86rem;font-weight:750;color:var(--text-2)">That was an objection ' + (n.obj === 'front' ? 'before the price. He goes past it:' : 'after the price. He guides them through it:') + '</p>' + ladderHTML(n.obj) + '</div>' : '') +
       '<button type="button" class="btn big" id="sim-next">' + (last || shut ? 'See how it ended' : 'Next moment') + ico('arrow') + '</button></div>';
     document.getElementById('sim-next').addEventListener('click', function () { if (last || shut) simEnd(shut); else { M.i++; simNode(); } });
     document.getElementById('sim-verdict').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -514,7 +548,13 @@
     var o = O.order[O.i % O.order.length];
     setStage(o.stage === 'front' ? 'door' : 'pain', o.hard ? .95 : o.stage === 'front' ? .75 : .5, o.stage === 'front' ? 'Front half: no offer yet' : 'Back half: price is out', o.stage);
     var nailed = C.objections.filter(function (x) { return P.obj[x.id] === 2; }).length;
-    el.innerHTML = '<header class="stack"><p class="eyebrow">Objections</p><h2>Answer out loud, then flip</h2>' +
+    var lit = litOf(o.steps), side = o.stage;
+    var segs = '<ol class="segs">' + o.steps.map(function (st) {
+      var inf = stepInfo(st[0]);
+      return '<li class="' + inf.side + '"><b>' + inf.n + '</b><div><strong>' + esc(inf.name) + '</strong><span>' + fmt(st[1]) + '</span></div></li>';
+    }).join('') + '</ol>';
+    el.innerHTML = '<header class="stack"><p class="eyebrow">Objections</p><h2>Build your answer on his process</h2>' +
+      '<p class="muted" style="font-size:.95rem">' + esc(C.process[side].line) + ' <button type="button" data-open="process" style="color:var(--accent);font-weight:750;text-decoration:underline;text-underline-offset:3px">See both ladders</button></p>' +
       '<div class="row" style="justify-content:space-between"><div class="seg" role="group" aria-label="Filter">' + [['all', 'All'], ['front', 'Front half'], ['back', 'Back half']].map(function (f) {
         return '<button type="button" data-ofilter="' + f[0] + '" aria-pressed="' + (O.filter === f[0]) + '">' + f[1] + '</button>';
       }).join('') + '</div><span class="tag good">' + nailed + ' of ' + C.objections.length + ' nailed</span></div>' +
@@ -523,9 +563,10 @@
       '<div class="face front"><div class="row" style="justify-content:space-between"><span class="tag ' + (o.stage === 'front' ? 'blue' : 'good') + '">' + (o.stage === 'front' ? 'Front half' : 'Back half') + '</span>' +
       '<button type="button" class="btn ghost sm" id="obj-say" aria-label="Hear it">' + ico('sound') + 'Hear it</button></div>' +
       '<p class="obj-q">“' + fmt(o.them) + '”</p>' +
+      (o.hard ? '<p class="muted" style="font-size:.9rem">Is this one a smokescreen, or real?</p>' : '<div class="stack" style="gap:8px"><p class="muted" style="font-size:.86rem;font-weight:750">Say it out loud, one step at a time:</p>' + ladderHTML(side) + '</div>') +
       '<button type="button" class="btn big" id="obj-flip"' + (O.flipped ? ' tabindex="-1"' : '') + '>I\'ve answered. Show me the coach\'s</button></div>' +
       '<div class="face back"' + (O.flipped ? '' : ' inert') + '><p class="feel"><b>What it means</b><span>' + esc(o.means) + '</span></p>' +
-      '<h3>' + esc(o.move) + '</h3><div class="convo">' + lineHTML({ who: 'you', t: o.say }) + '</div>' +
+      (o.hard ? '' : ladderHTML(side, lit)) + segs +
       '<div class="coach why"><span class="coach-ico">' + ico('whistle') + '</span><div><h4>Why</h4><p>' + fmt(o.why) + '</p><cite>' + esc(o.by) + '</cite></div></div>' +
       '<div class="rate" role="group" aria-label="How did you go?"><button type="button" class="r0" data-rate="0">Missed it</button><button type="button" class="r1" data-rate="1">Close</button><button type="button" class="r2" data-rate="2">Nailed it</button></div></div>' +
       '</div></div>';
@@ -547,7 +588,7 @@
       ['The quick price', C.beats[3].lines[0].t + ' ' + C.beats[3].lines[1].t],
       ['The parts', '{stackLine} {why}'],
       ['The price', C.beats[8].lines[0].t + ' ' + C.beats[8].lines[1].t + ' ' + C.beats[8].lines[3].t],
-      ['"Let me think about it"', C.objections.filter(function (o) { return o.id === 'think'; })[0].say]
+      ['"Let me think about it"', sayOf(C.objections.filter(function (o) { return o.id === 'think'; })[0])]
     ];
   }
   views.delivery = function () {
@@ -609,6 +650,8 @@
   views.film = function () {
     return '<header class="stack"><p class="eyebrow">Film room</p><h1 style="font-size:clamp(1.9rem,1.3rem + 2.4vw,2.9rem)">What the coach saw at each door</h1>' +
       '<p class="lede">Sixteen doors from three sessions. For each one: what worked, what it cost, and the fix he gave.</p></header>' +
+      '<section class="stack"><div class="stack" style="gap:6px"><h2>How he handles a no</h2><p class="lede">Watch any of his doors and it is the same steps each time. Before the price he goes past the objection. After the price he guides them to a decision.</p></div>' +
+      '<div class="two">' + processHTML('front') + processHTML('back') + '</div></section>' +
       '<section class="stack"><h2>His ten rules</h2><ol class="rules">' + C.rules.map(function (r) { return '<li><div><b>' + esc(r.t) + '</b><span>' + esc(r.d) + '</span></div></li>'; }).join('') + '</ol></section>' +
       C.film.map(function (f) {
         return '<section class="stack"><div><h2>' + esc(f.title) + '</h2><p class="muted">' + esc(f.sub) + '</p></div><div class="reel">' + f.reps.map(function (r) {
@@ -658,6 +701,10 @@
       '<div class="stack" style="gap:6px">' + C.qld.links.map(function (l) { return '<a href="' + l[1] + '" target="_blank" rel="noopener">' + esc(l[0]) + '</a>'; }).join('') + '</div>');
   }
 
+  function openProcess() {
+    sheet('How he handles a no', '<p class="muted">He never argues an objection. Which ladder you use depends on one thing: is there a price on the table yet?</p>' + processHTML('front') + processHTML('back'));
+  }
+
   /* ---------------- events ---------------- */
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button, a');
@@ -666,6 +713,8 @@
     if (d.close) return closeSheet();
     if (d.open === 'setup') return openSetup();
     if (d.open === 'law') return openLaw();
+    if (d.open === 'process') return openProcess();
+    if (t.id === 'pushback') { S.pushback = !S.pushback; save(); t.setAttribute('aria-pressed', S.pushback); RH.lines = rhLines(); return; }
     if (d.strategy) { S.strategy = d.strategy; save(); return render(); }
     if (d.service) { S.service = d.service; save(); return render(); }
     if (d.route) { location.hash = d.route; return; }

@@ -203,7 +203,7 @@
         { who: 'you', t: "{reasonLong}, we take ${saving} off each home." },
         { who: 'you', t: "I'll {count} and give you a quick price, just so you know. // Thirty seconds, I'll meet you back here." },
         { who: 'move', t: 'Nod. Turn your feet. Start walking before they answer.' },
-        { who: 'them', t: "Yeah, okay." }
+        { who: 'them', t: "Yeah, okay.", easy: true }
       ],
       move: 'Say it as something you do for everyone. It should not sound like a question.',
       why: "\"Do you want a quote?\" is a yes or no question from a stranger, and the safe answer is always no. \"I'll give you a quick price, just so you know\" is a courtesy. Now they have to go out of their way to stop you, and most people will not.",
@@ -222,13 +222,16 @@
     },
     {
       id: 'loop', half: 'front', title: 'If they brush you off', time: 'Only when needed', stage: 'door', guard: 0.75,
-      goal: 'Agree, give one small reason, go back for the price.',
+      goal: 'Go past the objection without answering it: disarm, one small reason, shrink the ask, move.',
       feel: 'Fine. Thirty seconds will not hurt.',
+      process: 'front',
       lines: [
         { who: 'them', t: "We're right, thanks. We've got a guy." },
-        { who: 'you', t: "Most people do. // {reasonCap}, so it's a fair bit cheaper." },
-        { who: 'you', t: "Got my runners on. I'll take a quick look and meet you back here." },
-        { who: 'move', t: 'Nod and go. You are asking for thirty seconds, nothing more.' }
+        { who: 'you', step: 'f1', t: "Most people do." },
+        { who: 'you', step: 'f2', t: "{reasonCap}, so it's a fair bit cheaper." },
+        { who: 'you', step: 'f3', t: "I'll take thirty seconds and at least let you know." },
+        { who: 'you', step: 'f4', t: "Got my runners on. I'll meet you back here." },
+        { who: 'move', t: 'Nod and go before they answer. You are asking for thirty seconds, nothing more.' }
       ],
       move: 'One light loop. If they give you a reason, answer it once. If they say no again or ask you to go, thank them and leave.',
       why: "There is no offer on the table yet, so this \"no\" has nothing to do with your price. The coach calls it a smokescreen: a reflex from someone who does not want to be sold. So do not argue with it. Agree, give a tiny reason, and go back for the price.",
@@ -237,14 +240,28 @@
       ways: [
         { by: 'Dylan', name: 'The haircut', lines: [
           { who: 'them', t: "Um, actually, no thanks." },
-          { who: 'you', t: "Is it more the service, or the haircut that's putting you off?" },
+          { who: 'you', step: 'f1', t: "Is it more the service, or the haircut that's putting you off?" },
           { who: 'them', t: "Ha! No, the haircut's fine." },
-          { who: 'you', t: "Twenty seconds. I'll let you know and get out of your hair. // Bit of information never hurts." }
+          { who: 'you', step: 'f3', t: "Twenty seconds. I'll let you know and get out of your hair." },
+          { who: 'you', step: 'f2', t: "Bit of information never hurts." }
         ], note: 'A joke drops the guard, and then she said "oh, okay". The coach: "her saying no is not logical, it is just a bodily reaction."' },
         { by: 'Nick', name: 'Busy right now', lines: [
           { who: 'them', t: "I'm in the middle of something." },
-          { who: 'you', t: "That's why we're here // you keep going. I'll be thirty seconds and meet you back here." }
-        ], note: 'The coach\'s fix for Drew and the ice-cream bloke: turn the reason they cannot talk into the reason you will be quick.' }
+          { who: 'you', step: 'f1', t: "No stress, you keep going." },
+          { who: 'you', step: 'f2', t: "That's why we're here." },
+          { who: 'you', step: 'f3', t: "I'll be thirty seconds." },
+          { who: 'you', step: 'f4', t: "I'll meet you back here." }
+        ], note: 'The coach\'s fix for Drew and the ice-cream bloke: turn the reason they cannot talk into the reason you will be quick.' },
+        { by: 'Nick', name: 'Three in a row', lines: [
+          { who: 'them', t: "I'm all set." },
+          { who: 'you', step: 'f3', t: "I can at least take a quick look and give you my price, that way you know." },
+          { who: 'them', t: "I have a housekeeper." },
+          { who: 'you', step: 'f1', t: "Most people have the housekeeper." },
+          { who: 'you', step: 'f2', t: "We just hand-clean the outside, {fiddly}." },
+          { who: 'you', step: 'f3', t: "I can take thirty seconds and at least let you know." },
+          { who: 'them', t: "I think I'm okay." },
+          { who: 'you', step: 'f4', t: "Got my runners on. I'll take a quick look and meet you back here." }
+        ], note: 'His own door with Valentina. Three brush-offs, and he never answers one of them. Each reply is shorter than the last, and every one points at the same small thing: thirty seconds and a price. A "think" is not a refusal. Had she said "no, please go", he would have gone.' }
       ]
     },
     {
@@ -315,11 +332,52 @@
       ]
     },
     {
+      id: 'stall', half: 'back', title: 'If they stall on the price', time: 'Only when needed', stage: 'pain', guard: 0.5,
+      goal: 'Guide them to a decision: stay in it, find the real hesitation, one reason, one move, ask.',
+      feel: 'He is not pushing me. He is sorting it out for me.',
+      process: 'back',
+      lines: [
+        { who: 'them', t: "Have you got a card? Let me think about it." },
+        { who: 'you', step: 'b1', t: "They're in the ute." },
+        { who: 'you', step: 'b2', t: "Is it more the price, or the timing?" },
+        { who: 'them', t: "The price, a bit." },
+        { who: 'you', step: 'b3', t: "Tell you what // you'd be my last spot on the run." },
+        { who: 'you', step: 'b4', t: "If you could leave us a review when we're done, I'll call it ${deal} and throw in {throwIn}." },
+        { who: 'you', step: 'b5', t: "Would that make it easy?" },
+        { who: 'them', t: "…Yeah, alright. Go on." }
+      ],
+      move: 'Stay beside them, still facing the surface. Ask your one question, then wait for the answer.',
+      why: "With a price on the table the hesitation can be real, so now you do ask about it. A card or \"I'll call you\" means \"I don't know\", and that never turns into a job later. So the coach stays, finds the real reason with one question, gives a reason for doing better, makes one move, and asks for the decision.",
+      trap: "Gabe heard \"I'm pretty good\" and went straight to \"25 off, 50 off\" with no question and no reason. Drew offered \"next Wednesday\" while the run was still possible and got \"we'll call you\".",
+      who: 'The coach, to Gabe and Drew',
+      ways: [
+        { by: 'Nick', name: 'They are away', lines: [
+          { who: 'them', t: "We're away that week." },
+          { who: 'you', step: 'b1', t: "That's fine, it's all outside. You don't need to be home." },
+          { who: 'you', step: 'b4', t: "I'll text you photos when we're done and you check it when you're back. Nothing to pay till then." },
+          { who: 'you', step: 'b5', t: "So I'll pop you on the run?" }
+        ], note: 'A logistics problem, so he solves it and asks. He does not offer another date: "You never want to put that on the table until it is a 100 percent guaranteed no."' },
+        { by: 'Nick', name: 'Call me in spring', lines: [
+          { who: 'them', t: "Call me in the spring." },
+          { who: 'you', step: 'b1', t: "I can do that." },
+          { who: 'you', step: 'b3', t: "The only reason it's ${price} is that {reason} on {runDay}. It's not a forever price." },
+          { who: 'you', step: 'b5', t: "Is it worth grabbing while we're here?" }
+        ], note: 'The re-anchor. It reminds them why the price exists and turns "later" back into "do I want this, yes or no".' },
+        { by: 'Nick', name: 'A real no', lines: [
+          { who: 'them', t: "It's reasonable, but I don't need it." },
+          { who: 'you', step: 'b1', t: "Fair enough." },
+          { who: 'you', step: 'b2', t: "Is there a price where it would make sense for you?" },
+          { who: 'them', t: "No. I just don't want it." },
+          { who: 'you', step: 'out', t: "All good. // What was your name?" }
+        ], note: 'Vinnie. One question found out it was a no at any price, in ten seconds. Name, handshake, next door.' }
+      ]
+    },
+    {
       id: 'book', half: 'back', title: 'Book it and get the name', time: 'The close', stage: 'shake',
       goal: 'A decision today, a name, a number, and it in writing.',
       feel: 'Easy. And I can still change my mind.',
       lines: [
-        { who: 'them', t: "Yeah, alright. Let's do it." },
+        { who: 'them', t: "Yeah, alright. Let's do it.", easy: true },
         { who: 'you', t: "Beautiful. // I'm {me}, by the way. What was your name?" },
         { who: 'them', t: "Sandra." },
         { who: 'you', t: "Sandra. // {runDay}, does morning or arvo suit you better?" },
@@ -354,87 +412,101 @@
     }
   ];
 
+  /* How the coach handles a no. Two ladders: before there is a price, and after.
+     Every objection reply below is tagged with the rung it stands on. */
+  var process = {
+    front: {
+      title: 'Before the price: go past it', when: 'No price yet',
+      line: 'There is no offer on the table, so the no is a reflex. He does not answer it. He goes past it, to the price.',
+      steps: [
+        { k: 'f1', name: 'Disarm', what: 'Agree with them, or make them laugh. Never argue the objection.', ex: '"Most people have the housekeeper."' },
+        { k: 'f2', name: 'One small reason', what: 'A few words on why this is different, or cheap, right now.', ex: '"We just hand-clean everything."' },
+        { k: 'f3', name: 'Shrink the ask', what: 'Ask for thirty seconds and a price. You are not asking for the job.', ex: '"I can at least take thirty seconds and let you know."' },
+        { k: 'f4', name: 'Move', what: 'Nod, turn your feet and go before they answer.', ex: '"Got my running shoes on. I\'ll meet you back here."' }
+      ],
+      out: 'A second no, or "please go": thank them and leave. That one is real.'
+    },
+    back: {
+      title: 'After the price: guide them to a decision', when: 'Price is out',
+      line: 'Now the hesitation can be real, so he finds it. One question, one reason, one move, then he asks.',
+      steps: [
+        { k: 'b1', name: 'Stay in it', what: 'A card or a call-back means "I don\'t know". Stay warm and stay put.', ex: '"I do, in the van."' },
+        { k: 'b2', name: 'Find the real one', what: 'One question, then wait for the answer.', ex: '"Is it kind of the price, or the value?"' },
+        { k: 'b3', name: 'Give a reason', what: 'Why you can do better for them, on this run.', ex: '"You\'d be the last spot. If you could leave a review…"' },
+        { k: 'b4', name: 'One move', what: 'One better number, or one thing thrown in. Once.', ex: '"I could call it 199 and still scrub the front porch."' },
+        { k: 'b5', name: 'Ask', what: 'Ask for the decision. Then go straight to the day and the phone number.', ex: '"Would that make it a no-brainer?"' }
+      ],
+      out: 'Still no: get the name, shake hands, and knock again once you have booked a neighbour.'
+    },
+    out: { name: 'Leave well' },
+    big: { name: 'Answer big' }
+  };
+
   /* Objection drills. stage: front (no offer yet) or back (price is out). */
   var objections = [
     { id: 'guy', stage: 'front', them: "We've got a guy who does it.",
       means: 'A reflex. There is no offer yet, so there is nothing to compare your guy with.',
-      move: 'Agree, small reason, back to the price',
-      say: "Most people do. // {reasonCap}, so it's a fair bit cheaper. I'll be thirty seconds, then at least you'll know.",
+      steps: [['f1', "Most people do."], ['f2', "{reasonCap}, so it's a fair bit cheaper."], ['f3', "I'll be thirty seconds, then at least you'll know."], ['f4', "Got my runners on. I'll meet you back here."]],
       why: 'The coach to Valentina: "Most people have the housekeeper." He never argues the guy. He goes back for the price.', by: 'Nick' },
     { id: 'guy2', stage: 'front', them: "Our guy's coming in a couple of weeks.",
       means: 'Could be real. Find out with a question before you decide.',
-      move: 'Ask about the guy',
-      say: "Nice. // {guy} // I'll count it up anyway. Is there any chance at all if the number's right?",
-      why: 'The coach asked Alisa "does he pressure wash, or how does he do it?" and then "do you think there is any percentage chance?" A question keeps it a conversation.', by: 'Nick' },
+      steps: [['f1', "Nice. {guy}"], ['f2', "We're doing it pretty cheap on the run."], ['f3', "I'll count it up anyway. Any chance at all if the number's right?"], ['f4', "Got my runners on, back in thirty seconds."]],
+      why: 'The coach asked Alisa "does he pressure wash, or how does he do it?" and then "do you think there is any percentage chance?" Being curious about their guy disarms better than competing with him.', by: 'Nick' },
     { id: 'done', stage: 'front', them: "We only did them a month ago.",
       means: 'They did part of it. The part nobody likes doing is probably still there.',
-      move: 'Look at the surface together',
-      say: "Oh, really? // You can see it on {fiddly} though, that's the bit that gets missed. I'll give you a quick price so you've got something to compare.",
-      why: 'John\'s wife did the glass. The coach pointed at the frames: "the dirt that is etched in, when it rains that drips back down."', by: 'Nick' },
+      steps: [['f1', "Oh, really? Good on you."], ['f2', "You can see it on {fiddly} though, that's the bit that gets missed."], ['f3', "I'll give you a quick price so you've got something to compare."], ['f4', "Thirty seconds, I'll meet you back here."]],
+      why: 'John\'s wife did the glass. The coach pointed at the frames: "the dirt that is etched in, when it rains that drips back down." He showed him, then went for the price.', by: 'Nick' },
     { id: 'diy', stage: 'front', them: "I do it myself.",
       means: 'Pride, and often true. Respect it, then find the part they hate.',
-      move: 'Respect, then a real question',
-      say: "Good on you. // {diy} // We're doing it pretty cheap on the run. I'll count it up. If it's not worth it, no stress.",
+      steps: [['f1', "Good on you. {diy}"], ['f2', "We're doing it pretty cheap on the run."], ['f3', "I'll count it up. If it's not worth it, no stress."], ['f4', "Back in thirty seconds."]],
       why: 'With Vinnie the coach asked "you do all the tall ones?" and let him explain. He still got to a price.', by: 'Nick' },
     { id: 'busy', stage: 'front', them: "I'm in the middle of dinner.",
       means: 'Probably true, and it is not a no.',
-      move: 'Make their reason your reason',
-      say: "That's why we're here // you keep going. I'll be thirty seconds and meet you back here.",
-      why: 'Drew let the ice-cream bloke go. The coach: "That is why we are here. You eat the ice cream, I will be thirty seconds."', by: 'The coach, to Drew' },
+      steps: [['f1', "No stress, you keep going."], ['f2', "That's why we're here."], ['f3', "I'll be thirty seconds."], ['f4', "I'll meet you back here."]],
+      why: 'Drew let the ice-cream bloke go. The coach: "That is why we are here. You eat the ice cream, I will be thirty seconds." Their reason becomes your reason.', by: 'The coach, to Drew' },
     { id: 'nothanks', stage: 'front', them: "Um, no thanks.",
       means: 'A flinch. You get one light go at it. A second no is a real no.',
-      move: 'One joke, one loop',
-      say: "Is it more the service, or the haircut? // Twenty seconds. I'll let you know and get out of your hair.",
+      steps: [['f1', "Is it more the service, or the haircut?"], ['f3', "Twenty seconds. I'll let you know and get out of your hair."], ['f2', "Bit of information never hurts."]],
       why: 'Dylan\'s loop. It worked because it was funny and small: twenty seconds, not a clean. If they say no again, thank them and go.', by: 'Dylan' },
     { id: 'howmuch', stage: 'front', them: "How much is it?",
       means: 'Interest. Do not guess from the door if you can walk round.',
-      move: 'Use it to go and count',
-      say: "Depends on the house, I'd have to count it up. // Got my runners on, back in thirty seconds.",
+      steps: [['f2', "Depends on the house, I'd have to count it up."], ['f4', "Got my runners on, back in thirty seconds."]],
       why: 'A buying question on the front half is your ticket to the count. A number at the door skips the part where they see the problem.', by: 'Nick' },
     { id: 'leave', stage: 'front', them: "I said no. Please go.",
-      means: 'A real no. So is a Do Not Knock sticker.',
-      move: 'Leave, warmly, straight away',
-      say: "No worries at all. // Have a great day.",
+      means: 'A real no. So is a Do Not Knock sticker. There is no ladder for this one.',
+      steps: [['out', "No worries at all. // Have a great day."]],
       why: 'The coach: "You are free to go whenever. Have a fantastic day, sir." In Queensland you must leave when asked and not call back for 30 days. It is also the brand: every street talks.', by: 'Nick', hard: true },
     { id: 'card', stage: 'back', them: "Have you got a card?",
       means: '"I don\'t know." And "I don\'t know" is a no, because nobody rings back.',
-      move: 'Find the real hesitation',
-      say: "They're in the ute. // Is it more the price, or the timing?",
+      steps: [['b1', "They're in the ute."], ['b2', "Is it more the price, or the timing?"], ['b3', "You'd be my last spot on the run."], ['b4', "Leave us a review after and I'll call it ${deal}."], ['b5', "Would that make it easy?"]],
       why: 'The coach: "If they do not have enough certainty with you right there in front of them, they are not going to develop it on their own time."', by: 'Nick' },
     { id: 'think', stage: 'back', them: "Let me think about it and I'll call you.",
       means: 'Neutral. Not sold, not unsold. They need one more reason.',
-      move: 'A reason, then a better number',
-      say: "Totally. // Tell you what, you'd be my last spot on the run. If you could leave us a review when we're done, I'll call it ${deal} and throw in {throwIn}. Would that make it easy?",
+      steps: [['b1', "Totally."], ['b2', "What's the bit you're weighing up, the price or the day?"], ['b3', "Tell you what, you'd be my last spot on the run."], ['b4', "Leave us a review when we're done and I'll call it ${deal}, and throw in {throwIn}."], ['b5', "Would that make it easy?"]],
       why: 'Valentina went from "may I call you in a couple of hours" to "I\'ll do it". The discount had a reason, so it read as a solution and kept his standing.', by: 'Nick' },
     { id: 'spouse', stage: 'back', them: "I'd have to ask my husband.",
       means: 'Sometimes true, sometimes a soft exit. One question tells you which.',
-      move: 'Test it, then make follow-up easy',
-      say: "Of course. // If I could do a bit better on the price, is it a yes? Or is it genuinely one to run past him?",
+      steps: [['b1', "Of course."], ['b2', "If I could do a bit better on the price, is it a yes? Or is it genuinely one to run past him?"], ['b3', "You'd be the last spot on the run."], ['b4', "I'll text you the quote at ${deal} so he can see it in writing."], ['b5', "What's the best number for you?"]],
       why: 'Gabe asked exactly this, got "I have to ask", texted the quote and moved on. He came back later with a new neighbour booked and closed it.', by: 'Gabe' },
     { id: 'price', stage: 'back', them: "That's more than I wanted to spend.",
       means: 'Price, or value? You do not know yet.',
-      move: 'Isolate before you move',
-      say: "Fair enough. // Is it the price, or is it more whether it needs doing? // …Okay. You'd be the last spot on the run. Why don't we call it ${deal} and I'll make it look unreal for you.",
+      steps: [['b1', "Fair enough."], ['b2', "Is it the price, or is it more whether it needs doing?"], ['b3', "You'd be the last spot on the run."], ['b4', "Why don't we call it ${deal} and I'll make it look unreal for you."], ['b5', "Does {runDay} work?"]],
       why: 'Gabe jumped straight to "25 off, 50 off". The coach: "This guy is desperate." Ask first, give a reason, then one move.', by: 'The coach, to Gabe' },
     { id: 'notnow', stage: 'back', them: "We're away that week.",
-      means: 'A logistics problem you can solve.',
-      move: 'Solve it. Do not offer another date',
-      say: "That's fine, it's all outside. You don't need to be home. // I'll text you photos when we're done and you check it when you're back. Nothing to pay till then.",
+      means: 'A logistics problem you can solve. Do not offer another date.',
+      steps: [['b1', "That's fine, it's all outside. You don't need to be home."], ['b4', "I'll text you photos when we're done and you check it when you're back. Nothing to pay till then."], ['b5', "So I'll pop you on the run?"]],
       why: 'Drew offered "next Wednesday" and got "we\'ll call you". The coach: "You never want to put that on the table until it is a 100 percent guaranteed no."', by: 'The coach, to Drew' },
     { id: 'later', stage: 'back', them: "Call me in the spring.",
       means: 'They like you and they are putting it off.',
-      move: 'Re-anchor the reason for the price',
-      say: "I can do that. // The only reason it's ${price} is that {reason} on {runDay}. It's not a forever price. // Is it worth grabbing while we're here?",
+      steps: [['b1', "I can do that."], ['b3', "The only reason it's ${price} is that {reason} on {runDay}. It's not a forever price."], ['b5', "Is it worth grabbing while we're here?"]],
       why: 'The coach\'s re-anchor: "This is not a forever deal. It is just because I am helping Jim right now." It changes the question to do I want this, yes or no.', by: 'Nick' },
     { id: 'inside', stage: 'back', them: "Is that the whole lot?",
-      means: 'A buying question. Answer it big.',
-      move: 'Never say "just"',
-      say: "{scope}",
+      means: 'A buying question, not an objection. Answer it big and never say "just".',
+      steps: [['big', "{scope}"], ['b5', "{runDay}, morning or arvo?"]],
       why: '"If you demean what you are doing with your own words, you are stacking the odds against yourself."', by: 'The coach, to Gabe' },
     { id: 'noneed', stage: 'back', them: "It's reasonable, but I don't need it.",
       means: 'Maybe a no at any price. One question finds out.',
-      move: 'Ask the price question, then leave well',
-      say: "Fair enough. // Is there a price where it would make sense for you? // …All good. What was your name?",
+      steps: [['b1', "Fair enough."], ['b2', "Is there a price where it would make sense for you?"], ['out', "All good. // What was your name?"]],
       why: 'Vinnie said no at any number. The coach found out in ten seconds, got the name, and walked to the next door in a good mood.', by: 'Nick' }
   ];
 
@@ -511,13 +583,13 @@
             { v: 'ok', g: 4, t: "We do {short}s. {whole}.", reply: "I have a housekeeper for that.", c: 'Fine, but said through a doorway. Nothing for her to look at.' },
             { v: 'miss', g: 12, t: "Exterior cleaning. Can I ask who does yours at the moment?", reply: "I have someone. I'm all set.", c: 'You invited the objection and got it.' }
           ] },
-        { stage: 'pain', them: "I have a housekeeper. I'm all set.",
+        { stage: 'pain', obj: 'front', them: "I have a housekeeper. I'm all set.",
           choices: [
             { v: 'best', g: -10, t: "Most people have the housekeeper. // We just do the outside by hand, {fiddly}. I'll take thirty seconds and at least let you know.", reply: "I think I'm okay.", c: 'Agree, one tiny reason, back to the price. You did not argue the housekeeper.' },
             { v: 'miss', g: 14, t: "With respect, a housekeeper won't do {fiddly} properly. That needs the right gear.", reply: "I said I'm all set.", c: 'You fought a smokescreen with logic and insulted her housekeeper on the way.' },
             { v: 'ok', g: 6, t: "No worries. Can I leave you a card?", reply: "Sure. (She will never ring.)", c: 'You believed it. The coach: "zero percent chance of closing that deal".' }
           ] },
-        { stage: 'pain', them: "I think I'm okay.",
+        { stage: 'pain', obj: 'front', them: "I think I'm okay.",
           choices: [
             { v: 'best', g: -12, t: "Got my runners on. // I'll take a quick look and meet you back here.", reply: "(She laughs.) …Okay. Quickly.", c: 'Light, moving, and asking for nothing but half a minute. A "think" is not a "no". If she had said "no, please go", you would go.' },
             { v: 'miss', g: 20, t: "Honestly, it'll be the best price you'll get all year. You'd be mad not to at least hear it.", reply: "No. Thank you. (Door closing.)", c: 'Pressure. That is the one thing a front-half loop must never carry.' },
@@ -529,7 +601,7 @@
             { v: 'ok', g: 0, t: "${price}, and that's with ${saving} off.", reply: "Do you have a card?", c: 'Right number, but no parts, so the price has nothing to sit beside.' },
             { v: 'miss', g: 10, t: "What were you hoping to pay?", reply: "I wasn't hoping to pay anything. Do you have a card?", c: 'You asked her to negotiate before you made an offer.' }
           ] },
-        { stage: 'pain', them: "Put your card in the letterbox. I'll call you in a couple of hours.",
+        { stage: 'pain', obj: 'back', them: "Put your card in the letterbox. I'll call you in a couple of hours.",
           choices: [
             { v: 'best', g: -16, t: "I'll get you my number. // If I can save you the couple of hours: you'd be my last spot on the run. Leave us a review after and I'll call it ${deal}.", reply: "(A pause.) …Oh, fine. I'll do it.", c: 'A card is "I don\'t know". You gave her certainty: a reason, a better number and a decision she could make now.' },
             { v: 'ok', g: 4, t: "Is it the price, or the timing?", reply: "I just need to think.", c: 'The right question. You still need the next move: a reason and one adjustment.' },
@@ -571,7 +643,7 @@
             { v: 'ok', g: 2, t: "${price} for everything, with the neighbour discount.", reply: "Okay. Can we call you when we're back?", c: 'Right price, thin presentation.' },
             { v: 'miss', g: 8, t: "${price}, or I can do next Wednesday if that's easier.", reply: "Yeah, we'll look at next Wednesday. We'll call you.", c: 'The offer and the exit in the same sentence.' }
           ] },
-        { stage: 'pain', them: "Can we just call you when we're back?",
+        { stage: 'pain', obj: 'back', them: "Can we just call you when we're back?",
           choices: [
             { v: 'best', g: -14, t: "You totally could. // The only reason it's ${price} is that I'm next door on {runDay}. It's not a forever price. If we fit you in with them I'll call it ${deal}, and you pay when you've seen it.", reply: "…Do it for ${deal}.", c: 'Re-anchor, a reason, one move. This is the "small fix" the coach made to get Drew\'s third sale.' },
             { v: 'ok', g: 4, t: "Sure. What's the best number to text the quote to?", reply: "(They give it.) We'll be in touch.", c: 'A text is better than a card. It is still a maybe, and most maybes fade.' },
@@ -589,19 +661,19 @@
       blurb: 'The price is out. Now it is the partner, the budget and "maybe in spring".',
       based: 'Gabe and Rob, Nick and the Christmas house', guard: 48, win: 38,
       nodes: [
-        { stage: 'pain', them: "(You have just said ${price}. He winces a little.) Have you got a card?",
+        { stage: 'pain', obj: 'back', them: "(You have just said ${price}. He winces a little.) Have you got a card?",
           choices: [
             { v: 'best', g: -8, t: "They're in the ute. // Is it more the price, or the timing?", reply: "Bit of both. I'd have to ask my wife, she's flat out in there.", c: 'You saw the wince and asked about it. The coach: "I literally saw him grimace, so I knew I might need the discount."' },
             { v: 'miss', g: 10, t: "I could do ${deal}?", reply: "Oh. Uh. I'd have to ask my wife.", c: 'A price drop with no reason, before you knew the problem. That is what the coach called desperate.' },
             { v: 'ok', g: 4, t: "Sure, I'll grab you one.", reply: "Thanks. I'd have to ask my wife anyway.", c: 'A card is a polite ending. Ask one question before you fetch it.' }
           ] },
-        { stage: 'pain', them: "I'd have to ask my wife.",
+        { stage: 'pain', obj: 'back', them: "I'd have to ask my wife.",
           choices: [
             { v: 'best', g: -10, t: "Of course. Is she free for a sec? // I'd love to show her this bit, it'll take thirty seconds.", reply: "She's up to her elbows in dishes. Not this time, mate.", c: 'Try to get both of them to the problem. It did not work here, and it was the right thing to try.' },
             { v: 'ok', g: 0, t: "If I did a bit better on the price, is it a yes? Or is it genuinely one to run past her?", reply: "I'd still have to ask.", c: 'Gabe\'s question. It tells you if the partner is real. Here it is.' },
             { v: 'miss', g: 14, t: "Surely you can make a call on ${price} yourself?", reply: "Excuse me?", c: 'You made it about his standing in his own house.' }
           ] },
-        { stage: 'pain', them: "Not this time. I usually do it myself anyway.",
+        { stage: 'pain', obj: 'back', them: "Not this time. I usually do it myself anyway.",
           choices: [
             { v: 'best', g: -14, t: "I hear you. // It does need doing, though, and you'd be my last spot on the run. If you two could leave us a review after, I'll call it ${deal} and throw in {throwIn}.", reply: "(He looks at it again.) …${deal}. Alright. Go on.", c: 'Reason, number, sweetener. It reads as a solution to his problem, not a trick. The coach\'s exact close at the Christmas house.' },
             { v: 'ok', g: 6, t: "No worries. What about in the spring?", reply: "Yeah, spring. Call me then.", c: 'You offered the exit yourself.' },
@@ -757,10 +829,10 @@
     { t: 'A conversation has gaps.', d: 'Short lines. Pauses. Your voice going up and down. A filler word or two so you sound human.' },
     { t: 'Get them off the door.', d: 'Two steps to the dirt. It becomes you and them against the problem.' },
     { t: 'Front half: go for the price, not the sale.', d: 'You cannot sell until there is a number. Every front-half move is about getting to the count.' },
-    { t: 'Front-half objections are smokescreens.', d: 'Agree, one small reason, back to the price. Never argue them.' },
+    { t: 'Before the price, go past the objection.', d: 'It is a smokescreen. Disarm, one small reason, shrink the ask, move. Never argue it.' },
     { t: 'Break the job into its parts.', d: 'Name every part and the price looks small beside the work.' },
     { t: 'Every discount needs a reason.', d: 'On the street already, last spot on the run, a review. No reason looks desperate.' },
-    { t: '"I don\'t know" is a no.', d: 'Cards and call-backs do not turn into jobs. Find the hesitation while you are there.' },
+    { t: 'After the price, guide them to a decision.', d: '"I don\'t know" is a no. Stay in it, find the real hesitation, give a reason, make one move, ask.' },
     { t: 'Do the job, not the outcome.', d: 'Take each person as far as they will comfortably go, leave with a name, carry the mood to the next door.' }
   ];
 
@@ -788,6 +860,6 @@
   };
 
   window.DC = window.DC || {};
-  window.DC.content = { services: services, strategies: strategies, beats: beats, objections: objections,
+  window.DC.content = { services: services, strategies: strategies, beats: beats, process: process, objections: objections,
     scenarios: scenarios, film: film, rules: rules, cues: cues, qld: qld };
 })();
