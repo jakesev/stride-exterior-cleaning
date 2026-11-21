@@ -1,6 +1,6 @@
 /* Stride Door Coach: offline support so the app opens from the home screen without signal.
    Network first, so a new version shows as soon as there is a connection; cache as the fallback. */
-var CACHE = 'door-coach-v3';
+var CACHE = 'door-coach-v4';
 var SHELL = ['./', 'index.html', 'app.css', 'content.js', 'app.js', 'manifest.webmanifest',
   '../assets/fonts/manrope-latin-var.woff2', '../assets/brand/icon-192.png', '../assets/brand/apple-touch-icon.png'];
 self.addEventListener('install', function (e) {
