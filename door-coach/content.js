@@ -167,7 +167,7 @@
         { who: 'them', t: "Good. How are you?" },
         { who: 'you', t: "I'm living the dream. // {bridge}", n: "Not the answer they expect, then first name only and a question. No company. They end up asking you what you are doing, so the rest is an answer and not a pitch." },
         { who: 'them', t: "No." },
-        { who: 'you', t: "No? // Good-looking bloke in the Stride shirt.", n: "His line is \"good-looking dudes in the black t-shirts\". A small joke keeps it light while they work out who you are." },
+        { who: 'you', t: "No? // Good-looking bloke in the work shirt.", n: "His line is \"good-looking dudes in the black t-shirts\". A small joke keeps it light while they work out who you are." },
         { who: 'them', t: "What do you need?" }
       ],
       move: 'Two steps back from the door, side-on. Smile before you speak. Sound a little unsure of yourself.',
@@ -559,7 +559,7 @@
           choices: [
             { v: 'best', g: -12, t: "Hello, hello. I'm living the dream. // Is that the guard dog back there?", reply: "Ha, she's harmless. Yeah, not bad.", c: 'Nothing in that fits the script she has for salespeople, so the reflex has nothing to fire at. She has answered twice and you have not pitched.' },
             { v: 'miss', g: 18, t: "Good! I'm {me} from Stride, we're doing {noun} on your street and taking ${saving} off, I can run round and give you a price?", reply: "Oh. Um. Okay…", c: 'She let you, because she is nice. That was still one run-on sentence. The coach to Gabe: "Slow down. It is a conversation."' },
-            { v: 'ok', g: 6, t: "Hi, I'm {me} from Stride Exterior Cleaning.", reply: "Hi…?", c: 'Name and company is exactly how she expects a salesman to start. That is the pattern. Break it first, first name next, and name Stride when you say what you are doing.' }
+            { v: 'ok', g: 6, t: "Hi, I'm {me} from Stride Exterior Cleaning.", reply: "Hi…?", c: 'Name and company is exactly how she expects a salesman to start. That is the pattern. Break it first, first name next, and say what you are doing only once they ask.' }
           ] },
         { stage: 'door', them: "So what brings you round?",
           choices: [
@@ -665,7 +665,7 @@
           ] },
         { stage: 'pain', them: "And what are you doing for them?",
           choices: [
-            { v: 'best', g: -12, t: "We're from Stride. I'll show you on yours // {show} Same thing at theirs on {runDay}. I'll {count} and give you the neighbour price.", reply: "(They look at it.) You do the screens? …Okay.", c: 'Shown on their own house, then the assumptive price.' },
+            { v: 'best', g: -12, t: "I'll show you on yours // {show} Same thing at theirs on {runDay}. I'll {count} and give you the neighbour price.", reply: "(They look at it.) You do the screens? …Okay.", c: 'Shown on their own house, then the assumptive price.' },
             { v: 'ok', g: 0, t: "A full {short}. I can do you a quote if you like?", reply: "Do you want a quote, honey?", c: 'A yes or no question, so now they are consulting each other about whether to let you look.' },
             { v: 'miss', g: 10, t: "Everything. Honestly it's the best value on the street.", reply: "Right.", c: 'A claim with nothing to look at.' }
           ] },
@@ -905,7 +905,7 @@
     intro: 'The coach works in the US. Door-knocking in Queensland falls under the Australian Consumer Law rules for unsolicited sales. This is a plain summary from the ACCC and Queensland Government pages, not legal advice. Check the detail with the Office of Fair Trading before your first run.',
     points: [
       ['Hours', 'Knock 9am to 6pm on weekdays and 9am to 5pm on Saturdays. No Sundays, no public holidays.'],
-      ['Say who you are', 'You must tell them your name, the business and why you are there before you start selling. The coach never names his company at the door. This script follows his opener, then names Stride in stage two, when you explain why you are there and before any price. Wear the Stride shirt. You can switch that line off in Settings if you would rather follow him exactly.'],
+      ['Say who you are', 'You must tell them your name, the business and why you are there before you start selling. The coach never names his company at the door. The coach never names his company at the door, and this script follows him, so it does not either. If you want to cover the rule, wear the Stride shirt, and you can switch on a "We are from Stride" line in Settings.'],
       ['Leave when asked', 'If they ask you to go, go, and do not call back for 30 days. A Do Not Knock sticker counts. So: one light loop on a reason, none on a refusal.'],
       ['Over $100: put it in writing', 'A door-knocked job over $100 needs a written agreement and a 10-business-day cooling-off notice.'],
       ['No work or money in the cooling-off', 'You cannot start the job or take payment, deposit included, until those ten business days are up. So the decision is made today and the work happens on the run day.'],

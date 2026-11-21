@@ -12,9 +12,10 @@
   var S = Object.assign({
     me: 'Jake', street: 'Wattle Street', neighbour: 'the Hendersons at number 14', runDay: '',
     service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {},
-    sayFirst: true, pushback: true, sayStride: true, example: true
+    sayFirst: true, pushback: true, sayStride: false, example: true
   }, saved.S || {});
-  if (S.v !== 4) { S.level = 'read'; S.v = 4; } // an earlier version could leave you in cues-only without saying so
+  // one-off resets: an earlier version could leave you in cues-only, and added the business name to his script
+  if (S.v !== 5) { if (S.v !== 4) S.level = 'read'; S.sayStride = false; S.v = 5; }
   if (!C.services[S.service]) S.service = 'windows';
   var L = saved.L || {};                                      // rep log: { 'YYYY-MM-DD': { n, by: { kind: n } } }
   var P = Object.assign({ obj: {}, sim: {} }, saved.P || {}); // ratings
@@ -671,8 +672,8 @@
       '<div class="field"><input id="f-saving" data-set="saving" inputmode="numeric" value="' + pr.saving + '" aria-label="Off on the run"><small>Off on the run</small></div>' +
       '<div class="field"><input id="f-drop" data-set="drop" inputmode="numeric" value="' + S.drop + '" aria-label="Extra, with a reason"><small>Extra, with a reason</small></div></div>' +
       '<p class="muted small">Run price $' + pr.price + '. Use the price you really charge for a one-off. The saving has to be real.</p></div>' +
-      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('sayfirst', S.sayFirst, 'Real doors: say my reply before I see options') + toggleHTML('saystride', S.sayStride, 'Say "We\'re from Stride" when I explain why I am there') + '</div>' +
-      '<p class="muted small">The coach never names his company at the door. Queensland expects you to say who you are before you sell, so it is on by default.</p></div>' +
+      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('sayfirst', S.sayFirst, 'Real doors: say my reply before I see options') + toggleHTML('saystride', S.sayStride, 'Add "We\'re from Stride" to the script') + '</div>' +
+      '<p class="muted small">Off by default, because the coach never names his company at the door. Queensland expects you to say who you are before you sell, so this is here if you want it.</p></div>' +
       '<div class="sec"><h4>Good to know</h4><div class="list"><button type="button" class="item" data-open="law"><h3>Knocking in Queensland</h3><p>Six rules that change how you book the job</p>' + ico('chev') + '</button></div>' +
       (framed ? '' : '<p class="muted small"><b>Put it on your phone.</b> iPhone: open this page in Safari, tap Share, then Add to Home Screen. Android: open it in Chrome, tap the menu, then Install app. It then opens like an app and works without signal.</p>') + '</div>',
       '<button type="button" class="btn big" data-close="1">Done</button>');
