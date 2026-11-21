@@ -12,8 +12,9 @@
   var S = Object.assign({
     me: 'Jake', street: 'Wattle Street', neighbour: 'the Hendersons at number 14', runDay: '',
     service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {},
-    sayFirst: true, pushback: true, example: true
+    sayFirst: true, pushback: true, sayStride: true, example: true
   }, saved.S || {});
+  if (S.v !== 4) { S.level = 'read'; S.v = 4; } // an earlier version could leave you in cues-only without saying so
   if (!C.services[S.service]) S.service = 'windows';
   var L = saved.L || {};                                      // rep log: { 'YYYY-MM-DD': { n, by: { kind: n } } }
   var P = Object.assign({ obj: {}, sim: {} }, saved.P || {}); // ratings
@@ -93,7 +94,8 @@
       noun: sv.noun, short: sv.short, spot: sv.spot, show: sv.show, count: sv.count, countTip: sv.countTip,
       stackLine: sv.stackLine, why: sv.why, fiddly: sv.fiddly, whole: sv.whole, scope: sv.scope, diy: sv.diy,
       guy: sv.guy, link: sv.link, throwIn: sv.throwIn, honestLine: HONEST[key],
-      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge, what: st.what
+      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge,
+      what: S.sayStride ? "We're from Stride // " + st.what : st.what.charAt(0).toUpperCase() + st.what.slice(1)
     };
     t.reasonCap = t.reason.charAt(0).toUpperCase() + t.reason.slice(1);
     return t;
@@ -225,7 +227,7 @@
     o = o || {};
     var cls = 'ln ' + l.who + (l.silent ? ' silent' : '');
     if (l.step) cls += ' ' + stepInfo(l.step).side + '-step';
-    return '<div class="' + cls + noteAttr(o.noNote ? '' : noteOf(l), o) + '"><span class="sp">' + labelOf(l) + '</span><p>' + fmt(l.t, o.strategy, o.service) + '</p></div>';
+    return '<div class="' + cls + noteAttr(o.noNote ? '' : noteOf(l), o) + '"><span class="sp">' + labelOf(l) + '</span><div class="tx"><p>' + fmt(l.t, o.strategy, o.service) + '</p>' + (l.do ? '<p class="do">' + fmt(l.do, o.strategy, o.service) + '</p>' : '') + '</div></div>';
   }
   function scriptHTML(lines, o) { return '<div class="script">' + lines.map(function (l) { return row(l, o); }).join('') + '</div>'; }
   function waysFor(b) { return (b.ways || []).filter(function (w) { return !w.only || w.only === S.strategy; }); }
@@ -335,7 +337,7 @@
         '<div><h4>The mistake</h4><p>' + fmt(b.trap) + '</p><cite>' + esc(b.who) + '</cite></div></div></details>' +
         (speaks(b) ? '<div class="row"><button type="button" class="btn sm" data-run="stage" data-beat="' + b.id + '">' + ico('repeat') + 'Drill this stage</button></div>' : '') + '</div></div>';
     }
-    return '<header class="sec"><h1>The sales process</h1><p class="lede">Twelve stages in three phases. Each has one objective and a clear point where it is done. Tap a stage to open it, and hold any of your lines to see why it is there.</p>' +
+    return '<header class="sec"><h1>The sales process</h1><p class="lede">' + C.beats.length + ' stages in three phases. Each has one objective and a clear point where it is done. Tap a stage to open it, and hold any of your lines to see why it is there.</p>' +
       '<div class="row"><button type="button" class="ctx" data-open="settings">' + ico('gear') + esc(C.services[S.service].label) + ' · ' + esc(C.strategies[S.strategy].label) + '</button></div></header>' +
       ['front', 'count', 'back'].map(function (h) {
         return '<section class="sec"><div class="phase-h"><h2>' + halfName(h) + '</h2><p>' + objectives[h] + '</p></div><div class="list">' + C.beats.filter(function (b) { return b.half === h; }).map(stage).join('') + '</div></section>';
@@ -427,9 +429,12 @@
   function thrown(side) {
     var ids = THROW[side].filter(function (id) { return id !== R['last' + side]; });
     var id = ids[Math.floor(Math.random() * ids.length)], o = C.objections.filter(function (x) { return x.id === id; })[0];
-    var out = [{ who: 'them', t: o.them }].concat(o.steps.map(function (s) { return { who: 'you', step: s[0], t: s[1] }; }));
-    out.push(side === 'front' ? { who: 'move', t: 'Nod and go before they answer.', n: 'You asked for thirty seconds, nothing more. A second no, or "please go", is real: thank them and leave.' }
-      : { who: 'them', t: "…Okay. Let's do it." });
+    var out = [{ who: 'them', t: o.them }].concat(o.steps.map(function (st, k) {
+      var ln = { who: 'you', step: st[0], t: st[1] };
+      if (side === 'front' && k === o.steps.length - 1) ln.do = 'Nod and go before they answer.';
+      return ln;
+    }));
+    if (side === 'back') out.push({ who: 'them', t: "All right. I'll go ahead and do it." });
     out.id = id;
     return out;
   }
@@ -463,20 +468,26 @@
     if (i >= R.lines.length) return runDone();
     var x = R.lines[i], l = x.l, b = x.b, mine = l.who !== 'them', quiet = l.who === 'move' || l.silent;
     var note = noteOf(l, l.who === 'you' ? b.goal : '');
-    var head = l.who === 'them' ? 'Homeowner' : l.who === 'move' ? 'Do this' : l.step ? labelOf(l) : 'Your line';
-    var sub = l.who === 'you' ? (S.level === 'read' ? 'Hold the line to see why it is there.' : esc(l.cue || b.goal)) : l.silent ? 'Wait. Let them look.' : '';
+    var head = l.who === 'them' ? 'Homeowner' : l.who === 'move' ? 'Do this' : 'Your line';
+    var hidden = l.who === 'you' && S.level !== 'read';
+    var first = l.who === 'you' && !R.told; if (first) R.told = true;
+    var lvl = S.level === 'read' ? '' : ' · ' + levelName().toLowerCase();
     focus({
       name: R.kind === 'door' ? esc(C.services[S.service].label) : 'One stage',
-      meta: R.kind === 'door' ? esc(b.title) + ' · ' + (x.bi + 1) + ' of ' + R.beats.length : esc(b.title) + ' · pass ' + R.pass,
+      meta: (R.kind === 'door' ? esc(b.title) + ' · ' + (x.bi + 1) + ' of ' + R.beats.length : esc(b.title) + ' · pass ' + R.pass) + lvl,
       pct: i / R.lines.length,
-      body: (R.cue && i === 0 ? '<p class="f-well"><b>At this door:</b> ' + esc(R.cue.toLowerCase()) + '. Open on that instead of the dog.</p>' : '') + prevHTML() +
+      body: (R.cue && i === 0 ? '<p class="f-well"><b>At this door:</b> ' + esc(R.cue.toLowerCase()) + '. React to it once, then carry on with the opener.</p>' : '') + prevHTML() +
         '<div class="f-now ' + (mine ? 'yours' : 'theirs') + (quiet ? ' quiet' : '') + '">' +
         (l.step && b.process ? ladderHTML(b.process, litOf([l]), true) : '<div class="f-label"><span>' + head + '</span>' +
           (l.who === 'them' && !l.silent && S.voice ? '<span class="speaking" aria-hidden="true"><i></i><i></i><i></i></span>' : '') + '</div>') +
-        '<p class="f-line' + noteAttr(note) + '">' + promptOf(l, b) + '</p>' + (sub ? '<p class="f-sub">' + sub + '</p>' : '') + '</div>',
-      foot: '<button type="button" class="btn big ' + (mine ? 'light' : 'ghost') + '" id="go">' + (l.who === 'them' ? 'Skip' : l.who === 'move' ? 'Done' : 'Said it') + '</button>'
+        '<p id="f-line" class="f-line' + noteAttr(note) + '">' + promptOf(l, b) + '</p>' +
+        (l.do ? '<p class="f-do"><b>Do</b>' + fmt(l.do) + '</p>' : '') +
+        (l.silent ? '<p class="f-sub">Wait. Let them look.</p>' : first ? '<p class="f-sub">Hold any line to see why it is there.</p>' : '') + '</div>',
+      foot: '<button type="button" class="btn big ' + (mine ? 'light' : 'ghost') + '" id="go">' + (l.who === 'them' ? 'Skip' : l.who === 'move' ? 'Done' : 'Said it') + '</button>' +
+        (hidden ? '<button type="button" class="btn ghost" id="peek">Show me the line</button>' : '')
     });
-    var t0 = Date.now();
+    var t0 = Date.now(), peek = document.getElementById('peek');
+    if (peek) peek.addEventListener('click', function () { document.getElementById('f-line').innerHTML = fmt(l.t); peek.remove(); });
     var next = function () {
       if (seq !== R.seq) return;
       var rec = { who: l.who, t: l.t, silent: l.silent };
@@ -498,23 +509,23 @@
   }
   function runDone() {
     var secs = Math.round((Date.now() - R.start) / 1000), wpm = R.ms > 0 ? Math.round(R.w / (R.ms / 60000)) : 0;
-    var up = S.level === 'read' ? ['cue', 'Again, cues only'] : S.level === 'cue' ? ['blind', 'Again, from memory'] : null;
+    // the level never changes on its own: you choose it here, and Again repeats what you just did
+    var level = '<div class="stack-s"><p class="f-sub">Next time, you see</p>' + levelSeg() + '</div>';
     if (R.kind === 'stage') {
       var list = C.beats.filter(speaks), nx = list[(list.indexOf(beatById(R.beatId)) + 1) % list.length];
       return focus({ name: 'One stage', meta: esc(beatById(R.beatId).title), pct: 1,
         body: '<div class="f-now"><div class="f-label"><span>Pass ' + R.pass + ' done</span></div><p class="f-big">' + esc(beatById(R.beatId).title) + '</p>' +
           '<div class="row">' + paceTag(wpm) + '<span class="tag">' + secs + ' seconds</span></div>' +
-          '<p class="f-sub">' + (wpm > 165 ? 'Take every pause mark and let each line land before the next.' : 'Say it again. Change one word so it stays yours.') + '</p></div>',
+          '<p class="f-sub">' + (wpm > 165 ? 'Take every pause mark and let each line land before the next.' : 'Say it again. Change one word so it stays yours.') + '</p></div>' + level,
         foot: '<button type="button" class="btn big light" id="go" data-run="stage" data-beat="' + R.beatId + '">' + ico('redo') + 'Again</button><div class="pair">' +
-          (up ? '<button type="button" class="btn ghost" data-run="stage" data-beat="' + R.beatId + '" data-setlevel="' + up[0] + '">' + up[1].replace('Again, ', '') + '</button>' : '<button type="button" class="btn ghost" data-fclose="1">Done</button>') +
-          '<button type="button" class="btn ghost" data-run="stage" data-beat="' + nx.id + '">Next stage</button></div>' });
+          '<button type="button" class="btn ghost" data-run="stage" data-beat="' + nx.id + '">Next stage</button><button type="button" class="btn ghost" data-fclose="1">Done</button></div>' });
     }
     focus({ name: esc(C.services[S.service].label), meta: 'Door complete', pct: 1,
       body: '<div class="f-now"><div class="f-label"><span>Door complete</span></div><p class="f-n">' + R.reps + '<span class="f-sub" style="font-size:1rem;font-weight:700;letter-spacing:0"> reps</span></p>' +
         '<div class="row">' + paceTag(wpm) + '<span class="tag">' + Math.floor(secs / 60) + ':' + pad(secs % 60) + '</span>' + (R.fast ? '<span class="tag bad">' + R.fast + ' lines rushed</span>' : '') + '</div>' +
-        '<ul class="checks"><li>' + ico('check') + '<span>Did the first seven seconds sound like a salesman, or like someone who popped over?</span></li>' +
-        '<li>' + ico('check') + '<span>Did you wait through the silences, or fill them?</span></li><li>' + ico('check') + '<span>Did you stop talking after the price?</span></li></ul></div>',
-      foot: '<button type="button" class="btn big light" id="go" data-run="door"' + (up ? ' data-setlevel="' + up[0] + '"' : '') + '>' + ico('redo') + (up ? up[1] : 'Again') + '</button>' +
+        '<ul class="checks"><li>' + ico('check') + '<span>Did the opener sound like a salesman, or like someone who popped over?</span></li>' +
+        '<li>' + ico('check') + '<span>Did you wait through the silences, or fill them?</span></li><li>' + ico('check') + '<span>Did you stop talking after the price?</span></li></ul></div>' + level,
+      foot: '<button type="button" class="btn big light" id="go" data-run="door">' + ico('redo') + 'Again</button>' +
         '<div class="pair"><button type="button" class="btn ghost" data-open="door">Another house</button><button type="button" class="btn ghost" data-fclose="1">Done</button></div>' });
   }
 
@@ -660,7 +671,8 @@
       '<div class="field"><input id="f-saving" data-set="saving" inputmode="numeric" value="' + pr.saving + '" aria-label="Off on the run"><small>Off on the run</small></div>' +
       '<div class="field"><input id="f-drop" data-set="drop" inputmode="numeric" value="' + S.drop + '" aria-label="Extra, with a reason"><small>Extra, with a reason</small></div></div>' +
       '<p class="muted small">Run price $' + pr.price + '. Use the price you really charge for a one-off. The saving has to be real.</p></div>' +
-      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('sayfirst', S.sayFirst, 'Real doors: say my reply before I see options') + '</div></div>' +
+      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('sayfirst', S.sayFirst, 'Real doors: say my reply before I see options') + toggleHTML('saystride', S.sayStride, 'Say "We\'re from Stride" when I explain why I am there') + '</div>' +
+      '<p class="muted small">The coach never names his company at the door. Queensland expects you to say who you are before you sell, so it is on by default.</p></div>' +
       '<div class="sec"><h4>Good to know</h4><div class="list"><button type="button" class="item" data-open="law"><h3>Knocking in Queensland</h3><p>Six rules that change how you book the job</p>' + ico('chev') + '</button></div>' +
       (framed ? '' : '<p class="muted small"><b>Put it on your phone.</b> iPhone: open this page in Safari, tap Share, then Add to Home Screen. Android: open it in Chrome, tap the menu, then Install app. It then opens like an app and works without signal.</p>') + '</div>',
       '<button type="button" class="btn big" data-close="1">Done</button>');
@@ -729,6 +741,7 @@
     if (d.snext) { if (d.snext === 'end') return simEnd(!!d.shut); M.i++; return simNode(); }
     if (t.id === 'voice') { S.voice = !S.voice; save(); t.setAttribute('aria-pressed', S.voice); if (!S.voice) Voice.stop(); return; }
     if (t.id === 'pushback') { S.pushback = !S.pushback; save(); return refresh(); }
+    if (t.id === 'saystride') { S.sayStride = !S.sayStride; save(); return refresh(); }
     if (t.id === 'sayfirst') { S.sayFirst = !S.sayFirst; save(); t.setAttribute('aria-pressed', S.sayFirst); return; }
   });
   document.addEventListener('keydown', function (e) {

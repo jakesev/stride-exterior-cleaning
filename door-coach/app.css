@@ -187,6 +187,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .ln.you .sp { color: var(--accent); } .ln.back-step .sp { color: var(--good); } .ln.out-step .sp { color: var(--text-2); }
 .ln.you p { color: var(--ink); font-weight: 650; font-size: 1.04rem; line-height: 1.45; }
 .ln.them p { color: var(--text-2); }
+.ln .tx { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ln.you p.do, .ln p.do { font-style: italic; font-weight: 450; font-size: .88rem; color: var(--muted); line-height: 1.4; }
 .ln.move p, .ln.silent p { color: var(--muted); font-style: italic; font-size: .95rem; }
 .has-note { cursor: help; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: pan-y; transition: background .15s; }
 .has-note.held, .ln.has-note:focus-visible { background: var(--accent-wash); outline: none; }
@@ -294,6 +296,8 @@ details.more cite { display: block; font-style: normal; font-size: .82rem; color
 .f-now.quiet .f-line { font-style: italic; font-weight: 550; color: var(--text-2); font-size: 1.25rem; }
 .f-line .dim { color: var(--muted); }
 .f-sub { font-size: .86rem; color: var(--muted); }
+.f-do { font-size: .95rem; color: var(--text-2); font-style: italic; }
+.f-do b { font-style: normal; font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 800; margin-right: 8px; }
 .speaking { display: inline-flex; gap: 3px; align-items: flex-end; height: 12px; }
 .speaking i { width: 3px; border-radius: 2px; background: var(--muted); animation: eq .9s ease-in-out infinite; }
 .speaking i:nth-child(2) { animation-delay: .15s; } .speaking i:nth-child(3) { animation-delay: .3s; }
