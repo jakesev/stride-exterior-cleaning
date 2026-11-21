@@ -9,6 +9,7 @@
   var services = {
     windows: {
       label: 'Windows', noun: 'windows', short: 'window clean',
+      see: 'Dull glass, dirty frames and tracks',
       spot: 'the dirtiest window near the front door',
       show: "It's just this stuff here // the frames and the tracks, where all the dirt sits.",
       count: 'run round and count the windows',
@@ -28,6 +29,7 @@
     },
     driveway: {
       label: 'Driveway', noun: 'driveway', short: 'driveway clean',
+      see: 'Dark bands, green edges, tyre marks',
       spot: 'the darkest band on the driveway',
       show: "See this dark band here? // That's not dirt, it's growth. It's in the pores, so a hose won't shift it.",
       count: 'pace out the driveway',
@@ -47,6 +49,7 @@
     },
     house: {
       label: 'House wash', noun: 'house', short: 'house wash',
+      see: 'Green on the shady wall, cobwebs under the eaves',
       spot: 'the green patch on the shaded wall',
       show: "It's this here // the green coming up the wall on the shady side, and the cobwebs up under the eaves.",
       count: 'walk round and look at the walls',
@@ -66,6 +69,7 @@
     },
     gutters: {
       label: 'Gutters', noun: 'gutters', short: 'gutter clean',
+      see: 'Grass in the gutter, stains down the fascia',
       spot: 'the worst stretch of gutter you can see from the lawn',
       show: "See the grass growing out of that corner? // I'll pop the camera up and show you what's actually sitting in there.",
       count: 'walk the gutter line and get a couple of photos',
@@ -82,6 +86,46 @@
       link: "While I'm up there I see the roof and the fascia // if the walls are due a wash I'll show you the photo.",
       throwIn: 'a flush of the shed downpipes',
       callout: 290, saving: 70
+    },
+    roof: {
+      label: 'Roof', noun: 'roof', short: 'roof clean',
+      see: 'Black streaks, lichen or moss on the tiles',
+      spot: 'the side of the roof with the black streaks, seen from the lawn',
+      show: "See the black streaks on that side, and the lichen spots? // That's growth. It sits in the tile and holds the damp against it.",
+      count: 'walk round and look at every side of the roof',
+      countTip: 'Walk right round and look at every face from the ground. Note the material (concrete tile, terracotta, Colorbond), its age, the pitch, and which side is worst. Take two photos. Do not get on the roof to quote.',
+      stack: ['Every face of the roof, at low pressure', 'Ridge capping and valleys', 'Gutters and downpipes checked afterwards', 'Paths, plants and walls protected and rinsed'],
+      stackLine: "So it's every face of the roof, done at low pressure // the ridge capping and the valleys // then we check the gutters and downpipes for anything that's washed down // and the paths, plants and walls all get protected and rinsed off.",
+      why: "Driveway pressure strips a tile. We check what the roof is made of and how old it is first, then clean it gently.",
+      fiddly: 'the ridges and the valleys',
+      whole: 'the whole roof, ridges and valleys included',
+      scope: "That's every face of the roof, the ridge capping and the valleys.",
+      diy: 'Up on the roof yourself?',
+      guy: 'Does he pressure blast it, or do it at low pressure?',
+      honest: 'Cleaning does not repair a roof. Cracked tiles, failed pointing and rust get reported, and they need a roofer. If the roof is too brittle or too steep to work safely, say so now and do not price it.',
+      link: "While we're set up for the roof // the gutters fill with what comes off it, so most people get those cleared the same day. Want a price on both?",
+      throwIn: 'a clear-out of the front gutters',
+      callout: 780, saving: 120
+    },
+    solar: {
+      label: 'Solar', noun: 'solar panels', short: 'solar panel clean',
+      see: 'A film or bird mess on the panels',
+      spot: 'a spot on the lawn where you can both see the panels',
+      show: "See the film along the bottom edge of the panels, and the bird mess? // That's shading the cells underneath.",
+      count: 'count the panels',
+      countTip: 'Count the panels and note the roof pitch, the height and how you would reach them. Look for nesting under the array. Take a photo: from the ground they cannot see how dirty the glass is. If the panels already look clean, tell them so and do not sell it.',
+      stack: ['Every panel, glass and frame', 'Deionised water and a soft brush only', 'The edges where the dirt collects', 'A check for nesting and shading'],
+      stackLine: "So it's every panel, glass and frame // done with deionised water and a soft brush, no detergent and no pressure // the bottom edges where it all collects // and we check under the array for nesting while we're up there.",
+      why: "Rain doesn't clean them, it leaves streaks. And tap water dries with mineral spots on the glass, which is why we use deionised.",
+      fiddly: 'the bottom edges of the panels',
+      whole: 'every panel on the roof',
+      scope: "That's every panel, glass and frame, and the edges where it collects.",
+      diy: 'With the hose?',
+      guy: 'Does he use deionised water, or the hose?',
+      honest: 'Never promise a percentage. How much output comes back depends on how dirty they were. Nothing electrical is touched, and panels are not cleaned in the heat of the day.',
+      link: "We've got the pure water out for the panels // it's the same gear we use on windows. Want a price on those too?",
+      throwIn: 'the glass on the front door',
+      callout: 220, saving: 50
     }
   };
 
@@ -475,7 +519,7 @@
       means: 'Could be real. Find out with a question before you decide.',
       steps: [['f1', "Nice. {guy}"], ['f2', "We're doing it pretty cheap on the run."], ['f3', "I'll count it up anyway. Any chance at all if the number's right?"], ['f4', "Got my runners on, back in thirty seconds."]],
       why: 'The coach asked Alisa "does he pressure wash, or how does he do it?" and then "do you think there is any percentage chance?" Being curious about their guy disarms better than competing with him.', by: 'Nick' },
-    { id: 'done', stage: 'front', them: "We only did them a month ago.",
+    { id: 'done', stage: 'front', them: "We only had it done a month ago.",
       means: 'They did part of it. The part nobody likes doing is probably still there.',
       steps: [['f1', "Oh, really? Good on you."], ['f2', "You can see it on {fiddly} though, that's the bit that gets missed."], ['f3', "I'll give you a quick price so you've got something to compare."], ['f4', "Thirty seconds, I'll meet you back here."]],
       why: 'John\'s wife did the glass. The coach pointed at the frames: "the dirt that is etched in, when it rains that drips back down." He showed him, then went for the price.', by: 'Nick' },

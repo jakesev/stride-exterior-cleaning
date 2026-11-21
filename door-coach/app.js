@@ -54,8 +54,12 @@
     windows: "those white marks are sprinkler scale. They're in the glass, so they won't lift.",
     driveway: "that oil spot has soaked right in, so it'll lighten but it won't vanish.",
     house: "the paint that's already flaking up there may lift a bit more.",
-    gutters: "that back corner up top I can't reach safely, so I've left it out."
+    gutters: "that back corner up top I can't reach safely, so I've left it out.",
+    roof: "there are a couple of cracked tiles up there. I'll photograph them for you, but they're a job for a roofer.",
+    solar: "I can't tell you how much more power you'll get. It depends how dirty they were, so I won't put a number on it."
   };
+  // objections a practice door can throw: ones he rolls past (front) and ones that end in a yes (back)
+  var THROW = { front: ['guy', 'guy2', 'done', 'diy', 'busy', 'nothanks'], back: ['card', 'think', 'price', 'notnow', 'later'] };
   function prices(svc) {
     var d = C.services[svc], p = S.prices[svc] || {};
     var callout = +p.callout || d.callout, saving = +p.saving || d.saving;
@@ -293,7 +297,8 @@
       '<div><div class="track' + (n >= MIN ? ' min' : '') + '" role="img" aria-label="' + n + ' of ' + ELITE + ' reps"><i style="width:' + Math.min(100, n / ELITE * 100) + '%"></i><u></u></div>' +
       '<div class="track-l"><span>0</span><span>' + MIN + ' minimum</span><span>' + ELITE + ' elite</span></div></div>' +
       '<p class="lede">' + status + '</p>' +
-      '<div class="row"><a class="btn" href="#drill">' + ico('drill') + 'Start drilling</a><a class="btn ghost" href="#process">The process</a></div></section>' +
+      '<div class="row"><button type="button" class="btn" data-startdoor="1">' + ico('drill') + 'Practise a door</button><a class="btn ghost" href="#drill">All drills</a></div>' +
+      (all ? '' : '<p class="well small"><b>Just starting?</b> Tap Practise a door, pick what the house needs, and read each line out loud. That is all there is to it. The rest of the app is there when you want it.</p>') + '</section>' +
       '<section class="stack"><h2>Last 14 days</h2><div class="days">' + days + '</div>' +
       '<div class="stats"><div><b>' + streak() + '</b><span>days in a row at ' + MIN + ' or more</span></div><div><b>' + week + '</b><span>last 7 days</span></div><div><b>' + best + '</b><span>best day</span></div><div><b>' + all + '</b><span>all time</span></div></div></section>' +
       '<section class="stack"><h2>What counts as a rep</h2><p class="lede">One rep is one stage of the door, or one objection, said out loud start to finish. A full door is ' + perDoor + ' reps. Twenty a day keeps it sharp. A hundred is how it becomes automatic and starts to sound like a conversation.</p>' +
@@ -365,7 +370,7 @@
   /* ---------------- drills ---------------- */
   var R = { seq: 0 }, O = { filter: 'all' }, N = {}, M = {}, pending = null;
   views.drill = function () { return '<div id="drill"></div>'; };
-  after.drill = function () { if (pending) { var p = pending; pending = null; startRun('stage', p); } else drillMenu(); };
+  after.drill = function () { var p = pending; pending = null; if (p === 'door') doorPicker(); else if (p) startRun('stage', p); else drillMenu(); };
   function box() { return document.getElementById('drill'); }
   function topBar(label, right) {
     return '<div class="drill-top"><button type="button" class="btn ghost sm" data-menu="1">' + ico('back') + 'Drills</button><span>' + label + '</span>' + (right ? '<span>' + right + '</span>' : '') + '</div>';
@@ -374,7 +379,7 @@
     R.seq++; Voice.stop();
     var perDoor = doorBeats().filter(speaks).length;
     var modes = [
-      ['door', 'Full door', 'The whole conversation, both halves. ' + perDoor + ' reps.'],
+      ['door', 'Full door', 'Pick what the house needs, then the whole conversation with an objection thrown in each half. ' + perDoor + ' reps.'],
       ['stage', 'One stage on repeat', 'Pick a stage and say it until it is automatic. One rep a pass.'],
       ['obj', 'Objections', 'Sixteen of them. Build each answer on his process. One rep each.'],
       ['numbers', 'Numbers', 'Your prices for every surface, said cold. One rep each.'],
@@ -395,11 +400,32 @@
     var same = R.kind === 'stage' && kind === 'stage' && R.beatId === beatId;
     var beats = kind === 'door' ? doorBeats() : [beatById(beatId)], lines = [];
     beats.forEach(function (b, bi) {
-      beatLines(b).forEach(function (l) { if (kind === 'door' && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
+      var src = b.process && wayIndex(b) < 0 ? thrown(b.process) : beatLines(b);
+      if (src.id) R['last' + b.process] = src.id;
+      src.forEach(function (l) { if (kind === 'door' && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
     });
-    R = { seq: R.seq + 1, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], start: Date.now(), fast: 0, reps: 0,
+    var lastF = R.lastfront, lastB = R.lastback;
+    R = { seq: R.seq + 1, lastfront: lastF, lastback: lastB, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], start: Date.now(), fast: 0, reps: 0,
       pass: same ? R.pass + 1 : 1, ms: 0, w: 0, cue: beatId === 'hello' ? C.cues[Math.floor(Math.random() * C.cues.length)] : '' };
     runStep(0);
+  }
+  // turn a random objection into script lines, so every door throws a different one
+  function thrown(side) {
+    var ids = THROW[side].filter(function (id) { return id !== R['last' + side]; });
+    var id = ids[Math.floor(Math.random() * ids.length)], o = C.objections.filter(function (x) { return x.id === id; })[0];
+    var out = [{ who: 'them', t: o.them }].concat(o.steps.map(function (s) { return { who: 'you', step: s[0], t: s[1] }; }));
+    out.push(side === 'front' ? { who: 'move', t: 'Nod and go before they answer.', n: 'You asked for thirty seconds, nothing more. A second no, or "please go", is real: thank them and leave.' }
+      : { who: 'them', t: "…Okay. Let's do it." });
+    out.id = id;
+    return out;
+  }
+  function doorPicker() {
+    box().innerHTML = '<div class="drill">' + topBar('Full door') + '<h2>What does this house need?</h2>' +
+      '<p class="lede">Pick the surface that looks worst from the footpath. That is what you lead with, and where you will both stand.</p>' +
+      '<div class="modes">' + Object.keys(C.services).map(function (k) {
+        var s = C.services[k];
+        return '<button type="button" class="mode" data-doorsvc="' + k + '"><h3>' + esc(s.label) + '</h3><p>' + esc(s.see) + '</p>' + ico('arrow') + '</button>';
+      }).join('') + '</div><p class="muted small">Each door throws a different brush-off before the price and a different stall after it. Turn that off under Drills if you want the clean run first.</p></div>';
   }
   function promptOf(l, b) {
     if (l.who !== 'you' || S.level === 'read') return fmt(l.t);
@@ -411,7 +437,7 @@
     if (!el) return;
     if (i >= R.lines.length) return runDone();
     var x = R.lines[i], l = x.l, b = x.b, mine = l.who !== 'them', note = noteOf(l, l.who === 'you' ? b.goal : '');
-    var label = R.kind === 'door' ? 'Stage ' + (x.bi + 1) + ' of ' + R.beats.length + ' · ' + esc(b.title) : esc(b.title) + ' · pass ' + R.pass;
+    var label = R.kind === 'door' ? esc(C.services[S.service].label) + ' · ' + (x.bi + 1) + ' of ' + R.beats.length + ' · ' + esc(b.title) : esc(b.title) + ' · pass ' + R.pass;
     var head = l.who === 'them' ? 'Homeowner' : l.who === 'move' ? 'Do this' : l.step ? labelOf(l) : 'Your line';
     el.innerHTML = '<div class="drill">' + topBar(label) + '<div class="bar"><i style="width:' + Math.round(i / R.lines.length * 100) + '%"></i></div>' +
       (R.cue ? '<p class="well small"><b>At this door:</b> ' + esc(R.cue.toLowerCase()) + '. Open on that instead of the dog.</p>' : '') +
@@ -459,7 +485,7 @@
         '<ul class="checks"><li>' + ico('check') + '<span>Did the first seven seconds sound like a salesman, or like someone who popped over?</span></li>' +
         '<li>' + ico('check') + '<span>Did you wait through the silences, or fill them?</span></li><li>' + ico('check') + '<span>Did you stop talking after the price?</span></li></ul>' +
         '<button type="button" class="btn big" id="go" data-run="door"' + (up ? ' data-setlevel="' + up[0] + '"' : '') + '>' + ico('redo') + (up ? up[1] : 'Again') + '</button>' +
-        (up ? '<div class="row"><button type="button" class="btn ghost sm" data-run="door">Again, same level</button></div>' : '') + '</div>';
+        '<div class="row">' + (up ? '<button type="button" class="btn ghost sm" data-run="door">Again, same level</button>' : '') + '<button type="button" class="btn ghost sm" data-mode="door">Another house</button></div></div>';
     }
     box().innerHTML = '<div class="drill">' + html + '</div>';
   }
@@ -644,16 +670,18 @@
     if (d.jump) { var s = document.getElementById(d.jump); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (d.way !== undefined) { S.ways[d.beat] = +d.way; save(); return render(true); }
     if (d.drillstage) { pending = d.drillstage; if (route === 'drill') render(); else location.hash = 'drill'; return; }
+    if (d.startdoor) { pending = 'door'; if (route === 'drill') render(); else location.hash = 'drill'; return; }
     if (d.menu) return drillMenu();
     if (d.setlevel) { S.level = d.setlevel; save(); }
     if (d.level) { S.level = d.level; save(); document.querySelectorAll('[data-level]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.level === S.level); }); return; }
     if (d.mode) {
-      if (d.mode === 'door') return startRun('door');
+      if (d.mode === 'door') return doorPicker();
       if (d.mode === 'stage') return stagePicker();
       if (d.mode === 'obj') return objStart();
       if (d.mode === 'numbers') { N = {}; return numStart(); }
       return simList();
     }
+    if (d.doorsvc) { S.service = d.doorsvc; save(); return startRun('door'); }
     if (d.run) return startRun(d.run, d.beat);
     if (d.oshow) { O.shown = true; Voice.stop(); return objRender(); }
     if (d.ofilter) { O.filter = d.ofilter; return objStart(); }
