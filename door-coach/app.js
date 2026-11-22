@@ -125,6 +125,7 @@
     house: '<path d="M4 11 12 4l8 7M6 10v10h12V10M10 20v-6h4v6"/>',
     check: '<path d="m5 12.500 4.500 4.500L19 7.500"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
     chev: '<path d="m9 6 6 6-6 6"/>',
     x: '<path d="M6 6l12 12M18 6 6 18"/>',
     alert: '<path d="M12 4 2.500 20h19zM12 10v5M12 17.500v.01"/>',
@@ -448,7 +449,7 @@
       if (src.id) R['last' + b.process] = src.id;
       src.forEach(function (l) { if (kind === 'door' && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
     });
-    R = { seq: R.seq + 1, lastfront: R.lastfront, lastback: R.lastback, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], start: Date.now(), fast: 0, reps: 0,
+    R = { seq: R.seq + 1, lastfront: R.lastfront, lastback: R.lastback, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], counted: {}, end: 0, start: Date.now(), fast: 0, reps: 0,
       pass: same ? R.pass + 1 : 1, ms: 0, w: 0, cue: beatId === 'hello' ? C.cues[Math.floor(Math.random() * C.cues.length)] : '' };
     runStep(0);
   }
@@ -484,9 +485,11 @@
         '<p id="f-line" class="f-line' + noteAttr(note) + '">' + promptOf(l, b) + '</p>' +
         (l.do ? '<p class="f-do"><b>Do</b>' + fmt(l.do) + '</p>' : '') +
         (l.silent ? '<p class="f-sub">Wait. Let them look.</p>' : first ? '<p class="f-sub">Hold any line to see why it is there.</p>' : '') + '</div>',
-      foot: '<button type="button" class="btn big ' + (mine ? 'light' : 'ghost') + '" id="go">' + (l.who === 'them' ? 'Skip' : l.who === 'move' ? 'Done' : 'Said it') + '</button>' +
+      foot: '<div class="go-row"><button type="button" class="btn ghost back" id="back" aria-label="Back one line"' + (prevMine(i) < 0 ? ' disabled' : '') + '>' + ico('back') + '</button>' +
+        '<button type="button" class="btn big ' + (mine ? 'light' : 'ghost') + '" id="go">' + (l.who === 'them' ? 'Skip' : l.who === 'move' ? 'Done' : 'Said it') + '</button></div>' +
         (hidden ? '<button type="button" class="btn ghost" id="peek">Show me the line</button>' : '')
     });
+    document.getElementById('back').addEventListener('click', function () { runBack(i); });
     var t0 = Date.now(), peek = document.getElementById('peek');
     if (peek) peek.addEventListener('click', function () { document.getElementById('f-line').innerHTML = fmt(l.t); peek.remove(); });
     var next = function () {
@@ -499,17 +502,38 @@
       }
       R.hist.push(rec); Voice.stop();
       var last = i === R.lines.length - 1 || R.lines[i + 1].b !== b;
-      if (last && speaks(b)) { R.reps++; addRep(R.kind === 'door' ? 'door' : 'stage'); }
+      if (last && speaks(b) && !R.counted[i]) { R.counted[i] = true; R.reps++; addRep(R.kind === 'door' ? 'door' : 'stage'); }
       runStep(i + 1);
     };
     document.getElementById('go').addEventListener('click', next);
     if (l.who === 'them') (l.silent ? wait(1900) : Voice.speak(spoken(l.t)).then(function () { return wait(350); })).then(next);
   }
+  // the last line before i that is yours (homeowner lines play themselves, so going back to one would bounce you forward)
+  function prevMine(i) { for (var j = i - 1; j >= 0; j--) if (R.lines[j].l.who !== 'them') return j; return -1; }
+  function runBack(i) {
+    var j = prevMine(i);
+    if (j < 0) return;
+    R.seq++; Voice.stop();
+    R.hist.length = j;
+    runStep(j);
+  }
+  // the whole door you just ran, objections included, to read back
+  function runReview() {
+    var out = '', last = null;
+    R.lines.forEach(function (x) {
+      if (x.b !== last) { if (last) out += '</div>'; out += '<h4 class="rv-h">' + esc(x.b.title) + '</h4><div class="script">'; last = x.b; }
+      out += row(x.l);
+    });
+    focus({ name: R.kind === 'door' ? esc(C.services[S.service].label) : 'One stage', meta: 'The whole ' + (R.kind === 'door' ? 'door' : 'stage') + ', to read back', pct: 1, top: true,
+      body: '<p class="f-sub">Hold any of your lines to see why it is there.</p>' + out + '</div>',
+      foot: '<div class="pair"><button type="button" class="btn ghost" data-rvback="1">' + ico('back') + 'Results</button><button type="button" class="btn light" data-run="' + R.kind + '"' + (R.beatId ? ' data-beat="' + R.beatId + '"' : '') + '>' + ico('redo') + 'Again</button></div>' });
+  }
   function paceTag(wpm) {
     return !wpm ? '' : wpm > 165 ? '<span class="tag bad">' + wpm + ' words a minute · rushing</span>' : wpm < 110 ? '<span class="tag warn">' + wpm + ' words a minute · slow</span>' : '<span class="tag good">' + wpm + ' words a minute · conversational</span>';
   }
   function runDone() {
-    var secs = Math.round((Date.now() - R.start) / 1000), wpm = R.ms > 0 ? Math.round(R.w / (R.ms / 60000)) : 0;
+    if (!R.end) R.end = Date.now();
+    var secs = Math.round((R.end - R.start) / 1000), wpm = R.ms > 0 ? Math.round(R.w / (R.ms / 60000)) : 0;
     // the level never changes on its own: you choose it here, and Again repeats what you just did
     var level = '<div class="stack-s"><p class="f-sub">Next time, you see</p>' + levelSeg() + '</div>';
     if (R.kind === 'stage') {
@@ -517,7 +541,8 @@
       return focus({ name: 'One stage', meta: esc(beatById(R.beatId).title), pct: 1,
         body: '<div class="f-now"><div class="f-label"><span>Pass ' + R.pass + ' done</span></div><p class="f-big">' + esc(beatById(R.beatId).title) + '</p>' +
           '<div class="row">' + paceTag(wpm) + '<span class="tag">' + secs + ' seconds</span></div>' +
-          '<p class="f-sub">' + (wpm > 165 ? 'Take every pause mark and let each line land before the next.' : 'Say it again. Change one word so it stays yours.') + '</p></div>' + level,
+          '<p class="f-sub">' + (wpm > 165 ? 'Take every pause mark and let each line land before the next.' : 'Say it again. Change one word so it stays yours.') + '</p>' +
+          '<button type="button" class="btn ghost sm" data-review="1">Read it back</button></div>' + level,
         foot: '<button type="button" class="btn big light" id="go" data-run="stage" data-beat="' + R.beatId + '">' + ico('redo') + 'Again</button><div class="pair">' +
           '<button type="button" class="btn ghost" data-run="stage" data-beat="' + nx.id + '">Next stage</button><button type="button" class="btn ghost" data-fclose="1">Done</button></div>' });
     }
@@ -525,7 +550,8 @@
       body: '<div class="f-now"><div class="f-label"><span>Door complete</span></div><p class="f-n">' + R.reps + '<span class="f-sub" style="font-size:1rem;font-weight:700;letter-spacing:0"> reps</span></p>' +
         '<div class="row">' + paceTag(wpm) + '<span class="tag">' + Math.floor(secs / 60) + ':' + pad(secs % 60) + '</span>' + (R.fast ? '<span class="tag bad">' + R.fast + ' lines rushed</span>' : '') + '</div>' +
         '<ul class="checks"><li>' + ico('check') + '<span>Did the opener sound like a salesman, or like someone who popped over?</span></li>' +
-        '<li>' + ico('check') + '<span>Did you wait through the silences, or fill them?</span></li><li>' + ico('check') + '<span>Did you stop talking after the price?</span></li></ul></div>' + level,
+        '<li>' + ico('check') + '<span>Did you wait through the silences, or fill them?</span></li><li>' + ico('check') + '<span>Did you stop talking after the price?</span></li></ul>' +
+        '<button type="button" class="btn ghost sm" data-review="1">Read the whole door</button></div>' + level,
       foot: '<button type="button" class="btn big light" id="go" data-run="door">' + ico('redo') + 'Again</button>' +
         '<div class="pair"><button type="button" class="btn ghost" data-open="door">Another house</button><button type="button" class="btn ghost" data-fclose="1">Done</button></div>' });
   }
@@ -551,8 +577,9 @@
           : (o.hard ? '<p class="f-sub">Is this one a smokescreen, or real? Say what you would do.</p>' : '<p class="f-sub">' + esc(C.process[side].line) + ' Answer out loud, one step at a time.</p>' + ladderHTML(side)) +
             '<div class="row"><button type="button" class="btn ghost sm" id="hear">' + ico('sound') + 'Hear it</button><button type="button" class="link small" data-open="process">See both processes</button></div>') +
         '</div>',
-      foot: O.shown ? '<div class="trio"><button type="button" class="btn ghost" data-rate="0">Missed it</button><button type="button" class="btn ghost" data-rate="1">Close</button><button type="button" class="btn light" data-rate="2">Nailed it</button></div>'
-        : '<button type="button" class="btn big light" id="go" data-oshow="1">I\'ve answered. Show his.</button>' });
+      foot: O.shown ? '<div class="trio' + (O.i ? ' with-back' : '') + '">' + (O.i ? '<button type="button" class="btn ghost back" data-oprev="1" aria-label="Previous objection">' + ico('back') + '</button>' : '') + '<button type="button" class="btn ghost" data-rate="0">Missed it</button><button type="button" class="btn ghost" data-rate="1">Close</button><button type="button" class="btn light" data-rate="2">Nailed it</button></div>'
+        : '<div class="go-row">' + '<button type="button" class="btn ghost back" data-oprev="1" aria-label="Previous objection"' + (O.i ? '' : ' disabled') + '>' + ico('back') + '</button>' +
+          '<button type="button" class="btn big light" id="go" data-oshow="1">I\'ve answered. Show his.</button></div>' });
     var hear = document.getElementById('hear');
     if (hear) hear.addEventListener('click', function () { Voice.speak(spoken(o.them), true); });
   }
@@ -727,6 +754,9 @@
     }
     if (d.run) return startRun(d.run, d.beat);
     if (d.oshow) { O.shown = true; Voice.stop(); return objRender(); }
+    if (d.oprev) { if (O.i > 0) { O.i--; O.shown = true; Voice.stop(); objRender(); } return; }
+    if (d.review) return runReview();
+    if (d.rvback) return runDone();
     if (d.ofilter) { O.filter = d.ofilter; return objStart(); }
     if (d.rate !== undefined) {
       P.obj[O.order[O.i].id] = +d.rate; addRep('obj');
@@ -750,6 +780,7 @@
     var note = e.target.closest && e.target.closest('.has-note');
     if (note && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); if (heldEl === note) hideHint(); else showHint(note); return; }
     if (e.key === 'Escape') hideHint();
+    if (!FOCUS.hidden && !document.getElementById('sheet').open && e.key === 'ArrowLeft') { var bk = document.getElementById('back') || document.querySelector('[data-oprev]'); if (bk && !bk.disabled) { e.preventDefault(); bk.click(); } return; }
     if (!FOCUS.hidden && !document.getElementById('sheet').open && e.key === ' ' && e.target === document.body) {
       var b = document.getElementById('go');
       if (b) { e.preventDefault(); b.click(); }
