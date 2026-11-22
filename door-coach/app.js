@@ -12,7 +12,7 @@
   var S = Object.assign({
     me: 'Jake', street: 'Wattle Street', neighbour: 'the Hendersons at number 14', runDay: '',
     service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {},
-    sayFirst: true, pushback: true, sayStride: false, example: true
+    sayFirst: true, pushback: true, sayStride: false, lsRate: 1, lsNarrate: true, lsGap: false, lsLoop: true, example: true
   }, saved.S || {});
   // one-off resets: an earlier version could leave you in cues-only, and added the business name to his script
   if (S.v !== 5) { if (S.v !== 4) S.level = 'read'; S.sayStride = false; S.v = 5; }
@@ -109,7 +109,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function fmt(s, strategy, service) { return esc(fill(s, strategy, service)).replace(/\s*\/\/\s*/g, ' <i class="pz" aria-hidden="true"></i> '); }
   function plain(s) { return fill(s).replace(/\s*\/\/\s*/g, ' … '); }
-  function spoken(s, strategy) { return fill(s, strategy).replace(/\([^)]*\)\s*/g, '').replace(/\s*\/\/\s*/g, ', ').replace(/\$(\d+)/g, '$1 dollars').trim(); }
+  function spoken(s, strategy) { return fill(s, strategy).replace(/\([^)]*\)\s*/g, '').replace(/([.?!])\s*\/\/\s*/g, '$1 ').replace(/\s*\/\/\s*/g, ', ').replace(/\$(\d+)/g, '$1 dollars').trim(); }
   function words(s) { return fill(s).replace(/\/\//g, ' ').split(/\s+/).filter(Boolean).length; }
 
   /* ---------------- icons ---------------- */
@@ -126,6 +126,9 @@
     check: '<path d="m5 12.500 4.500 4.500L19 7.500"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    listen: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+    play: '<path d="M7 5v14l12-7z" fill="currentColor"/>',
+    pause: '<path d="M8 5v14M16 5v14"/>',
     chev: '<path d="m9 6 6 6-6 6"/>',
     x: '<path d="M6 6l12 12M18 6 6 18"/>',
     alert: '<path d="M12 4 2.500 20h19zM12 10v5M12 17.500v.01"/>',
@@ -145,20 +148,27 @@
   Voice.stop = function () {
     try { if (Voice.tts) Voice.tts.stop().catch(function () {}); else if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
   };
-  Voice.speak = function (text, force) {
-    var fallbackMs = 600 + text.length * 45;
+  // who: 'them' (the homeowner, default), 'you', or 'narrator'
+  var CAST = { them: { voice: 'rounded', pitch: .85, pick: 1 }, you: { voice: 'buttery', pitch: 1.05, pick: 0 }, narrator: { voice: 'airy', pitch: 1, pick: 2 } };
+  Voice.can = function () { return !!Voice.tts || (!!window.speechSynthesis && typeof window.SpeechSynthesisUtterance === 'function'); };
+  Voice.speak = function (text, force, o) {
+    o = o || {};
+    var rate = o.rate || 1, cast = CAST[o.who || 'them'];
+    var fallbackMs = (600 + text.length * 45) / rate;
     if (!text) return wait(1400);
     if (!S.voice && !force) return wait(fallbackMs);
-    if (Voice.tts) return Promise.race([Voice.tts.speak(text, { voice: 'rounded' }).catch(function () { return wait(fallbackMs); }), wait(fallbackMs + 9000)]);
+    if (Voice.tts) return Promise.race([Voice.tts.speak(text, { voice: cast.voice, rate: rate }).catch(function () { return wait(fallbackMs); }), wait(fallbackMs + 9000)]);
     var ss = window.speechSynthesis;
     if (!ss || typeof window.SpeechSynthesisUtterance !== 'function') return wait(fallbackMs);
     return Promise.race([new Promise(function (res) {
       try {
         ss.cancel();
         var u = new window.SpeechSynthesisUtterance(text);
-        var vs = ss.getVoices().filter(function (v) { return /en[-_]AU/i.test(v.lang); });
-        if (vs[0]) u.voice = vs[0];
-        u.lang = 'en-AU'; u.onend = res; u.onerror = res; ss.speak(u);
+        var all = ss.getVoices(), au = all.filter(function (v) { return /en[-_]AU/i.test(v.lang); });
+        var pool = au.concat(all.filter(function (v) { return /^en/i.test(v.lang) && au.indexOf(v) < 0; }));
+        if (pool.length) u.voice = pool[cast.pick % pool.length];
+        if (cast.pick >= pool.length) u.pitch = cast.pitch; // not enough voices: tell the speakers apart by pitch
+        u.lang = 'en-AU'; u.rate = rate; u.onend = res; u.onerror = res; ss.speak(u);
       } catch (e) { res(); }
     }), wait(fallbackMs + 4000)]);
   };
@@ -310,7 +320,8 @@
     return '<section class="board"><div class="board-top"><span>' + esc(now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })) + '</span>' + tier + '</div>' +
       '<div class="board-n"><b>' + n + '</b><span>reps today</span></div>' + trackHTML(n) +
       '<p class="board-s">' + statusLine(n) + '</p>' +
-      '<button type="button" class="btn light big" data-open="door">Practise a door' + ico('arrow') + '</button></section>' +
+      '<div class="board-go"><button type="button" class="btn light big" data-open="door">Practise a door' + ico('arrow') + '</button>' +
+      '<button type="button" class="btn big listen" data-listen="1">' + ico('listen') + 'Listen</button></div></section>' +
       (all ? '' : '<p class="card small"><b>Just starting?</b> Tap Practise a door, pick what the house needs, and read each line out loud. That is the whole job. Everything else is here when you want it.</p>') +
       '<section class="sec"><h4>Or drill one thing</h4><div class="tiles">' + tiles.map(function (t) {
         return '<button type="button" class="tile" data-mode="' + t[0] + '">' + ico(t[1]) + '<h3>' + t[2] + '</h3><p>' + t[3] + '</p></button>';
@@ -340,11 +351,11 @@
         (speaks(b) ? '<div class="row"><button type="button" class="btn sm" data-run="stage" data-beat="' + b.id + '">' + ico('repeat') + 'Drill this stage</button></div>' : '') + '</div></div>';
     }
     return '<header class="sec"><h1>The sales process</h1><p class="lede">' + C.beats.length + ' stages in three phases. Each has one objective and a clear point where it is done. Tap a stage to open it, and hold any of your lines to see why it is there.</p>' +
-      '<div class="row"><button type="button" class="ctx" data-open="settings">' + ico('gear') + esc(C.services[S.service].label) + ' · ' + esc(C.strategies[S.strategy].label) + '</button></div></header>' +
+      '<div class="row"><button type="button" class="ctx" data-open="settings">' + ico('gear') + esc(C.services[S.service].label) + ' · ' + esc(C.strategies[S.strategy].label) + '</button><button type="button" class="ctx" data-listen="1">' + ico('listen') + 'Listen</button></div></header>' +
       ['front', 'count', 'back'].map(function (h) {
         return '<section class="sec"><div class="phase-h"><h2>' + halfName(h) + '</h2><p>' + objectives[h] + '</p></div><div class="list">' + C.beats.filter(function (b) { return b.half === h; }).map(stage).join('') + '</div></section>';
       }).join('') +
-      '<div class="row"><button type="button" class="btn ghost sm" id="copy">' + ico('copy') + 'Copy the whole script</button></div>';
+      '<div class="row"><button type="button" class="btn sm" data-listen="1">' + ico('listen') + 'Listen to the whole door</button><button type="button" class="btn ghost sm" id="copy">' + ico('copy') + 'Copy the whole script</button></div>';
   };
   after.process = function () {
     document.getElementById('copy').addEventListener('click', function () {
@@ -421,7 +432,7 @@
     var body = document.getElementById('f-body'); body.scrollTop = o.top ? 0 : body.scrollHeight;
   }
   function focusClose() {
-    R.seq++; Voice.stop(); hideHint();
+    R.seq++; listenStop(); Voice.stop(); hideHint();
     FOCUS.hidden = true; FOCUS.innerHTML = ''; document.documentElement.classList.remove('focus-open');
     render(true);
   }
@@ -440,15 +451,19 @@
     out.id = id;
     return out;
   }
-  function startRun(kind, beatId) {
-    closeSheet();
-    var same = R.kind === 'stage' && kind === 'stage' && R.beatId === beatId;
-    var beats = kind === 'door' ? doorBeats() : [beatById(beatId)], lines = [];
+  function buildLines(beats, door) {
+    var lines = [];
     beats.forEach(function (b, bi) {
       var src = b.process && wayIndex(b) < 0 ? thrown(b.process) : beatLines(b);
       if (src.id) R['last' + b.process] = src.id;
-      src.forEach(function (l) { if (kind === 'door' && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
+      src.forEach(function (l) { if (door && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
     });
+    return lines;
+  }
+  function startRun(kind, beatId) {
+    closeSheet(); listenStop();
+    var same = R.kind === 'stage' && kind === 'stage' && R.beatId === beatId;
+    var beats = kind === 'door' ? doorBeats() : [beatById(beatId)], lines = buildLines(beats, kind === 'door');
     R = { seq: R.seq + 1, lastfront: R.lastfront, lastback: R.lastback, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], counted: {}, end: 0, start: Date.now(), fast: 0, reps: 0,
       pass: same ? R.pass + 1 : 1, ms: 0, w: 0, cue: beatId === 'hello' ? C.cues[Math.floor(Math.random() * C.cues.length)] : '' };
     runStep(0);
@@ -554,6 +569,85 @@
         '<button type="button" class="btn ghost sm" data-review="1">Read the whole door</button></div>' + level,
       foot: '<button type="button" class="btn big light" id="go" data-run="door">' + ico('redo') + 'Again</button>' +
         '<div class="pair"><button type="button" class="btn ghost" data-open="door">Another house</button><button type="button" class="btn ghost" data-fclose="1">Done</button></div>' });
+  }
+
+  /* --- listen: the whole door read aloud, both sides, hands-free --- */
+  var LS = { seq: 0, i: 0, playing: false, lines: [], doors: 0, lock: null };
+  var RATES = [[.85, 'Slower'], [1, 'Normal'], [1.15, 'Faster']];
+  function wake(on) {
+    try {
+      if (on && !LS.lock && navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { LS.lock = l; l.addEventListener('release', function () { LS.lock = null; }); }).catch(function () {});
+      if (!on && LS.lock) { LS.lock.release().catch(function () {}); LS.lock = null; }
+    } catch (e) { /* not offered here */ }
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && LS.playing) wake(true); });
+  function listenStop() { LS.seq++; if (LS.playing) Voice.stop(); LS.playing = false; wake(false); }
+  function listenStart() {
+    closeSheet();
+    if (!Voice.can()) { toast('This browser cannot read aloud. Try Chrome or Safari.'); return; }
+    LS.lines = buildLines(doorBeats(), true); LS.i = 0; LS.doors = 0;
+    listenRender(); listenPlay();
+  }
+  function lsOpts() {
+    function chip(k, label) { return '<button type="button" class="chip" data-lsopt="' + k + '" aria-pressed="' + !!S[k] + '">' + label + '</button>'; }
+    return '<div class="stack-s"><div class="seg" role="group" aria-label="Speed">' + RATES.map(function (r) {
+      return '<button type="button" data-lsrate="' + r[0] + '" aria-pressed="' + (S.lsRate === r[0]) + '">' + r[1] + '</button>';
+    }).join('') + '</div><div class="chips">' + chip('lsNarrate', 'Read stage names and directions') + chip('lsGap', 'Pause after my lines so I can repeat them') + chip('lsLoop', 'Keep going, door after door') + '</div></div>';
+  }
+  function listenRender() {
+    var out = '', last = null;
+    LS.lines.forEach(function (x, k) {
+      if (x.b !== last) { if (last) out += '</div>'; out += '<h4 class="rv-h">' + esc(x.b.title) + '</h4><div class="script">'; last = x.b; }
+      out += '<div class="ls-row" data-li="' + k + '">' + row(x.l, { noNote: x.l.who !== 'you' }) + '</div>';
+    });
+    focus({ name: 'Listen', meta: esc(C.services[S.service].label), pct: 0, top: true,
+      body: lsOpts() + '<p class="f-sub">Listening does not add reps. Say it out loud to count. Tap any line to jump to it.</p><div class="lsn">' + out + '</div></div>',
+      foot: '<div class="ls-ctl"><button type="button" class="btn ghost back" data-lsstep="-1" aria-label="Previous line">' + ico('back') + '</button>' +
+        '<button type="button" class="btn big light" id="lsplay"></button>' +
+        '<button type="button" class="btn ghost back" data-lsstep="1" aria-label="Next line">' + ico('arrow') + '</button></div>' });
+    lsMark(true);
+  }
+  function lsMark(jump) {
+    var x = LS.lines[Math.min(LS.i, LS.lines.length - 1)], btn = document.getElementById('lsplay');
+    if (!btn) return;
+    btn.innerHTML = LS.playing ? ico('pause') + 'Pause' : ico('play') + (LS.i >= LS.lines.length ? 'Play again' : 'Play');
+    document.querySelectorAll('.ls-row').forEach(function (r) { r.classList.toggle('on', +r.dataset.li === LS.i); });
+    var meta = document.querySelector('.f-meta span'), bar = document.querySelector('.f-bar i');
+    if (meta && x) meta.textContent = C.services[S.service].label + ' · ' + x.b.title + (LS.doors ? ' · door ' + (LS.doors + 1) : '');
+    if (bar) bar.style.width = Math.round(LS.i / LS.lines.length * 100) + '%';
+    var on = document.querySelector('.ls-row.on');
+    if (on && jump !== false) on.scrollIntoView({ block: 'center', behavior: jump === true ? 'auto' : 'smooth' });
+  }
+  function listenPlay() {
+    if (LS.i >= LS.lines.length) LS.i = 0;
+    LS.playing = true; wake(true); lsStep();
+  }
+  function listenPause() { listenStop(); lsMark(false); }
+  function lsSay(seq, text, who) {
+    return seq !== LS.seq ? Promise.resolve() : Voice.speak(spoken(text), true, { who: who, rate: S.lsRate });
+  }
+  function lsStep() {
+    var seq = ++LS.seq;
+    if (LS.i >= LS.lines.length) {
+      if (!S.lsLoop) { LS.playing = false; wake(false); lsMark(false); return; }
+      LS.doors++; LS.lines = buildLines(doorBeats(), true); LS.i = 0; listenRender();
+      return wait(700).then(function () { if (seq === LS.seq) lsStep(); });
+    }
+    lsMark();
+    var x = LS.lines[LS.i], l = x.l, first = LS.i === 0 || LS.lines[LS.i - 1].b !== x.b, chain = Promise.resolve();
+    function then(f) { chain = chain.then(function () { if (seq === LS.seq) return f(); }); }
+    if (first && S.lsNarrate) { then(function () { return lsSay(seq, x.b.title + '.', 'narrator'); }); then(function () { return wait(250); }); }
+    if (l.who === 'move') { if (S.lsNarrate) then(function () { return lsSay(seq, l.t, 'narrator'); }); }
+    else if (l.silent) then(function () { return wait(1600 / S.lsRate); });
+    else then(function () { return lsSay(seq, l.t, l.who === 'you' ? 'you' : 'them'); });
+    if (l.do && S.lsNarrate) then(function () { return lsSay(seq, l.do, 'narrator'); });
+    if (l.who === 'you' && S.lsGap) then(function () { return wait(Math.max(1500, words(l.t) * 420) / S.lsRate); });
+    then(function () { return wait(320 / S.lsRate); });
+    chain.then(function () { if (seq !== LS.seq) return; LS.i++; lsStep(); });
+  }
+  function lsJump(k) {
+    LS.i = Math.max(0, Math.min(LS.lines.length - 1, k));
+    if (LS.playing) { LS.seq++; Voice.stop(); lsStep(); } else lsMark();
   }
 
   /* --- objections --- */
@@ -666,10 +760,10 @@
   function closeSheet() { var d = document.getElementById('sheet'); if (!d) return; SHEET = ''; if (d.open && d.close) d.close(); else d.removeAttribute('open'); }
   function openDoor() {
     var n = doorBeats().filter(speaks).length;
-    sheet('door', 'Practise a door', '<div class="sec"><h4>What does this house need?</h4>' + surfacePicks() + '</div>' +
+    sheet('door', 'Practise or listen', '<div class="sec"><h4>What does this house need?</h4>' + surfacePicks() + '</div>' +
       '<div class="sec"><h4>How much of each line you see</h4>' + levelSeg() + '</div>' +
       '<div class="list" style="padding:0 16px">' + toggleHTML('pushback', S.pushback, 'Throw an objection in each half') + '</div>',
-      '<button type="button" class="btn big" data-run="door">Start · ' + n + ' reps</button>');
+      '<div class="go-pair"><button type="button" class="btn big" data-run="door">Practise · ' + n + ' reps</button><button type="button" class="btn big ghost" data-listen="1">' + ico('listen') + 'Listen</button></div>');
   }
   function openStages() {
     sheet('stages', 'Which stage?', ['front', 'back'].map(function (h) {
@@ -730,7 +824,12 @@
   });
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button, a');
-    if (!t) { if (e.target.id === 'sheet') { closeSheet(); if (FOCUS.hidden) render(true); } return; }
+    if (!t) {
+      var lr = e.target.closest && e.target.closest('.ls-row');
+      if (lr) return lsJump(+lr.dataset.li);
+      if (e.target.id === 'sheet') { closeSheet(); if (FOCUS.hidden) render(true); }
+      return;
+    }
     var d = t.dataset;
     if (d.close) { closeSheet(); if (FOCUS.hidden) render(true); return; }
     if (d.fclose) return focusClose();
@@ -756,6 +855,11 @@
     if (d.oshow) { O.shown = true; Voice.stop(); return objRender(); }
     if (d.oprev) { if (O.i > 0) { O.i--; O.shown = true; Voice.stop(); objRender(); } return; }
     if (d.review) return runReview();
+    if (d.listen) return listenStart();
+    if (d.lsstep) return lsJump(LS.i + +d.lsstep);
+    if (d.lsrate) { S.lsRate = +d.lsrate; save(); document.querySelectorAll('[data-lsrate]').forEach(function (b) { b.setAttribute('aria-pressed', b === t); }); return; }
+    if (d.lsopt) { S[d.lsopt] = !S[d.lsopt]; save(); t.setAttribute('aria-pressed', S[d.lsopt]); return; }
+    if (t.id === 'lsplay') { if (LS.playing) listenPause(); else listenPlay(); return; }
     if (d.rvback) return runDone();
     if (d.ofilter) { O.filter = d.ofilter; return objStart(); }
     if (d.rate !== undefined) {
@@ -781,13 +885,14 @@
     if (note && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); if (heldEl === note) hideHint(); else showHint(note); return; }
     if (e.key === 'Escape') hideHint();
     if (!FOCUS.hidden && !document.getElementById('sheet').open && e.key === 'ArrowLeft') { var bk = document.getElementById('back') || document.querySelector('[data-oprev]'); if (bk && !bk.disabled) { e.preventDefault(); bk.click(); } return; }
+    if (!FOCUS.hidden && e.key === ' ' && e.target === document.body && document.getElementById('lsplay')) { e.preventDefault(); document.getElementById('lsplay').click(); return; }
     if (!FOCUS.hidden && !document.getElementById('sheet').open && e.key === ' ' && e.target === document.body) {
       var b = document.getElementById('go');
       if (b) { e.preventDefault(); b.click(); }
     }
   });
   document.getElementById('app').addEventListener('close', function () { if (SHEET) { SHEET = ''; if (FOCUS.hidden) render(true); } }, true);
-  window.addEventListener('hashchange', function () { if (!FOCUS.hidden) { R.seq++; Voice.stop(); FOCUS.hidden = true; FOCUS.innerHTML = ''; document.documentElement.classList.remove('focus-open'); } closeSheet(); render(); });
+  window.addEventListener('hashchange', function () { if (!FOCUS.hidden) { R.seq++; listenStop(); Voice.stop(); FOCUS.hidden = true; FOCUS.innerHTML = ''; document.documentElement.classList.remove('focus-open'); } closeSheet(); render(); });
 
   shell(); render();
 })();

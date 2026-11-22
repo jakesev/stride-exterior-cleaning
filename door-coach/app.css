@@ -288,6 +288,18 @@ details.more cite { display: block; font-style: normal; font-size: .82rem; color
 .f-foot .trio .btn.back, .f-foot .pair .btn.back { min-height: 50px; }
 .f-foot .btn.back[disabled] { opacity: .3; pointer-events: none; }
 .rv-h { margin: 14px 0 2px; color: var(--accent); }
+.board-go { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.btn.listen { background: rgba(255,255,255,.12); color: #FFFFFF; padding: 0 18px; width: auto; }
+.btn.listen:hover { background: rgba(255,255,255,.2); }
+.btn.listen svg { width: 20px; height: 20px; }
+.go-pair { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.go-pair .btn.ghost { padding: 0 20px; }
+.ls-ctl { display: grid; grid-template-columns: 58px 1fr 58px; gap: 8px; }
+.ls-ctl .btn.back { min-height: 58px; padding: 0; }
+.lsn .ls-row { transition: opacity .25s; opacity: .45; cursor: pointer; }
+.lsn .ls-row.on { opacity: 1; }
+.lsn .ls-row.on .ln { background: var(--accent-wash); }
+.lsn .ls-row .ln { padding-left: 6px; }
 .rv-h:first-of-type { margin-top: 4px; }
 .f-foot .btn.ghost { min-height: 50px; }
 .pv { display: flex; flex-direction: column; gap: 8px; opacity: .55; }
