@@ -175,6 +175,19 @@
       trap: "The Duo opened with \"Be quick with you, we were just helping your neighbour Julie\" in one breath. Same words the coach would use, but fired at her with no gap, so it landed as a pitch.",
       who: 'The coach, on the Pitch Perfect Duo',
       ways: [
+        { by: 'Nick', name: '"What\'s up?"', lines: [
+          { who: 'you', t: "Hello, hello. // How are you doing?" },
+          { who: 'them', t: "I'm good. What's up?" },
+          { who: 'you', t: "My name's {me}. // Have you kind of just seen us?" },
+          { who: 'them', t: "What are you talking about?" }
+        ], note: 'Valentina. When they skip the small talk, so does he: first name and the question, straight away.' },
+        { by: 'Nick', name: 'They were ready for you', lines: [
+          { who: 'you', t: "Oh, my goodness. You were ready for me. // Sorry to startle you." },
+          { who: 'them', t: "(Laughs.)" },
+          { who: 'you', t: "My name's {me}. // Have you just seen me on {street} the past two or three days?" },
+          { who: 'them', t: "Yeah." },
+          { who: 'you', t: "You have!" }
+        ], note: 'The door opened before he knocked. He reacted to that, laughed at himself, and carried on.' },
         { by: 'Nick', name: '"Can I help you?"', lines: [
           { who: 'you', t: "Hello, hello." },
           { who: 'them', t: "Can I help you?" },
@@ -182,28 +195,52 @@
           { who: 'them', t: "Fine. Can I help you?" },
           { who: 'you', t: "I don't know // I was just popping over. My name's {me}. Have you seen me on {street} the past couple of days?" },
           { who: 'them', t: "No. How can I help you?" }
-        ], note: 'His real answer to a suspicious "can I help you?". A salesman would launch into the pitch here. He says he does not know, and that he just popped over.' },
-        { by: 'Nick', name: 'Something to react to', lines: [
-          { who: 'you', t: "Hello, hello. // Sorry to disturb the guard dog. I like the van, is that you guys?" },
-          { who: 'them', t: "My mother-in-law's." },
-          { who: 'you', t: "I wondered if it was for hauling the kids around. // {bridge}" },
+        ], note: 'The old bloke. A salesman would launch into the pitch here. He says he does not know, and that he just popped over.' },
+        { by: 'Nick', name: '"What\'s going on?"', lines: [
+          { who: 'you', t: "Hello, hello. // What's going on?" },
+          { who: 'them', t: "What is going on?" },
+          { who: 'you', t: "Uh, nothing much. // Have you just kind of seen me on {street} at all? Like, the past two days?" },
+          { who: 'them', t: "I really haven't noticed." }
+        ], note: 'Vinnie. Answering his own question with "nothing much" is the pattern break: he has no agenda.' },
+        { by: 'Nick', name: 'A grand entrance', lines: [
+          { who: 'you', t: "Hello, hello. // That was a grand entrance." },
+          { who: 'them', t: "What's up?" },
+          { who: 'you', t: "Nothing much. // Have you just seen us at all on {street}, the past like two days?" },
           { who: 'them', t: "No." }
-        ], note: 'When there is something real in front of him he opens on it: the dog, the van, "you were ready for me!", "that was a grand entrance". It only works if it is true at this door.' },
-        { by: 'Nick', name: 'They have seen you', lines: [
-          { who: 'you', t: "Hello, hello. // {bridge}" },
-          { who: 'them', t: "Yeah." },
-          { who: 'you', t: "You have!" }
-        ], note: 'When they say yes, be pleased about it. Then go straight to what you are doing.' },
+        ], note: 'He reacted to how she opened the door. (That house had a no-soliciting sign and it went badly. Skip any house with one.)' },
+        { by: 'Nick', name: 'Something to react to', lines: [
+          { who: 'you', t: "Hello, hello. // Sorry to disturb the guard dog." },
+          { who: 'them', t: "(Laughs.)" },
+          { who: 'you', t: "I like the van. Is that you guys?" },
+          { who: 'them', t: "My mother-in-law's." },
+          { who: 'you', t: "I was going to say, I wondered if it was just for hauling the kids around. // That'd be pretty efficient." }
+        ], note: 'Alisa. Two real things in front of him, the dog and the van. It only works if it is true at this door.' },
+        { by: 'Nick', name: 'Just popping over', lines: [
+          { who: 'you', t: "Hello, hello. // How's it going?" },
+          { who: 'them', t: "Good. How are you?" },
+          { who: 'you', t: "I'm doing good. // My name's {me}. I was just popping over." }
+        ], note: 'The Christmas street. "Doing good" instead of "living the dream". Same shape.' },
+        { by: 'Nick', name: 'Second knock', nomix: true, lines: [
+          { who: 'you', t: "Hello, hello. // I came by a little bit earlier, but I think you guys might have been out the back." },
+          { who: 'you', t: "Have you seen me? // The very good-looking young man in the work shirt?" },
+          { who: 'them', t: "You are very good." },
+          { who: 'you', t: "Well, thank you." }
+        ], note: 'Pat. Nobody answered the first time, so he came back and made the first knock part of the joke.' },
+        { by: 'Nick', name: 'Coming back to a maybe', nomix: true, lines: [
+          { who: 'you', t: "Oh, howdy howdy. // We're back again." },
+          { who: 'them', t: "Did the price just drop?" },
+          { who: 'you', t: "Well, what happened was, // do you know {neighbour}? We're going to be doing them too." }
+        ], note: 'Going back to a maybe once you have booked a neighbour. The new booking is the reason for the knock.' },
         { by: 'Blake', name: 'Do you know…?', only: 'anchor', lines: [
           { who: 'you', t: "Hello, hello. // Do you know {neighbour}, by any chance?" },
           { who: 'them', t: "Yeah, we know them." }
         ], note: 'Blake\'s name-drop works. Say one name, then wait for the nod. He lost the effect by listing three names and carrying straight on.' },
-        { by: 'Nick', name: 'A quieter homeowner', lines: [
+        { by: 'The coach', name: 'A quieter homeowner', lines: [
           { who: 'you', t: "Hello. // How are you?" },
           { who: 'them', t: "Fine." },
           { who: 'you', t: "{bridge}" },
           { who: 'them', t: "No." }
-        ], note: 'Meet people where they are. Big energy at a calm older bloke reads as a salesman. Drop your pace to theirs.' }
+        ], note: 'His advice rather than a door he knocked: "Meet people where they are." Big energy at a calm older bloke reads as a salesman, so drop your pace to theirs.' }
       ]
     },
     {
@@ -480,73 +517,377 @@
     big: { name: 'Answer big' }
   };
 
-  /* Objection drills. stage: front (no offer yet) or back (price is out). */
-  var objections = [
-    { id: 'guy', stage: 'front', them: "We've got a guy who does it.",
-      means: 'A reflex. There is no offer yet, so there is nothing to compare your guy with.',
-      steps: [['f1', "Nice. Most people do."], ['f2', "We're doing a bunch in bulk, so we're just taking ${saving} off each home."], ['f3', "I can at least let you know what the price is. If you don't want to do it, all good, but that way you at least kind of know."], ['f4', "Got my running shoes on. I'll meet you back here."]],
-      why: 'The coach to Valentina: "Most people have the housekeeper." He never argues the guy. He goes back for the price.', by: 'Nick' },
-    { id: 'guy2', stage: 'front', them: "Our guy's coming in a couple of weeks.",
-      means: 'Could be real. Find out with a question before you decide.',
-      steps: [['f1', "Nice. {guy}"], ['f2', "We're doing it pretty cheap on the run."], ['f3', "I'll count it up anyway. Any chance at all if the number's right?"], ['f4', "Got my runners on, back in thirty seconds."]],
-      why: 'The coach asked Alisa "does he pressure wash, or how does he do it?" and then "do you think there is any percentage chance?" Being curious about their guy disarms better than competing with him.', by: 'Nick' },
-    { id: 'done', stage: 'front', them: "We only had it done a month ago.",
-      means: 'They did part of it. The part nobody likes doing is probably still there.',
-      steps: [['f1', "Oh, really? Good on you."], ['f2', "You can see it on {fiddly} though, that's the bit that gets missed."], ['f3', "I'll give you a quick price so you've got something to compare."], ['f4', "Thirty seconds, I'll meet you back here."]],
-      why: 'John\'s wife did the glass. The coach pointed at the frames: "the dirt that is etched in, when it rains that drips back down." He showed him, then went for the price.', by: 'Nick' },
-    { id: 'diy', stage: 'front', them: "I do it myself.",
-      means: 'Pride, and often true. Respect it, then find the part they hate.',
-      steps: [['f1', "Good on you. {diy}"], ['f2', "We're doing it pretty cheap on the run."], ['f3', "I'll count it up. If it's not worth it, no stress."], ['f4', "Back in thirty seconds."]],
-      why: 'With Vinnie the coach asked "you do all the tall ones?" and let him explain. He still got to a price.', by: 'Nick' },
-    { id: 'busy', stage: 'front', them: "I'm in the middle of dinner.",
-      means: 'Probably true, and it is not a no.',
-      steps: [['f1', "No stress, you keep going."], ['f2', "That's why we're here."], ['f3', "I'll be thirty seconds."], ['f4', "I'll meet you back here."]],
-      why: 'Drew let the ice-cream bloke go. The coach: "That is why we are here. You eat the ice cream, I will be thirty seconds." Their reason becomes your reason.', by: 'The coach, to Drew' },
-    { id: 'nothanks', stage: 'front', them: "Um, no thanks.",
-      means: 'A flinch. You get one light go at it. A second no is a real no.',
-      steps: [['f1', "Is it more the service, or the haircut?"], ['f3', "Twenty seconds. I'll let you know and get out of your hair."], ['f2', "Bit of information never hurts."]],
-      why: 'Dylan\'s loop. It worked because it was funny and small: twenty seconds, not a clean. If they say no again, thank them and go.', by: 'Dylan' },
-    { id: 'howmuch', stage: 'front', them: "How much is it?",
-      means: 'Interest. Do not guess from the door if you can walk round.',
-      steps: [['f2', "Depends on the house, I'd have to count it up."], ['f4', "Got my runners on, back in thirty seconds."]],
-      why: 'A buying question on the front half is your ticket to the count. A number at the door skips the part where they see the problem.', by: 'Nick' },
-    { id: 'leave', stage: 'front', them: "I said no. Please go.",
-      means: 'A real no. So is a Do Not Knock sticker. There is no ladder for this one.',
-      steps: [['out', "No worries at all. // Have a great day."]],
-      why: 'The coach: "You are free to go whenever. Have a fantastic day, sir." In Queensland you must leave when asked and not call back for 30 days. It is also the brand: every street talks.', by: 'Nick', hard: true },
-    { id: 'card', stage: 'back', them: "Have you got a card?",
-      means: '"I don\'t know." And "I don\'t know" is a no, because nobody rings back.',
-      steps: [['b1', "I do, in the ute."], ['b2', "Is it kind of just the price for you?"], ['b3', "To be honest, you'd be my last spot. If you could just leave a really good review when we're done…"], ['b4', "…I could call it ${deal}, and we'll still do {throwIn}."], ['b5', "Would that make it a no-brainer?"]],
-      why: 'The coach: "If they do not have enough certainty with you right there in front of them, they are not going to develop it on their own time."', by: 'Nick' },
-    { id: 'think', stage: 'back', them: "Let me think about it and I'll call you.",
-      means: 'Neutral. Not sold, not unsold. They need one more reason.',
-      steps: [['b1', "Totally."], ['b2', "Is there any particular reason?"], ['b3', "I'll get my number to you either way. But you'd be my last spot for {runDay}."], ['b4', "If I can save you the thinking, can we call it ${deal}?"], ['b5', "Would that make it a no-brainer?"]],
-      why: 'Valentina went from "may I call you in a couple of hours" to "I\'ll do it". The discount had a reason, so it read as a solution and kept his standing.', by: 'Nick' },
-    { id: 'spouse', stage: 'back', them: "I'd have to ask my husband.",
+  /* His objection playbook: every objection in the three videos, grouped by type.
+     Each play is the real exchange, close to word for word, including what he said
+     when they pushed back a second time. US details are swapped for local ones
+     (truck → ute, a weekday → the run day, dollar figures → your prices).
+     throw: 'front' | 'back' marks plays a practice door can throw at you. */
+  var playbook = [
+    {
+      id: 'someone', stage: 'front', title: 'We already have someone',
+      hear: ['I have a guy that does it.', 'We have our cleaner guy coming to do them.', 'I have a housekeeper.'],
+      means: 'A reflex. There is no price on the table yet, so there is nothing to compare their guy with.',
+      move: '"Most people do." Or "{proofCap} did too, until they heard the deal." Then straight back to the price. He never argues about the guy and never runs him down.',
+      plays: [
+        { id: 'someone-valentina', by: 'Nick', door: 'Valentina', result: 'Booked', win: true, throw: 'front',
+          note: 'Three brush-offs in a row, and he never answers one of them. Each reply points at the same small thing: a quick look and a price.',
+          lines: [
+            { who: 'them', t: "I'm all set." },
+            { who: 'you', step: 'f3', t: "If you want, I can at least just take a quick look and just give you my price, that way you at least kind of know." },
+            { who: 'them', t: "I have a housekeeper." },
+            { who: 'you', step: 'f1', t: "Most people have the housekeeper," },
+            { who: 'you', step: 'f2', t: "but we actually just hand clean everything." },
+            { who: 'you', step: 'f3', t: "I can at least just take thirty seconds and at least just let you know." },
+            { who: 'them', t: "I think I'm okay." },
+            { who: 'you', step: 'f4', t: "Got my running shoes on. I'll take a quick look, I'll meet you back here. I'll be right back." }
+          ] },
+        { id: 'someone-vinnie', by: 'Nick', door: 'Vinnie', result: 'Got to a price · no sale · got his name', throw: 'front',
+          note: '"Barbra did too until she heard the deal." He uses a neighbour as the answer to "I have a guy", then goes straight back to the price.',
+          lines: [
+            { who: 'them', t: "I have a guy that does it." },
+            { who: 'you', step: 'f1', t: "Nice. I will say, {proof} did too, until they heard the deal." },
+            { who: 'you', step: 'f2', t: "We're doing a bunch in bulk, so we're just taking ${saving} off each home." },
+            { who: 'you', step: 'f3', t: "I can {count}, and at least let you know what the price is. If you don't want to do it, all good, but that way you at least kind of know." },
+            { who: 'them', t: "I do most of it myself. I've got a guy for the rest." },
+            { who: 'you', step: 'f1', t: "Yeah? {diy}" },
+            { who: 'them', t: "Yeah, I get it done." },
+            { who: 'you', step: 'f4', t: "Okay. While we're doing it for pretty cheap, I'll count it up and let you know what it is. If you want to do it, cool. If not, all good." }
+          ] },
+        { id: 'someone-alisa', by: 'Nick', door: 'Alisa', result: 'Got to a price · no sale (her guy is a mate)', throw: 'front',
+          note: 'He gets curious about their guy instead of competing with him, then asks if there is "any percentage chance".',
+          lines: [
+            { who: 'them', t: "We have our cleaner guy coming to do them." },
+            { who: 'you', step: 'f1', t: "Does he pressure wash, or what? How does he do it, do you know?" },
+            { who: 'them', t: "He pressure washes, and he takes the screens off and does all that too." },
+            { who: 'you', step: 'f2', t: "Nice. I will say, we're doing it for super cheap." },
+            { who: 'you', step: 'f3', t: "Do you think there's any percentage chance?" },
+            { who: 'them', t: "Um, it kind of depends." },
+            { who: 'you', step: 'f4', t: "I'd have to {count}, but I've got my shoes on. I can jog around and let you know. I'll be super quick. What's your name?" }
+          ] }
+      ]
+    },
+    {
+      id: 'diy', stage: 'front', title: 'We do it ourselves',
+      hear: ['My wife likes to do it.', 'I do it myself.', 'I usually do it myself.'],
+      means: 'Pride, and often true. They have still never heard your price.',
+      move: '"Sure." Then a real question about how they do it, or he points at the bit they missed. Then the price anyway, even if he has to say it from the front.',
+      plays: [
+        { id: 'diy-vinnie', by: 'Nick', door: 'Vinnie', result: 'Price given · no sale · got his name',
+          note: 'Five nos, and he still gets the price out, asks one question about it, and leaves with a name. "They cannot buy if they do not know what we are doing and how much it is."',
+          lines: [
+            { who: 'them', t: "I do it myself." },
+            { who: 'you', t: "Yeah? {diy}" },
+            { who: 'them', t: "Yep." },
+            { who: 'you', t: "Okay. While we're doing it for pretty cheap, I'll count it up, let you know what it is. If you want to do it, cool. If not…" },
+            { who: 'them', t: "I don't want to." },
+            { who: 'you', t: "You sure? Well, I'll at least tell you, cause I've done this build a couple of times. ${callout} for a one-off appointment. While we're doing every fifth home, we just take off ${saving}. It's just a lot easier to wheel over. So it comes down to literally ${price} for {whole}." },
+            { who: 'you', t: "I will say, while we're doing it dirt cheap, does that sound somewhat reasonable for just ${price}?" },
+            { who: 'them', t: "Reasonable, but I don't need it." },
+            { who: 'you', step: 'b2', t: "Sure. Would there be a price that does make sense for you? Or would you just do it yourself no matter what?" },
+            { who: 'them', t: "I'm not going to do it." },
+            { who: 'you', step: 'out', t: "No worries. Well, what's your name?" }
+          ] },
+        { id: 'diy-john', by: 'Nick', door: 'John', result: 'Price given · no sale · got his name',
+          note: 'He could not walk round, so he pointed at the frames from the door and put a price on the table anyway.',
+          lines: [
+            { who: 'them', t: "My wife likes to. Not that she likes to do it, but she does it." },
+            { who: 'you', t: "Sure." },
+            { who: 'them', t: "We just did them a month ago." },
+            { who: 'you', t: "Oh, really?" },
+            { who: 'them', t: "Do you see water spots?" },
+            { who: 'you', t: "It's hard to see in the shade. I can see a little bit on {fiddly}, though. It's dirt that's kind of etched in. And when it rains, a lot of the time that stuff drips back down." },
+            { who: 'you', t: "It's normally a bit pricey if you were to call us out. ${callout} for a one-off appointment. While we're here, though, we take ${saving} off each home, cause it's a lot easier to wheel over. So it'd just be ${price}." },
+            { who: 'them', t: "Nope. Thank you very much." },
+            { who: 'you', step: 'out', t: "What's your name? // {me}, nice to meet you. Well, if you see us on {runDay}, feel free to flag us down." }
+          ] }
+      ]
+    },
+    {
+      id: 'done', stage: 'front', title: 'We just had it done',
+      hear: ['We just did them a month ago.', 'I did it not too long ago.', "I'm pretty good."],
+      means: 'They did part of it. The part nobody likes doing is usually still there.',
+      move: '"Oh, really?" or "I got you." Then he assumes the yes and asks a logistics question: "Is the gate on the left or the right?"',
+      plays: [
+        { id: 'done-rob', by: 'Gabe', door: 'Rob', result: 'Got round the back and gave a price', throw: 'front',
+          note: 'The gate question is the move. It assumes the walk-round is happening, so the only thing left to answer is which way.',
+          lines: [
+            { who: 'them', t: "I'm pretty good." },
+            { who: 'you', step: 'f1', t: "Pretty good. // Have you had it done recently?" },
+            { who: 'them', t: "I did it not too long ago." },
+            { who: 'you', step: 'f1', t: "I got you." },
+            { who: 'you', step: 'f3', t: "I can get you the price. If you like it, awesome. If not, no big deal at all." },
+            { who: 'you', step: 'f4', t: "But is the gate on the left, or the right?" },
+            { who: 'them', t: "No gate. It's all open." },
+            { who: 'you', step: 'f4', t: "Sounds good. I'll meet you back here in thirty seconds. What's your name?" }
+          ] }
+      ]
+    },
+    {
+      id: 'busy', stage: 'front', title: "I'm busy",
+      hear: ["I'm busy eating ice cream.", "I'm in the middle of doing something."],
+      means: 'Probably true, and not a no. Their reason is your reason to be quick.',
+      move: '"That\'s why we\'re here. You keep going, I\'ll be thirty seconds."',
+      plays: [
+        { id: 'busy-drew', by: 'The coach, fixing Drew\'s door', door: 'The ice-cream bloke', result: 'Drew let him go. This is what the coach said to say', throw: 'front',
+          note: 'Drew took "I\'m busy" as the end. The coach: turn their reason into the reason you will be quick, then give your name.',
+          lines: [
+            { who: 'them', t: "I think it's the heat of the day, and I'm busy eating ice cream." },
+            { who: 'you', step: 'f1', t: "Well, there you go. That's why we're here." },
+            { who: 'you', step: 'f3', t: "You eat the ice cream, I'll be thirty seconds." },
+            { who: 'you', step: 'f4', t: "I'll meet you back here. My name's {me}, by the way." }
+          ] }
+      ]
+    },
+    {
+      id: 'nothanks', stage: 'front', title: 'No thanks',
+      hear: ['Um, actually, no thanks.', "I'm good right now.", "I'm all set."],
+      means: 'A flinch, not a decision. There is no offer yet. You get one light go at it.',
+      move: 'A joke, then the smallest possible ask: "Twenty seconds, even faster."',
+      plays: [
+        { id: 'nothanks-dylan', by: 'Dylan', door: 'Cindy', result: 'Booked', win: true, throw: 'front',
+          note: 'The joke drops her guard, and twenty seconds is easy to say yes to. The coach: "her saying no is not logical, it is just a bodily reaction."',
+          lines: [
+            { who: 'them', t: "Um, actually, no thanks. Thank you." },
+            { who: 'you', step: 'f1', t: "Is it more like the service, or my haircut, that's kind of throwing you off?" },
+            { who: 'them', t: "(Laughs.) It's pretty bad right now." },
+            { who: 'you', step: 'f3', t: "Twenty seconds, even faster. I'll just let you know, and then we'll get out of your hair." },
+            { who: 'you', step: 'f2', t: "Little information never hurts." },
+            { who: 'them', t: "Oh, okay." }
+          ] },
+        { id: 'nothanks-miss', by: 'Nick', door: 'His own miss', result: 'No',
+          note: 'Even the coach slips. He asked a yes-or-no question and got the safe answer. Compare "I\'ll give you a quick price, just so you know", said while you start walking.',
+          lines: [
+            { who: 'them', t: "I'm good right now." },
+            { who: 'you', t: "Would you want a quick price?" },
+            { who: 'them', t: "No, not right now." }
+          ] }
+      ]
+    },
+    {
+      id: 'cardfront', stage: 'front', title: 'Got a card? (before the price)',
+      hear: ["You don't have a card or anything?", "I'm going to do it, but not now."],
+      means: 'A polite way to end it. If they will not let you walk round, the price has to come to them.',
+      move: 'Find the reason with one question, find something to like, then price it from the front: "I\'ve done a few of these builds, I think I know roughly."',
+      plays: [
+        { id: 'cardfront-seller', by: 'Nick', door: 'The woman selling her house', result: 'Price given · no sale',
+          note: '"Is that probably a deal? No. But I\'m going to take it as far as I can, just cause maybe one of those is a deal."',
+          lines: [
+            { who: 'them', t: "I'm going to be doing that, but not now. And you don't have a card or anything?" },
+            { who: 'you', t: "I do, in the ute. We had the two spots on {runDay}, so we always take ${saving} off whenever we're out here." },
+            { who: 'them', t: "I can't do that." },
+            { who: 'you', t: "Is there any particular reason for {runDay}?" },
+            { who: 'them', t: "I'm trying to get the house ready for sale." },
+            { who: 'you', t: "Oh, really? You guys selling it soon? // That looks pretty good. The brick on this place is nice." },
+            { who: 'you', t: "The cards are in the ute, but I could even tell you what it would be, if you wanted to write it down, or I could shoot you a text." },
+            { who: 'you', t: "I tell you what, I've done a few of these builds, I think I know roughly. It would normally be ${callout}. While we're here, though, we take ${saving} off each home. If we could fit you in, it would just be ${price} for literally the entire thing." },
+            { who: 'them', t: "But thank you." },
+            { who: 'you', step: 'out', t: "It was a pleasure meeting you." }
+          ] }
+      ]
+    },
+    {
+      id: 'realno', stage: 'front', title: 'A real no', hard: true,
+      hear: ['Please let me go.', "I don't appreciate the interruption.", 'A No Junk Mail or Do Not Knock sign.'],
+      means: 'Not a smokescreen. They asked you to leave, or the sign did.',
+      move: 'Leave, warmly, straight away: "You\'re free to go whenever. Have a fantastic day."',
+      plays: [
+        { id: 'realno-old', by: 'Nick', door: 'The old bloke', result: 'Walked away', hard: true,
+          note: 'One light question when he said he was busy. The moment he asked to be let go, Nick let him go. In Queensland you must leave when asked and not come back for 30 days.',
+          lines: [
+            { who: 'them', t: "Thank you very much. I'm in the middle of doing something. We don't need it, and I'll see you later." },
+            { who: 'you', t: "Totally cool. Is that what you're up to? The {noun}?" },
+            { who: 'them', t: "No, sir. Please let me go, because I'm in the middle of something and I really need to go. Please let me go." },
+            { who: 'you', step: 'out', t: "You're free to go whenever. I'm just having a conversation. Have a fantastic day, sir." }
+          ] },
+        { id: 'realno-sign', by: 'Nick', door: 'The no-soliciting sign', result: 'Walked away', hard: true,
+          note: 'He knocked a house with a sign and copped it. Skip any house with one.',
+          lines: [
+            { who: 'them', t: "No, I'm not interested. Thank you." },
+            { who: 'them', t: "I don't appreciate the interruption. We really do have a no-soliciting policy in the neighbourhood." },
+            { who: 'you', step: 'out', t: "I'm sorry. // Well, have a great day." }
+          ] }
+      ]
+    },
+    {
+      id: 'card', stage: 'back', title: 'Got a card? / Let me think about it',
+      hear: ['Do you have a card?', 'Let me think about it.', 'Can I call you when I get back?'],
+      means: '"I don\'t know." And "I don\'t know" never turns into a job, because nobody rings back.',
+      move: 'Stay in it ("I do, in the ute"), then a reason and one better number now: "If I can bypass the few hours and you thinking about it…"',
+      plays: [
+        { id: 'card-valentina', by: 'Nick', door: 'Valentina', result: 'Booked', win: true, throw: 'back',
+          note: 'He never argued with "let me think about it". He offered to save her the thinking.',
+          lines: [
+            { who: 'them', t: "Do you have a card?" },
+            { who: 'you', step: 'b1', t: "I do, in the ute, yeah. It's just kind of down the street." },
+            { who: 'them', t: "I'm running somewhere. Let me think about it. Put your card in the letterbox. Can I call you when I get back in a couple of hours?" },
+            { who: 'you', step: 'b1', t: "I'll get my phone number and email to you." },
+            { who: 'you', step: 'b4', t: "If I can bypass the few hours and you thinking about it, can we call it ${deal}?" },
+            { who: 'them', t: "…All right. I'll do it." }
+          ] }
+      ]
+    },
+    {
+      id: 'partner', stage: 'back', title: "I'd have to ask my partner",
+      hear: ["I'd have to ask my wife.", "I've got to ask my husband.", 'Let me ask real quick.'],
       means: 'Sometimes true, sometimes a soft exit. One question tells you which.',
-      steps: [['b1', "Of course."], ['b2', "If I could do a bit better on the price, is it a yes? Or is it genuinely one to run past him?"], ['b3', "You'd be the last spot on the run."], ['b4', "I'll text you the quote at ${deal} so he can see it in writing."], ['b5', "What's the best number for you?"]],
-      why: 'Gabe asked exactly this, got "I have to ask", texted the quote and moved on. He came back later with a new neighbour booked and closed it.', by: 'Gabe' },
-    { id: 'price', stage: 'back', them: "That's more than I wanted to spend.",
-      means: 'Price, or value? You do not know yet.',
-      steps: [['b1', "Sure."], ['b2', "Is it kind of the price, or the value?"], ['b3', "To be honest, we only have one spot left anyway."], ['b4', "Why don't we call it ${deal} for the whole thing and just make it look awesome for you."], ['b5', "Would that make it a no-brainer?"]],
-      why: 'Gabe jumped straight to "25 off, 50 off". The coach: "This guy is desperate." Ask first, give a reason, then one move.', by: 'The coach, to Gabe' },
-    { id: 'notnow', stage: 'back', them: "We're away that week.",
+      move: 'Try to get the partner to the problem. If not: "Is it a thing where, if I could do a bit cheaper, you could say yes?" Then a reason, one move, and the guarantee.',
+      plays: [
+        { id: 'partner-christmas', by: 'Nick', door: 'The Christmas house', result: 'Booked, $50 under the run price', win: true, throw: 'back',
+          note: 'He saw the husband wince at the price, tried to bring the wife out, then gave one reason (last spot), one condition (a review) and one move.',
+          lines: [
+            { who: 'them', t: "Have you got a card?" },
+            { who: 'you', step: 'b1', t: "I don't on me. I was just kind of filling the last spot for {runDay}." },
+            { who: 'you', step: 'b2', t: "Is she free? I wanted to show her {throwIn}, just so she knows we could take care of that too." },
+            { who: 'them', t: "You know what? Not this time." },
+            { who: 'you', step: 'b1', t: "Okay, sure. I will say, I know there was a buildup. I know she's just kind of busy. It does, you know, kind of need done." },
+            { who: 'them', t: "Yeah. You know what, I did it myself a few months ago. I usually do it myself." },
+            { who: 'you', step: 'b3', t: "Sure, I hear you. I will say, since it does kind of need it, and you guys would be the last spot, it'd make my day easier to just fill you guys." },
+            { who: 'you', step: 'b4', t: "If you could just leave an awesome review once we're done doing a good job, I could just call it ${deal}, and we'll still scrub down {throwIn}." },
+            { who: 'them', t: "All right. I'll go ahead and do it." }
+          ] },
+        { id: 'partner-gabe', by: 'Gabe', door: 'Gabe\'s first door', result: 'A maybe, then booked on a comeback',
+          note: 'He tested whether the husband was real, texted the quote, and came back later with a neighbour booked. The comeback closed it.',
+          lines: [
+            { who: 'them', t: "Like I said, I can't. My husband's working now, so I've got to ask him." },
+            { who: 'you', step: 'b1', t: "No problem. Let me do this: I'll send you an estimate. What's a good phone number for you?" },
+            { who: 'you', step: 'b2', t: "I will say, we're just trying to fill the last spot. Is it a thing where if I could give you a little bit cheaper of a price, you could say yes? Or is it something you really just have to talk to him about?" },
+            { who: 'them', t: "Yeah, I've got to ask him." },
+            { who: 'you', step: 'b1', t: "Gotcha. No problem. I'll text you that information, and a couple of days before we're out here, I'll shoot you a text and see if you guys want to get it done." }
+          ] },
+        { id: 'partner-drew', by: 'The coach, coaching Drew', door: 'The couple leaving town', result: 'Booked', win: true, throw: 'back',
+          note: 'Coach to Drew: "If there\'s any hesitancy when he comes back, just mention the full guarantee."',
+          lines: [
+            { who: 'them', t: "Let me ask real quick." },
+            { who: 'you', step: 'b1', t: "No worries." },
+            { who: 'you', step: 'b4', t: "And just so you know, we have a full guarantee. As soon as we're done, I don't want you to pay anything until you've walked around and made sure it all looks perfect." },
+            { who: 'them', t: "All right. ${deal}'s perfect." }
+          ] }
+      ]
+    },
+    {
+      id: 'price', stage: 'back', title: "It's more than I wanted",
+      hear: ["I'm pretty good.", "Our guy only charges less.", 'Can you take another fifty off?'],
+      means: 'Price, or value? You do not know yet, so do not move the price yet.',
+      move: '"Is it kind of the price, or the value?" Then a reason ("we only have one spot left") and one move. Never two drops in one breath.',
+      plays: [
+        { id: 'price-coach', by: 'The coach, redoing Gabe\'s door', door: 'Rob', result: 'How it should have gone', throw: 'back',
+          note: 'Gabe said "let us earn your business, I\'ll take another 50 off… 25". The coach: "This guy is desperate." Ask first, give a reason, make one move.',
+          lines: [
+            { who: 'them', t: "I'll call you back in the spring, if you take another fifty off." },
+            { who: 'you', step: 'b2', t: "Is it kind of the price, or the value, to be honest?" },
+            { who: 'you', step: 'b3', t: "We only have one spot left anyways." },
+            { who: 'you', step: 'b4', t: "Why don't we call it ${deal} for the whole thing, and just make it look awesome for you." },
+            { who: 'them', t: "All right. Sounds good." }
+          ] },
+        { id: 'price-alisa', by: 'Nick', door: 'Alisa', result: 'No sale. The right call',
+          note: 'Her reason was loyalty to a mate with a newborn, not money. He made one offer, heard the real reason, and stopped.',
+          lines: [
+            { who: 'them', t: "Our guy who does our house and our windows is ${deal}." },
+            { who: 'you', t: "Really?" },
+            { who: 'them', t: "He's also a friend." },
+            { who: 'you', t: "Well, ${deal} is pretty hard to beat." },
+            { who: 'you', step: 'b2', t: "Is he already scheduled, or is he just kind of due to come in at some point soon?" },
+            { who: 'them', t: "I think it's in the next two weeks." },
+            { who: 'you', step: 'b2', t: "Is there a price where it would make sense for you?" },
+            { who: 'them', t: "Probably not. They just had a baby. I can't take the job off him." },
+            { who: 'you', step: 'out', t: "I hear you. I hear you. // Fair enough. I'll text you in the springish time." }
+          ] }
+      ]
+    },
+    {
+      id: 'away', stage: 'back', title: "We won't be home / Not today",
+      hear: ["We won't be here.", "It's not going to be today.", "We're leaving town."],
       means: 'A logistics problem you can solve. Do not offer another date.',
-      steps: [['b1', "That's fine, it's all outside. You don't need to be home."], ['b4', "I'll text you photos when we're done and you check it when you're back. Nothing to pay till then."], ['b5', "So I'll pop you on the run?"]],
-      why: 'Drew offered "next Wednesday" and got "we\'ll call you". The coach: "You never want to put that on the table until it is a 100 percent guaranteed no."', by: 'The coach, to Drew' },
-    { id: 'later', stage: 'back', them: "Call me in the spring.",
-      means: 'They like you and they are putting it off.',
-      steps: [['b1', "I can do that."], ['b3', "The only reason it's ${price} is that {reason} on {runDay}. It's not a forever price."], ['b5', "Is it worth grabbing while we're here?"]],
-      why: 'The coach\'s re-anchor: "This is not a forever deal. It is just because I am helping Jim right now." It changes the question to do I want this, yes or no.', by: 'Nick' },
-    { id: 'inside', stage: 'back', them: "Is that the whole lot?",
-      means: 'A buying question, not an objection. Answer it big and never say "just".',
-      steps: [['big', "{scope}"], ['b5', "{runDay}, morning or arvo?"]],
-      why: '"If you demean what you are doing with your own words, you are stacking the odds against yourself."', by: 'The coach, to Gabe' },
-    { id: 'noneed', stage: 'back', them: "It's reasonable, but I don't need it.",
-      means: 'Maybe a no at any price. One question finds out.',
-      steps: [['b1', "Fair enough."], ['b2', "Is there a price where it would make sense for you?"], ['out', "All good. // What was your name?"]],
-      why: 'Vinnie said no at any number. The coach found out in ten seconds, got the name, and walked to the next door in a good mood.', by: 'Nick' }
+      move: '"We do everything from the outside, you don\'t need to be here." Then a reason to do it with the neighbour, and one move. A later date only goes on the table when this one is a definite no.',
+      plays: [
+        { id: 'away-pat', by: 'Nick', door: 'Jim\'s neighbours, second knock', result: 'Booked, $50 under', win: true, throw: 'back',
+          note: 'Drew had offered "next Wednesday" and got "we\'ll call you". Nick went back with a second neighbour booked and re-anchored on doing it with them.',
+          lines: [
+            { who: 'them', t: "It's not going to be today, okay?" },
+            { who: 'you', step: 'b1', t: "I will say, just to know that we have the spot secure, if you'd prefer to wait, we totally could." },
+            { who: 'you', step: 'b3', t: "So if you wanted to do it with them, we could even call it ${deal}, just because it would be really convenient, cause we wouldn't even have to come back." },
+            { who: 'you', step: 'b5', t: "Would that sound good? Just to fit you in with them." },
+            { who: 'them', t: "What if we're not here?" },
+            { who: 'you', step: 'b1', t: "If you weren't here, then we just text you an invoice, and you guys just pay once you've checked it out." },
+            { who: 'them', t: "Do it for ${deal}." }
+          ] },
+        { id: 'away-prehandle', by: 'The coach, coaching Drew', door: 'Jim\'s neighbours', result: 'Say this before the price',
+          note: 'When you already know they are going away, handle it inside the presentation so it never becomes the objection.',
+          lines: [
+            { who: 'you', t: "We pop out all the screens, we do everything from the outside. So you guys will just come home later to a clean house." },
+            { who: 'you', t: "I'll just shoot you an invoice, and as soon as you get home, make sure everything looks super awesome. You can just pay once you've had a chance to check it out." }
+          ] }
+      ]
+    },
+    {
+      id: 'later', stage: 'back', title: "We'll call you / In the spring",
+      hear: ["We'll call you.", "I'll call you back in the spring.", "We'll look at next week."],
+      means: 'They like you and they are putting it off. Later almost never comes.',
+      move: 'The re-anchor: "The reason I was popping over is just because you\'re right next door. That\'s why I\'m able to take it off. It\'s not a forever deal."',
+      plays: [
+        { id: 'later-reanchor', by: 'The coach, coaching Drew', door: 'Jim\'s neighbours', result: 'How to bring it back to now', throw: 'back',
+          note: '"When you re-anchor them, it changes their frame. He\'s just popping by because he\'s doing Jim right now. Do I want this, yes or no?"',
+          lines: [
+            { who: 'them', t: "We'll just call you when we're back." },
+            { who: 'you', step: 'b1', t: "Yeah, you totally could." },
+            { who: 'you', step: 'b3', t: "The reason I was popping over is just because {reason}. That's why I'm able to take ${saving} off. This isn't like a forever deal." },
+            { who: 'you', step: 'b5', t: "Do you want to do it while we're here?" },
+            { who: 'them', t: "Yeah, okay. Let's just do it." }
+          ] }
+      ]
+    },
+    {
+      id: 'compare', stage: 'back', title: 'Did someone else come through?',
+      hear: ['Did you guys come through here in the spring?', 'Were there some other fellas?'],
+      means: 'They are comparing you with someone. A joke keeps it light and keeps you moving.',
+      move: '"Probably not as good-looking, I assume."',
+      plays: [
+        { id: 'compare-pat', by: 'Nick', door: 'Pat', result: 'Booked', win: true,
+          note: 'He did not ask who they were or what they charged. A joke, and on to booking.',
+          lines: [
+            { who: 'them', t: "Did you guys come through here in the spring? Were there some other fellas that swung by?" },
+            { who: 'you', t: "This is my first time. // Probably not as good-looking, I assume." },
+            { who: 'them', t: "I don't know. They were pretty cute." },
+            { who: 'you', t: "Oh, darn." }
+          ] }
+      ]
+    },
+    {
+      id: 'extra', stage: 'back', title: 'Can you throw in…?',
+      hear: ['If you do everything, including the screens, for that, you\'ve got a deal.', "I'll only talk to you if you'll do my sliding doors."],
+      means: 'A buying signal. They are already negotiating the job.',
+      move: 'A barter keeps your price: "If we can get a good review from you when we\'re done, we can do that for free."',
+      plays: [
+        { id: 'extra-barter', by: 'Nick', door: 'The woman who walked out', result: 'Booked', win: true, throw: 'back',
+          note: 'He did not drop the number. He traded the extra for a review.',
+          lines: [
+            { who: 'them', t: "If you do everything, including {throwIn}, for ${deal}, you've got a deal." },
+            { who: 'you', step: 'b3', t: "I tell you what, we'll do a little bit of a barter here." },
+            { who: 'you', step: 'b4', t: "If we can get a good review from you whenever we're done doing a good job, we can call it ${deal} for everything, and do {throwIn} for free." },
+            { who: 'them', t: "Okay." }
+          ] }
+      ]
+    },
+    {
+      id: 'inside', stage: 'back', title: 'Is that the whole lot?',
+      hear: ['Is that inside too?', 'Is that everything?'],
+      means: 'A buying question. Answer it big.',
+      move: '"That\'s all the exteriors." Never "that\'s just the outside".',
+      plays: [
+        { id: 'inside-gabe', by: 'The coach, to Gabe', door: 'Lynn', result: 'Booked',
+          note: '"If you demean what you are doing with your own words, you are stacking the odds against yourself."',
+          lines: [
+            { who: 'them', t: "Is that inside too?" },
+            { who: 'you', step: 'big', t: "That's all the exteriors. // {scope}" }
+          ] }
+      ]
+    }
   ];
+  // the flat list the drills and practice doors use
+  var objections = [];
+  playbook.forEach(function (g) {
+    g.plays.forEach(function (pl) { objections.push(Object.assign({ group: g, stage: g.stage, them: pl.lines[0].t, hard: g.hard || pl.hard }, pl)); });
+  });
 
   /* Door sim. Each choice: v best|ok|miss, g = change to their guard (minus is good). */
   var scenarios = [
@@ -918,6 +1259,6 @@
   };
 
   window.DC = window.DC || {};
-  window.DC.content = { sources: sources, services: services, strategies: strategies, beats: beats, patterns: patterns, process: process, objections: objections,
+  window.DC.content = { sources: sources, playbook: playbook, services: services, strategies: strategies, beats: beats, patterns: patterns, process: process, objections: objections,
     scenarios: scenarios, film: film, rules: rules, cues: cues, qld: qld };
 })();

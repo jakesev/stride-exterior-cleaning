@@ -12,7 +12,7 @@
   var S = Object.assign({
     me: 'Jake', street: 'Wattle Street', neighbour: 'the Hendersons at number 14', runDay: '',
     service: 'windows', strategy: 'anchor', prices: {}, drop: 30, voice: true, level: 'read', ways: {},
-    sayFirst: true, pushback: true, sayStride: false, lsRate: 1, lsNarrate: true, lsGap: false, lsLoop: true, example: true
+    sayFirst: true, pushback: true, sayStride: false, lsRate: 1, lsNarrate: true, lsGap: false, lsLoop: true, mixOpen: true, example: true
   }, saved.S || {});
   // one-off resets: an earlier version could leave you in cues-only, and added the business name to his script
   if (S.v !== 5) { if (S.v !== 4) S.level = 'read'; S.sayStride = false; S.v = 5; }
@@ -77,7 +77,6 @@
     solar: "I can't tell you how much more power you'll get. It depends how dirty they were, so I won't put a number on it."
   };
   // objections a practice door can throw: ones he rolls past (front) and ones that end in a yes (back)
-  var THROW = { front: ['guy', 'guy2', 'done', 'diy', 'busy', 'nothanks'], back: ['card', 'think', 'price', 'notnow', 'later'] };
   var LEVELS = [['read', 'Read it'], ['cue', 'Cues only'], ['blind', 'From memory']];
   function levelName() { return LEVELS.filter(function (l) { return l[0] === S.level; })[0][1]; }
   function prices(svc) {
@@ -99,6 +98,8 @@
       what: S.sayStride ? "We're from Stride // " + st.what : st.what.charAt(0).toUpperCase() + st.what.slice(1)
     };
     t.reasonCap = t.reason.charAt(0).toUpperCase() + t.reason.slice(1);
+    t.proof = (strategy || S.strategy) === 'anchor' ? t.neighbour : 'a few of your neighbours';
+    t.proofCap = t.proof.charAt(0).toUpperCase() + t.proof.slice(1);
     return t;
   }
   function fill(s, strategy, service) {
@@ -278,8 +279,8 @@
 
   /* ---------------- shell and routing ---------------- */
   var views = {}, after = {}, route = 'practise', OPEN = 'hello';
-  var TABS = [['practise', 'Practise', 'door'], ['process', 'Process', 'process'], ['coach', 'Coach', 'coach'], ['log', 'Log', 'log']];
-  var LEGACY = { today: 'practise', drill: 'practise', walk: 'process', script: 'process', film: 'coach', rehearse: 'practise', sim: 'practise', objections: 'practise', delivery: 'practise', practice: 'practise' };
+  var TABS = [['practise', 'Practise', 'door'], ['process', 'Process', 'process'], ['objections', 'Objections', 'shield'], ['coach', 'Coach', 'coach'], ['log', 'Log', 'log']];
+  var LEGACY = { today: 'practise', drill: 'practise', walk: 'process', script: 'process', film: 'coach', rehearse: 'practise', sim: 'practise', delivery: 'practise', practice: 'practise' };
   var FOCUS = null;
   function shell() {
     app.innerHTML = '<div class="shell"><header class="top"><div class="top-in">' +
@@ -367,6 +368,30 @@
     });
   };
 
+  /* ---------------- objections: his playbook ---------------- */
+  var OPENG = '';
+  views.objections = function () {
+    function group(g) {
+      var open = OPENG === g.id, n = g.plays.length;
+      var html = '<div class="st' + (open ? ' open' : '') + '" id="g-' + g.id + '"><button type="button" class="st-h" data-gtoggle="' + g.id + '" aria-expanded="' + open + '"><span class="n">' + ico(g.hard ? 'alert' : 'shield') + '</span><h3>' + esc(g.title) + '</h3>' + ico('chev') +
+        '<p>' + n + (n === 1 ? ' real exchange' : ' real exchanges') + ' · "' + esc(g.hear[0]) + '"</p></button>';
+      if (!open) return html + '</div>';
+      return html + '<div class="st-b"><div class="callout"><h4>His move</h4><p>' + fmt(g.move) + '</p></div>' +
+        '<p class="kvl"><b>What it means</b>' + esc(g.means) + '</p>' +
+        '<p class="kvl"><b>You will hear</b>' + g.hear.map(function (x) { return '“' + esc(x) + '”'; }).join(' · ') + '</p>' +
+        g.plays.map(function (o) {
+          return '<div class="play">' + playHead(o) + scriptHTML(o.lines) + '<p class="way-note">' + fmt(o.note) + '</p></div>';
+        }).join('') +
+        (g.plays.some(function (o) { return o.lines[0].who === 'them'; }) ? '<div class="row"><button type="button" class="btn sm" data-ogroup="' + g.id + '">' + ico('repeat') + 'Drill these</button></div>' : '') + '</div></div>';
+    }
+    return '<header class="sec"><h1>His objection playbook</h1><p class="lede">Every objection from his videos, in his words, including what he said when they pushed back a second time. He never argues. Before the price he rolls past it. After the price he guides them to a yes.</p>' +
+      '<div class="row"><button type="button" class="btn sm" data-mode="obj">' + ico('repeat') + 'Drill all of them</button><button type="button" class="ctx" data-open="process">The two processes</button></div></header>' +
+      ['front', 'back'].map(function (side) {
+        return '<section class="sec"><div class="phase-h"><h2>' + (side === 'front' ? 'Before the price' : 'After the price') + '</h2><p>' + esc(C.process[side].line) + '</p></div>' +
+          ladderHTML(side) + '<div class="list">' + C.playbook.filter(function (g) { return g.stage === side; }).map(group).join('') + '</div></section>';
+      }).join('');
+  };
+
   /* ---------------- coach: what the method is built from ---------------- */
   views.coach = function () {
     var secs = [['c-pattern', 'The pattern'], ['c-no', 'Handling a no'], ['c-rules', 'Ten rules'], ['c-surfaces', 'Every surface'], ['c-doors', 'The doors']];
@@ -440,21 +465,25 @@
   /* --- full door, or one stage on repeat --- */
   // turn a random objection into script lines, so every door throws a different one
   function thrown(side) {
-    var ids = THROW[side].filter(function (id) { return id !== R['last' + side]; });
-    var id = ids[Math.floor(Math.random() * ids.length)], o = C.objections.filter(function (x) { return x.id === id; })[0];
-    var out = [{ who: 'them', t: o.them }].concat(o.steps.map(function (st, k) {
-      var ln = { who: 'you', step: st[0], t: st[1] };
-      if (side === 'front' && k === o.steps.length - 1) ln.do = 'Nod and go before they answer.';
-      return ln;
-    }));
-    if (side === 'back') out.push({ who: 'them', t: "All right. I'll go ahead and do it." });
-    out.id = id;
+    var pool = C.objections.filter(function (o) { return o.throw === side; });
+    var pick = pool.filter(function (o) { return o.id !== R['last' + side]; });
+    var o = (pick.length ? pick : pool)[Math.floor(Math.random() * (pick.length || pool.length))];
+    var out = o.lines.map(function (l) { return Object.assign({}, l); });
+    var last = out[out.length - 1];
+    if (side === 'front' && last.who === 'you') last.do = 'Nod and go before they answer.';
+    if (side === 'back' && last.who !== 'them') out.push({ who: 'them', t: "All right. I'll go ahead and do it." });
+    out.id = o.id;
     return out;
+  }
+  // a different one of his real openers each door, unless you picked one
+  function openerLines(b) {
+    var all = [b.lines].concat(waysFor(b).filter(function (w) { return !w.nomix; }).map(function (w) { return w.lines; }));
+    return all[Math.floor(Math.random() * all.length)];
   }
   function buildLines(beats, door) {
     var lines = [];
     beats.forEach(function (b, bi) {
-      var src = b.process && wayIndex(b) < 0 ? thrown(b.process) : beatLines(b);
+      var src = b.process && wayIndex(b) < 0 ? thrown(b.process) : b.id === 'hello' && door && S.mixOpen && wayIndex(b) < 0 ? openerLines(b) : beatLines(b);
       if (src.id) R['last' + b.process] = src.id;
       src.forEach(function (l) { if (door && S.pushback && l.easy) return; lines.push({ b: b, l: l, bi: bi }); });
     });
@@ -652,24 +681,30 @@
 
   /* --- objections --- */
   function objOrder() {
-    var list = C.objections.filter(function (o) { return O.filter === 'all' || o.stage === O.filter; });
+    var list = C.objections.filter(function (o) {
+      return o.lines[0].who === 'them' && (O.group ? o.group.id === O.group : O.filter === 'all' || o.stage === O.filter);
+    });
     var rank = function (o) { var r = P.obj[o.id]; return r === undefined ? -1 : r; };
     return shuffle(list).sort(function (a, b) { return rank(a) - rank(b); });
   }
-  function objStart() { O.order = objOrder(); O.i = 0; O.shown = false; objRender(); }
+  function objStart(group) { closeSheet(); O.group = group || null; O.order = objOrder(); O.i = 0; O.shown = false; objRender(); }
+  function playHead(o) {
+    return '<div class="play-h"><span><b>' + esc(o.by) + '</b> · ' + esc(o.door) + '</span><span class="tag ' + (o.win ? 'good' : '') + '">' + esc(o.result) + '</span></div>';
+  }
   function objRender() {
-    var o = O.order[O.i], side = o.stage;
-    var seg = '<div class="seg" role="group" aria-label="Which objections">' + [['all', 'All'], ['front', 'Before the price'], ['back', 'After it']].map(function (f) {
-      return '<button type="button" data-ofilter="' + f[0] + '" aria-pressed="' + (O.filter === f[0]) + '">' + f[1] + '</button>';
-    }).join('') + '</div>';
-    focus({ name: 'Objections', meta: (O.i + 1) + ' of ' + O.order.length + ' · ' + esc(C.process[side].when.toLowerCase()), pct: O.i / O.order.length, top: O.shown,
-      body: (O.shown ? '' : seg) + '<div class="f-now ' + (O.shown ? '' : 'theirs') + '"><div class="f-label"><span>They say</span></div><p class="f-big">“' + fmt(o.them) + '”</p>' +
+    var o = O.order[O.i], g = o.group, side = o.stage;
+    var seg = O.group ? '<div class="row between"><span class="tag blue">' + esc(g.title) + '</span><button type="button" class="link small" data-ogroup="">All objections</button></div>'
+      : '<div class="seg" role="group" aria-label="Which objections">' + [['all', 'All'], ['front', 'Before the price'], ['back', 'After it']].map(function (f) {
+        return '<button type="button" data-ofilter="' + f[0] + '" aria-pressed="' + (O.filter === f[0]) + '">' + f[1] + '</button>';
+      }).join('') + '</div>';
+    focus({ name: 'Objections', meta: (O.i + 1) + ' of ' + O.order.length + ' · ' + esc(g.title), pct: O.i / O.order.length, top: O.shown,
+      body: (O.shown ? '' : seg) + '<div class="f-now ' + (O.shown ? '' : 'theirs') + '"><div class="f-label"><span>' + esc(C.process[side].when) + ' · they say</span></div><p class="f-big">“' + fmt(o.them) + '”</p>' +
         (O.shown
-          ? '<p class="f-sub"><b>What it means.</b> ' + esc(o.means) + '</p>' +
-            scriptHTML(o.steps.map(function (s) { return { who: 'you', step: s[0], t: s[1] }; })) +
-            '<details class="more"><summary>Why he handles it this way</summary><div class="in"><p>' + fmt(o.why) + '</p><cite>' + esc(o.by) + '</cite></div></details>'
-          : (o.hard ? '<p class="f-sub">Is this one a smokescreen, or real? Say what you would do.</p>' : '<p class="f-sub">' + esc(C.process[side].line) + ' Answer out loud, one step at a time.</p>' + ladderHTML(side)) +
-            '<div class="row"><button type="button" class="btn ghost sm" id="hear">' + ico('sound') + 'Hear it</button><button type="button" class="link small" data-open="process">See both processes</button></div>') +
+          ? playHead(o) + scriptHTML(o.lines.slice(1)) +
+            '<div class="callout"><h4>His move</h4><p>' + fmt(g.move) + '</p></div>' +
+            '<details class="more"><summary>Why this worked, or did not</summary><div class="in"><p>' + fmt(o.note) + '</p><p class="muted small">' + esc(g.means) + '</p></div></details>'
+          : (o.hard ? '<p class="f-sub">Is this one a smokescreen, or real? Say what you would do.</p>' : '<p class="f-sub">' + esc(C.process[side].line) + ' Answer out loud, then see what he actually said, follow-ups included.</p>' + ladderHTML(side)) +
+            '<div class="row"><button type="button" class="btn ghost sm" id="hear">' + ico('sound') + 'Hear it</button></div>') +
         '</div>',
       foot: O.shown ? '<div class="trio' + (O.i ? ' with-back' : '') + '">' + (O.i ? '<button type="button" class="btn ghost back" data-oprev="1" aria-label="Previous objection">' + ico('back') + '</button>' : '') + '<button type="button" class="btn ghost" data-rate="0">Missed it</button><button type="button" class="btn ghost" data-rate="1">Close</button><button type="button" class="btn light" data-rate="2">Nailed it</button></div>'
         : '<div class="go-row">' + '<button type="button" class="btn ghost back" data-oprev="1" aria-label="Previous objection"' + (O.i ? '' : ' disabled') + '>' + ico('back') + '</button>' +
@@ -762,7 +797,7 @@
     var n = doorBeats().filter(speaks).length;
     sheet('door', 'Practise or listen', '<div class="sec"><h4>What does this house need?</h4>' + surfacePicks() + '</div>' +
       '<div class="sec"><h4>How much of each line you see</h4>' + levelSeg() + '</div>' +
-      '<div class="list" style="padding:0 16px">' + toggleHTML('pushback', S.pushback, 'Throw an objection in each half') + '</div>',
+      '<div class="list" style="padding:0 16px">' + toggleHTML('pushback', S.pushback, 'Throw a real objection in each half') + toggleHTML('mixopen', S.mixOpen, 'Use a different one of his openers each door') + '</div>',
       '<div class="go-pair"><button type="button" class="btn big" data-run="door">Practise · ' + n + ' reps</button><button type="button" class="btn big ghost" data-listen="1">' + ico('listen') + 'Listen</button></div>');
   }
   function openStages() {
@@ -847,12 +882,18 @@
     if (d.setlevel) { S.level = d.setlevel; save(); }
     if (d.mode) {
       if (d.mode === 'stage') return openStages();
-      if (d.mode === 'obj') return objStart();
+      if (d.mode === 'obj') return objStart(O.group && !FOCUS.hidden ? O.group : null);
       if (d.mode === 'numbers') { N = {}; return numStart(); }
       return openDoors();
     }
     if (d.run) return startRun(d.run, d.beat);
     if (d.oshow) { O.shown = true; Voice.stop(); return objRender(); }
+    if (d.gtoggle !== undefined) {
+      OPENG = OPENG === d.gtoggle ? '' : d.gtoggle; render(true);
+      var ge = document.getElementById('g-' + d.gtoggle); if (ge && OPENG) ge.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    if (d.ogroup !== undefined) return objStart(d.ogroup);
     if (d.oprev) { if (O.i > 0) { O.i--; O.shown = true; Voice.stop(); objRender(); } return; }
     if (d.review) return runReview();
     if (d.listen) return listenStart();
@@ -875,6 +916,7 @@
     if (d.pick !== undefined) return simPick(+d.pick);
     if (d.snext) { if (d.snext === 'end') return simEnd(!!d.shut); M.i++; return simNode(); }
     if (t.id === 'voice') { S.voice = !S.voice; save(); t.setAttribute('aria-pressed', S.voice); if (!S.voice) Voice.stop(); return; }
+    if (t.id === 'mixopen') { S.mixOpen = !S.mixOpen; save(); t.setAttribute('aria-pressed', S.mixOpen); return; }
     if (t.id === 'pushback') { S.pushback = !S.pushback; save(); return refresh(); }
     if (t.id === 'saystride') { S.sayStride = !S.sayStride; save(); return refresh(); }
     if (t.id === 'sayfirst') { S.sayFirst = !S.sayFirst; save(); t.setAttribute('aria-pressed', S.sayFirst); return; }

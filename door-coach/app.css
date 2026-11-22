@@ -96,7 +96,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .icon-btn svg { width: 20px; height: 20px; }
 .main { flex: 1; padding-block: 14px 108px; }
 .tabbar { position: fixed; inset: auto 0 0; z-index: 30; background: var(--nav-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.tabbar-in { display: grid; grid-template-columns: repeat(4, 1fr); }
+.tabbar-in { display: grid; grid-template-columns: repeat(5, 1fr); }
 .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 2px 8px; font-size: .68rem; font-weight: 750; color: var(--muted); text-decoration: none; }
 .tabbar a svg { width: 22px; height: 22px; }
 .tabbar a[aria-current="page"] { color: var(--accent); }
@@ -419,3 +419,14 @@ dialog.sheet::backdrop { background: rgba(4, 12, 22, .6); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; }
 }
+
+/* ---------- objection playbook ---------- */
+.callout { background: var(--accent-wash); border-radius: var(--r); padding: 12px 14px; }
+.callout h4 { color: var(--accent); margin-bottom: 3px; }
+.callout p { color: var(--ink); font-weight: 600; }
+.play { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
+.play + .play { border-top: 1px dashed var(--line-2); padding-top: 16px; }
+.play-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: .9rem; color: var(--text-2); }
+.play-h b { color: var(--ink); }
+.st-h .n svg { width: 18px; height: 18px; color: var(--accent); }
+.sec > .ladder { margin-bottom: 2px; }
