@@ -430,3 +430,6 @@ dialog.sheet::backdrop { background: rgba(4, 12, 22, .6); }
 .play-h b { color: var(--ink); }
 .st-h .n svg { width: 18px; height: 18px; color: var(--accent); }
 .sec > .ladder { margin-bottom: 2px; }
+
+.src { display: inline-block; margin-top: 3px; padding: 1px 7px; border-radius: 6px; font-size: .68rem; font-weight: 800; letter-spacing: .04em; color: var(--warn); background: var(--warn-wash); font-style: normal; }
+.f-now .src { align-self: flex-start; }

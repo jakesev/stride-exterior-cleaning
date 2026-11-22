@@ -94,7 +94,7 @@
       noun: sv.noun, short: sv.short, spot: sv.spot, show: sv.show, count: sv.count, countTip: sv.countTip,
       stackLine: sv.stackLine, why: sv.why, fiddly: sv.fiddly, whole: sv.whole, scope: sv.scope, diy: sv.diy,
       guy: sv.guy, link: sv.link, throwIn: sv.throwIn, honestLine: HONEST[key],
-      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge,
+      reason: st.reason, reasonLong: st.reasonLong, bridge: st.bridge, priceReason: st.priceReason, drop: '$' + (+S.drop || 30),
       what: S.sayStride ? "We're from Stride // " + st.what : st.what.charAt(0).toUpperCase() + st.what.slice(1)
     };
     t.reasonCap = t.reason.charAt(0).toUpperCase() + t.reason.slice(1);
@@ -240,7 +240,15 @@
     o = o || {};
     var cls = 'ln ' + l.who + (l.silent ? ' silent' : '');
     if (l.step) cls += ' ' + stepInfo(l.step).side + '-step';
-    return '<div class="' + cls + noteAttr(o.noNote ? '' : noteOf(l), o) + '"><span class="sp">' + labelOf(l) + '</span><div class="tx"><p>' + fmt(l.t, o.strategy, o.service) + '</p>' + (l.do ? '<p class="do">' + fmt(l.do, o.strategy, o.service) + '</p>' : '') + '</div></div>';
+    return '<div class="' + cls + noteAttr(o.noNote ? '' : noteOf(l), o) + '"><span class="sp">' + labelOf(l) + '</span><div class="tx"><p>' + fmt(l.t, o.strategy, o.service) + '</p>' + srcTag(l, o.service) + (l.do ? '<p class="do">' + fmt(l.do, o.strategy, o.service) + '</p>' : '') + '</div></div>';
+  }
+  // lines that use a surface's own details are ours for every surface except windows (the only thing he sells)
+  var ADAPTED = /\{(show|stackLine|why|countTip|count|fiddly|whole|scope|diy|spot)\}/;
+  function srcTag(l, service) {
+    var svc = service || S.service;
+    if (l.ours) return '<span class="src">Not from his videos</span>';
+    if (svc !== 'windows' && ADAPTED.test(l.t)) return '<span class="src">Our words for ' + esc(C.services[svc].label.toLowerCase()) + '</span>';
+    return '';
   }
   function scriptHTML(lines, o) { return '<div class="script">' + lines.map(function (l) { return row(l, o); }).join('') + '</div>'; }
   function waysFor(b) { return (b.ways || []).filter(function (w) { return !w.only || w.only === S.strategy; }); }
@@ -316,7 +324,7 @@
       ['stage', 'repeat', 'One stage', 'Say one stage until it is automatic'],
       ['obj', 'shield', 'Objections', 'He never argues one. Learn how'],
       ['numbers', 'dollar', 'Numbers', 'Your prices, said cold'],
-      ['scenario', 'house', 'Real doors', 'Five doors from his videos']
+      ['playbook', 'house', 'His playbook', 'Every objection, in his words']
     ];
     return '<section class="board"><div class="board-top"><span>' + esc(now.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })) + '</span>' + tier + '</div>' +
       '<div class="board-n"><b>' + n + '</b><span>reps today</span></div>' + trackHTML(n) +
@@ -469,9 +477,7 @@
     var pick = pool.filter(function (o) { return o.id !== R['last' + side]; });
     var o = (pick.length ? pick : pool)[Math.floor(Math.random() * (pick.length || pool.length))];
     var out = o.lines.map(function (l) { return Object.assign({}, l); });
-    var last = out[out.length - 1];
-    if (side === 'front' && last.who === 'you') last.do = 'Nod and go before they answer.';
-    if (side === 'back' && last.who !== 'them') out.push({ who: 'them', t: "All right. I'll go ahead and do it." });
+    if (side === 'front') { for (var k = out.length - 1; k >= 0; k--) if (out[k].who === 'you') { out[k].do = out[k].do || 'Nod and go before they answer.'; break; } }
     out.id = o.id;
     return out;
   }
@@ -494,7 +500,7 @@
     var same = R.kind === 'stage' && kind === 'stage' && R.beatId === beatId;
     var beats = kind === 'door' ? doorBeats() : [beatById(beatId)], lines = buildLines(beats, kind === 'door');
     R = { seq: R.seq + 1, lastfront: R.lastfront, lastback: R.lastback, kind: kind, beatId: beatId, beats: beats, lines: lines, hist: [], counted: {}, end: 0, start: Date.now(), fast: 0, reps: 0,
-      pass: same ? R.pass + 1 : 1, ms: 0, w: 0, cue: beatId === 'hello' ? C.cues[Math.floor(Math.random() * C.cues.length)] : '' };
+      pass: same ? R.pass + 1 : 1, ms: 0, w: 0, cue: '' };
     runStep(0);
   }
   function promptOf(l, b) {
@@ -526,7 +532,7 @@
         '<div class="f-now ' + (mine ? 'yours' : 'theirs') + (quiet ? ' quiet' : '') + '">' +
         (l.step && b.process ? ladderHTML(b.process, litOf([l]), true) : '<div class="f-label"><span>' + head + '</span>' +
           (l.who === 'them' && !l.silent && S.voice ? '<span class="speaking" aria-hidden="true"><i></i><i></i><i></i></span>' : '') + '</div>') +
-        '<p id="f-line" class="f-line' + noteAttr(note) + '">' + promptOf(l, b) + '</p>' +
+        '<p id="f-line" class="f-line' + noteAttr(note) + '">' + promptOf(l, b) + '</p>' + srcTag(l) +
         (l.do ? '<p class="f-do"><b>Do</b>' + fmt(l.do) + '</p>' : '') +
         (l.silent ? '<p class="f-sub">Wait. Let them look.</p>' : first ? '<p class="f-sub">Hold any line to see why it is there.</p>' : '') + '</div>',
       foot: '<div class="go-row"><button type="button" class="btn ghost back" id="back" aria-label="Back one line"' + (prevMine(i) < 0 ? ' disabled' : '') + '>' + ico('back') + '</button>' +
@@ -828,7 +834,7 @@
       '<div class="field"><input id="f-saving" data-set="saving" inputmode="numeric" value="' + pr.saving + '" aria-label="Off on the run"><small>Off on the run</small></div>' +
       '<div class="field"><input id="f-drop" data-set="drop" inputmode="numeric" value="' + S.drop + '" aria-label="Extra, with a reason"><small>Extra, with a reason</small></div></div>' +
       '<p class="muted small">Run price $' + pr.price + '. Use the price you really charge for a one-off. The saving has to be real.</p></div>' +
-      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('sayfirst', S.sayFirst, 'Real doors: say my reply before I see options') + toggleHTML('saystride', S.sayStride, 'Add "We\'re from Stride" to the script') + '</div>' +
+      '<div class="sec"><h4>Practice</h4><div class="list" style="padding:0 16px">' + toggleHTML('voice', S.voice, 'The homeowner speaks their lines') + toggleHTML('pushback', S.pushback, 'Full door throws an objection in each half') + toggleHTML('saystride', S.sayStride, 'Add "We\'re from Stride" to the script') + '</div>' +
       '<p class="muted small">Off by default, because the coach never names his company at the door. Queensland expects you to say who you are before you sell, so this is here if you want it.</p></div>' +
       '<div class="sec"><h4>Good to know</h4><div class="list"><button type="button" class="item" data-open="law"><h3>Knocking in Queensland</h3><p>Six rules that change how you book the job</p>' + ico('chev') + '</button></div>' +
       (framed ? '' : '<p class="muted small"><b>Put it on your phone.</b> iPhone: open this page in Safari, tap Share, then Add to Home Screen. Android: open it in Chrome, tap the menu, then Install app. It then opens like an app and works without signal.</p>') + '</div>',
@@ -882,6 +888,7 @@
     if (d.setlevel) { S.level = d.setlevel; save(); }
     if (d.mode) {
       if (d.mode === 'stage') return openStages();
+      if (d.mode === 'playbook') { location.hash = 'objections'; return; }
       if (d.mode === 'obj') return objStart(O.group && !FOCUS.hidden ? O.group : null);
       if (d.mode === 'numbers') { N = {}; return numStart(); }
       return openDoors();
